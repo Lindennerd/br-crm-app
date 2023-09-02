@@ -1,5 +1,4 @@
 import {
-  IonButton,
   IonContent,
   IonIcon,
   IonItem,
@@ -11,76 +10,46 @@ import {
   IonNote,
 } from "@ionic/react";
 
-import {
-  businessOutline,
-  businessSharp,
-  cashOutline,
-  cashSharp,
-  homeOutline,
-  homeSharp,
-  personOutline,
-  personSharp,
-  settingsOutline,
-  settingsSharp,
-} from "ionicons/icons";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
+import { useMenuContext } from "../context/MenuContext";
+import { AppPage } from "../types/app.types";
+import { additionalPages, authenticationPages } from "../types/pages";
 import "./Menu.css";
 
-interface AppPage {
-  url: string;
-  iosIcon: string;
-  mdIcon: string;
-  title: string;
-}
-
-const appPages: AppPage[] = [
-  {
-    title: "Inicio",
-    url: "/page/Inicio",
-    iosIcon: homeOutline,
-    mdIcon: homeSharp,
-  },
-  {
-    title: "Clientes",
-    url: "/page/Clientes",
-    iosIcon: businessOutline,
-    mdIcon: businessSharp,
-  },
-  {
-    title: "Financeiro",
-    url: "/page/Financeiro",
-    iosIcon: cashOutline,
-    mdIcon: cashSharp,
-  },
-];
-
-const additionalPages: AppPage[] = [
-  {
-    title: "Configurações",
-    url: "/page/Configuracoes",
-    iosIcon: settingsOutline,
-    mdIcon: settingsSharp,
-  },
-  {
-    title: "Usuários",
-    url: "/page/users",
-    iosIcon: personOutline,
-    mdIcon: personSharp,
-  },
-];
-
-const labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];
-
 const Menu: React.FC = () => {
+  const [pages, setPages] = useState<AppPage[]>(additionalPages);
+  const [activeModules, setActiveModules] = useState<AppPage[]>([]);
+
   const location = useLocation();
+  const { modules } = useMenuContext();
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (!user) setPages([...authenticationPages]);
+    else setPages(additionalPages);
+
+    if (!user) setActiveModules([]);
+    else {
+      const activeModules = modules.filter((module) => {
+        console.log(module.id);
+        console.log(user.modules);
+        return user.modules.includes(module.id);
+      });
+
+      console.log(activeModules);
+      setActiveModules(activeModules);
+    }
+  }, [user]);
 
   return (
-    <IonMenu contentId="main" type="overlay">
+    <IonMenu contentId="main" type="push">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>Company Name</IonListHeader>
+          <IonListHeader>{user?.name ?? "BrCRM Solutions"}</IonListHeader>
           <IonNote>Powered By BrCRM</IonNote>
-          {appPages.map((appPage, index) => {
+          {activeModules.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
                 <IonItem
@@ -105,7 +74,7 @@ const Menu: React.FC = () => {
           })}
         </IonList>
         <IonList id="additional-list">
-          {additionalPages.map((appPage, index) => {
+          {pages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
                 <IonItem
@@ -129,7 +98,6 @@ const Menu: React.FC = () => {
             );
           })}
         </IonList>
-        <IonButton fill="outline">Logout</IonButton>
       </IonContent>
     </IonMenu>
   );

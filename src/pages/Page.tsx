@@ -7,12 +7,27 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import ExploreContainer from "../components/ExploreContainer";
+import { useAuthContext } from "../context/AuthContext";
+import { AppPage } from "../types/app.types";
+import { additionalPages, appPages, authenticationPages } from "../types/pages";
 import "./Page.css";
 
-const Page: React.FC = () => {
+const Page = () => {
+  const { user } = useAuthContext();
   const { name } = useParams<{ name: string }>();
+  const [page, setPage] = useState<AppPage>();
+
+  useEffect(() => {
+    const page = additionalPages.find((page) => page.id === name);
+    if (page) return setPage(page);
+    const authPage = authenticationPages.find((page) => page.id === name);
+    if (authPage) return setPage(authPage);
+    const appPage = appPages.find((page) => page.id === name);
+    if (appPage) return setPage(appPage);
+  }, [name]);
 
   return (
     <IonPage>
@@ -21,7 +36,7 @@ const Page: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>{name}</IonTitle>
+          <IonTitle>{page?.title}</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -31,7 +46,7 @@ const Page: React.FC = () => {
             <IonTitle size="large">{name}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name={name} />
+        {page?.page ?? <ExploreContainer name={name} />}
       </IonContent>
     </IonPage>
   );
