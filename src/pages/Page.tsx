@@ -10,13 +10,11 @@ import {
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import ExploreContainer from "../components/ExploreContainer";
-import { useAuthContext } from "../context/AuthContext";
 import { AppPage } from "../types/app.types";
 import { additionalPages, appPages, authenticationPages } from "../types/pages";
 import "./Page.css";
 
 const Page = () => {
-  const { user } = useAuthContext();
   const { name } = useParams<{ name: string }>();
   const [page, setPage] = useState<AppPage>();
 
@@ -46,6 +44,7 @@ const Page = () => {
             <IonTitle size="large">{name}</IonTitle>
           </IonToolbar>
         </IonHeader>
+
         {page?.page ?? <ExploreContainer name={name} />}
       </IonContent>
     </IonPage>

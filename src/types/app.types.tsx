@@ -25,3 +25,21 @@ export enum UserRole {
   User,
   Admin,
 }
+
+export type ClientConfiguration = {
+  name: string;
+  fieldConfigurations: FieldConfiguration[];
+};
+
+export type FieldConfiguration = {
+  name: string;
+  type: number;
+  defaultValue: string;
+  possibleValues: string[];
+};
+
+export enum FieldType {
+  Text,
+  Number,
+  Date,
+}

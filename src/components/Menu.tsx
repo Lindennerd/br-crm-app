@@ -33,12 +33,9 @@ const Menu: React.FC = () => {
     if (!user) setActiveModules([]);
     else {
       const activeModules = modules.filter((module) => {
-        console.log(module.id);
-        console.log(user.modules);
         return user.modules.includes(module.id);
       });
 
-      console.log(activeModules);
       setActiveModules(activeModules);
     }
   }, [user]);

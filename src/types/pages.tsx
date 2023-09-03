@@ -12,18 +12,19 @@ import {
   settingsOutline,
   settingsSharp,
 } from "ionicons/icons";
+import { ConfigurationPage } from "../pages/Configuration/ConfigurationPage";
 import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { LogoutPage } from "../pages/LoginPage/LogoutPage";
 import { AppPage } from "./app.types";
 
 export const additionalPages: AppPage[] = [
   {
-    id: "Configurations",
+    id: "Configuracoes",
     title: "Configurações",
     url: "/page/Configuracoes",
     iosIcon: settingsOutline,
     mdIcon: settingsSharp,
-    page: undefined,
+    page: <ConfigurationPage />,
   },
   {
     id: "Users",
