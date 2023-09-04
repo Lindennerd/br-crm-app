@@ -12,6 +12,7 @@ import {
   settingsOutline,
   settingsSharp,
 } from "ionicons/icons";
+import { ClientsPage } from "../pages/ClientsPage/ClientsPage";
 import { ConfigurationPage } from "../pages/Configuration/ConfigurationPage";
 import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { LogoutPage } from "../pages/LoginPage/LogoutPage";
@@ -67,10 +68,10 @@ export const appPages: AppPage[] = [
   {
     title: "Clientes",
     id: "ClientManagement",
-    url: "/page/Clientes",
+    url: "/page/ClientManagement",
     iosIcon: businessOutline,
     mdIcon: businessSharp,
-    page: undefined,
+    page: <ClientsPage />,
   },
   {
     title: "Financeiro",

@@ -49,7 +49,7 @@ export const AddConfigurationForm = (params: AddConfigurationFormParams) => {
       (formRef.current["defaultValue"] as unknown as HTMLInputElement).value =
         params.currentField?.defaultValue ?? "";
       (formRef.current["possibleValues"] as unknown as HTMLInputElement).value =
-        params.currentField?.possibleValues.join(", ") ?? "";
+        params.currentField?.possibleValues?.join(", ") ?? "";
     }
   }, []);
 
@@ -78,12 +78,7 @@ export const AddConfigurationForm = (params: AddConfigurationFormParams) => {
       onSubmit={handleAddConfigurationSubmit}
       className="ion-padding"
     >
-      <IonInput
-        type="text"
-        label="Nome"
-        labelPlacement="floating"
-        name="name"
-      />
+      <IonInput type="text" label="Nome" labelPlacement="fixed" name="name" />
       <IonSelect placeholder="Tipos" name="type">
         <IonSelectOption value="0">Texto</IonSelectOption>
         <IonSelectOption value="1">Número</IonSelectOption>
@@ -92,14 +87,14 @@ export const AddConfigurationForm = (params: AddConfigurationFormParams) => {
       <IonInput
         type="text"
         label="Valor Padrão"
-        labelPlacement="floating"
+        labelPlacement="fixed"
         name="defaultValue"
       />
       <IonInput
         name="possibleValues"
         type="text"
         label="Valores Possíveis"
-        labelPlacement="floating"
+        labelPlacement="fixed"
         placeholder="Separe os valores por vírgula"
       />
       <IonButtons>
@@ -159,7 +154,7 @@ export const ConfigurationItem = ({
       <IonCol>{item.name}</IonCol>
       <IonCol>{getFieldType(item.type)}</IonCol>
       <IonCol>{item.defaultValue}</IonCol>
-      <IonCol>{item.possibleValues.join(", ")}</IonCol>
+      <IonCol>{item.possibleValues?.join(", ")}</IonCol>
       <IonCol size="auto">
         <IonButton
           fill="clear"

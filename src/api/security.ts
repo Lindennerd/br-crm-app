@@ -1,8 +1,15 @@
 import { CapacitorHttp as http } from "@capacitor/core";
+import { useIonRouter } from "@ionic/react";
 import { get } from "../common/storage";
-import { ClientConfiguration } from "../types/app.types";
+import {
+  Client,
+  ClientConfiguration,
+  GetClientsRequest,
+} from "../types/app.types";
 
 export const useApi = () => {
+  const { push } = useIonRouter();
+
   const baseUrl: string = "http://localhost:5114";
   const headers = {
     "Content-Type": "application/json",
@@ -48,5 +55,36 @@ export const useApi = () => {
     else return response.data;
   }
 
-  return { login, getConfiguration, saveConfiguration, logout: () => {} };
+  async function getClientsByType(request: GetClientsRequest) {
+    await authenticate();
+    const response = await http.post({
+      url: `${baseUrl}/Client/GetClients`,
+      data: request,
+      headers,
+    });
+
+    if (!response.data || response.status > 299) throw new Error(response.data);
+    else return response.data;
+  }
+
+  async function saveClient(client: Client) {
+    await authenticate();
+    const response = await http.post({
+      url: `${baseUrl}/Client/UpsertClient`,
+      data: client,
+      headers,
+    });
+
+    if (!response.data || response.status > 299) throw new Error(response.data);
+    else return response.data;
+  }
+
+  return {
+    login,
+    getConfiguration,
+    getClientsByType,
+    saveConfiguration,
+    saveClient,
+    logout: () => {},
+  };
 };

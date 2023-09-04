@@ -34,8 +34,8 @@ export type ClientConfiguration = {
 export type FieldConfiguration = {
   name: string;
   type: number;
-  defaultValue: string;
-  possibleValues: string[];
+  defaultValue: string | null;
+  possibleValues: string[] | null;
 };
 
 export enum FieldType {
@@ -43,3 +43,19 @@ export enum FieldType {
   Number,
   Date,
 }
+
+export type GetClientsRequest = {
+  page: number;
+  size: number;
+  clientType: string;
+};
+
+export type ClientField = {
+  value: string;
+  field: FieldConfiguration;
+};
+
+export type Client = {
+  clientType: string;
+  values: ClientField[];
+};
