@@ -10,7 +10,7 @@ import {
 export const useApi = () => {
   const { push } = useIonRouter();
 
-  const baseUrl: string = "https://brcrm-api.fly.dev/";
+  const baseUrl: string = "https://brcrm-api.fly.dev";
   const headers = {
     "Content-Type": "application/json",
     Authorization: "",
@@ -85,6 +85,6 @@ export const useApi = () => {
     getClientsByType,
     saveConfiguration,
     saveClient,
-    logout: () => {},
+    logout: () => { },
   };
 };
