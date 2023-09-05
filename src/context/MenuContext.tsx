@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import { AppPage } from "../types/app.types";
-import { appPages } from "../types/pages";
+import { modulePages } from "../types/pages";
 import { childrenProp as ChildrenProp } from "../types/react.types";
 
 interface IMenuContext {
@@ -8,13 +8,13 @@ interface IMenuContext {
 }
 
 const context = createContext<IMenuContext>({
-  modules: appPages,
+  modules: modulePages,
 });
 export const useMenuContext = () => useContext(context);
 
 export const MenuContextProvider = ({ children }: ChildrenProp) => {
   return (
-    <context.Provider value={{ modules: appPages }}>
+    <context.Provider value={{ modules: modulePages }}>
       {children}
     </context.Provider>
   );

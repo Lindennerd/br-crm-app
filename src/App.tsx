@@ -5,8 +5,8 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { Route } from "react-router-dom";
-import Menu from "./components/Menu";
+import { Redirect, Route } from "react-router-dom";
+import Menu from "./components/Menu/Menu";
 import Page from "./pages/Page";
 
 /* Core CSS required for Ionic components to work properly */
@@ -26,7 +26,6 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
-import { LandingPage } from "./pages/LandingPage";
 import "./theme/variables.css";
 
 setupIonicReact();
@@ -39,7 +38,7 @@ const App: React.FC = () => {
           <Menu />
           <IonRouterOutlet id="main">
             <Route path="/" exact={true}>
-              <LandingPage />
+              <Redirect to="/page/home" />
             </Route>
             <Route path="/page/:name" exact={true}>
               <Page></Page>

@@ -5,6 +5,8 @@ import {
   businessSharp,
   cashOutline,
   cashSharp,
+  homeOutline,
+  homeSharp,
   logInOutline,
   logInSharp,
   personOutline,
@@ -14,6 +16,7 @@ import {
 } from "ionicons/icons";
 import { ClientsPage } from "../pages/ClientsPage/ClientsPage";
 import { ConfigurationPage } from "../pages/Configuration/ConfigurationPage";
+import { HomePage } from "../pages/Home/HomePage";
 import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { AppPage } from "./app.types";
 
@@ -55,7 +58,15 @@ export const authenticationPages: AppPage[] = [
   },
 ];
 
-export const appPages: AppPage[] = [
+export const modulePages: AppPage[] = [
+  {
+    title: "Início",
+    id: "home",
+    url: "/page/home",
+    iosIcon: homeOutline,
+    mdIcon: homeSharp,
+    page: <HomePage />,
+  },
   {
     title: "Clientes",
     id: "ClientManagement",

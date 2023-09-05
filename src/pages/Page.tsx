@@ -9,9 +9,13 @@ import {
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import ExploreContainer from "../components/ExploreContainer";
+import ExploreContainer from "../components/ExploreContainer/ExploreContainer";
 import { AppPage } from "../types/app.types";
-import { additionalPages, appPages, authenticationPages } from "../types/pages";
+import {
+  additionalPages,
+  authenticationPages,
+  modulePages,
+} from "../types/pages";
 import "./Page.css";
 
 const Page = () => {
@@ -23,7 +27,7 @@ const Page = () => {
     if (page) return setPage(page);
     const authPage = authenticationPages.find((page) => page.id === name);
     if (authPage) return setPage(authPage);
-    const appPage = appPages.find((page) => page.id === name);
+    const appPage = modulePages.find((page) => page.id === name);
     if (appPage) return setPage(appPage);
   }, [name]);
 

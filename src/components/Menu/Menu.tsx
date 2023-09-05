@@ -9,20 +9,20 @@ import {
   IonMenu,
   IonMenuToggle,
   IonNote,
-  useIonRouter,
 } from "@ionic/react";
 
 import { logOutOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useAuthContext } from "../context/AuthContext";
-import { useMenuContext } from "../context/MenuContext";
-import { AppPage } from "../types/app.types";
-import { additionalPages, authenticationPages } from "../types/pages";
+import { useRouter } from "../../common/useRouter";
+import { useAuthContext } from "../../context/AuthContext";
+import { useMenuContext } from "../../context/MenuContext";
+import { AppPage } from "../../types/app.types";
+import { additionalPages, authenticationPages } from "../../types/pages";
 import "./Menu.css";
 
 const Menu: React.FC = () => {
-  const router = useIonRouter();
+  const { gotoHome } = useRouter();
 
   const [pages, setPages] = useState<AppPage[]>(additionalPages);
   const [activeModules, setActiveModules] = useState<AppPage[]>([]);
@@ -38,7 +38,7 @@ const Menu: React.FC = () => {
     if (!user) setActiveModules([]);
     else {
       const activeModules = modules.filter((module) => {
-        return user.modules.includes(module.id);
+        return user.modules.includes(module.id) || module.id === "home";
       });
 
       setActiveModules(activeModules);
@@ -47,7 +47,7 @@ const Menu: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    router.push("/page/login", "root", "replace");
+    gotoHome();
   };
 
   return (
