@@ -97,10 +97,10 @@ export const ConfigurationPage = () => {
     if (currentConfiguration) {
       presentLoading();
       saveConfiguration(currentConfiguration)
-        .then((res) =>
+        .then(() =>
           presentToast("Configurações salvas com sucesso", "success")
         )
-        .catch((err) =>
+        .catch(() =>
           presentToast("Houve um erro ao salvar as configurações", "danger")
         )
         .finally(async () => await dismissLoading());

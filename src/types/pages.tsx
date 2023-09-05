@@ -15,7 +15,6 @@ import {
 import { ClientsPage } from "../pages/ClientsPage/ClientsPage";
 import { ConfigurationPage } from "../pages/Configuration/ConfigurationPage";
 import { LoginPage } from "../pages/LoginPage/LoginPage";
-import { LogoutPage } from "../pages/LoginPage/LogoutPage";
 import { AppPage } from "./app.types";
 
 export const additionalPages: AppPage[] = [
@@ -34,14 +33,6 @@ export const additionalPages: AppPage[] = [
     iosIcon: personOutline,
     mdIcon: personSharp,
     page: null,
-  },
-  {
-    id: "logout",
-    title: "Logout",
-    url: "/page/logout",
-    iosIcon: personOutline,
-    mdIcon: personSharp,
-    page: <LogoutPage />,
   },
 ];
 

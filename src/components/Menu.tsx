@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonContent,
   IonIcon,
   IonItem,
@@ -8,8 +9,10 @@ import {
   IonMenu,
   IonMenuToggle,
   IonNote,
+  useIonRouter,
 } from "@ionic/react";
 
+import { logOutOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
@@ -19,12 +22,14 @@ import { additionalPages, authenticationPages } from "../types/pages";
 import "./Menu.css";
 
 const Menu: React.FC = () => {
+  const router = useIonRouter();
+
   const [pages, setPages] = useState<AppPage[]>(additionalPages);
   const [activeModules, setActiveModules] = useState<AppPage[]>([]);
 
   const location = useLocation();
   const { modules } = useMenuContext();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
 
   useEffect(() => {
     if (!user) setPages([...authenticationPages]);
@@ -39,6 +44,11 @@ const Menu: React.FC = () => {
       setActiveModules(activeModules);
     }
   }, [user]);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/page/login", "root", "replace");
+  };
 
   return (
     <IonMenu contentId="main" type="push">
@@ -94,6 +104,22 @@ const Menu: React.FC = () => {
               </IonMenuToggle>
             );
           })}
+          {user && (
+            <IonItem>
+              <IonButton
+                onClick={() => handleLogout()}
+                size="default"
+                fill="clear"
+              >
+                <IonIcon
+                  slot="end"
+                  ios={logOutOutline}
+                  md={logOutOutline}
+                ></IonIcon>
+                <IonLabel>Logout</IonLabel>
+              </IonButton>
+            </IonItem>
+          )}
         </IonList>
       </IonContent>
     </IonMenu>

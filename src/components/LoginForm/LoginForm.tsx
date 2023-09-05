@@ -1,4 +1,10 @@
-import { IonButton, IonInput, useIonAlert, useIonLoading } from "@ionic/react";
+import {
+  IonButton,
+  IonInput,
+  useIonAlert,
+  useIonLoading,
+  useIonRouter,
+} from "@ionic/react";
 import { useAuthContext } from "../../context/AuthContext";
 
 type LoginFormTargetType = EventTarget & {
@@ -8,6 +14,7 @@ type LoginFormTargetType = EventTarget & {
 
 export const LoginForm = () => {
   const authContext = useAuthContext();
+  const { push } = useIonRouter();
   const [present, dismiss] = useIonLoading();
   const [presentAlert] = useIonAlert();
 
@@ -21,6 +28,7 @@ export const LoginForm = () => {
         target.password.value
       );
       await dismiss();
+      await push("/", "root", "replace");
 
       if (!result.success)
         presentAlert("O usuário ou a senha estão incorretos");

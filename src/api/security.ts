@@ -1,5 +1,4 @@
 import { CapacitorHttp as http } from "@capacitor/core";
-import { useIonRouter } from "@ionic/react";
 import { get } from "../common/storage";
 import {
   Client,
@@ -8,9 +7,7 @@ import {
 } from "../types/app.types";
 
 export const useApi = () => {
-  const { push } = useIonRouter();
-
-  const baseUrl: string = "https://brcrm-api.fly.dev";
+  const baseUrl: string = "http://localhost:5114";
   const headers = {
     "Content-Type": "application/json",
     Authorization: "",
@@ -85,6 +82,6 @@ export const useApi = () => {
     getClientsByType,
     saveConfiguration,
     saveClient,
-    logout: () => { },
+    logout: () => {},
   };
 };
