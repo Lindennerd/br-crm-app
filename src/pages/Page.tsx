@@ -1,15 +1,21 @@
 import {
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
+  IonLabel,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { logOutOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { useRouter } from "../common/useRouter";
 import ExploreContainer from "../components/ExploreContainer/ExploreContainer";
+import { useAuthContext } from "../context/AuthContext";
 import { AppPage } from "../types/app.types";
 import {
   additionalPages,
@@ -19,6 +25,8 @@ import {
 import "./Page.css";
 
 const Page = () => {
+  const { gotoHome, gotoLogin } = useRouter();
+  const { user, logout } = useAuthContext();
   const { name } = useParams<{ name: string }>();
   const [page, setPage] = useState<AppPage>();
 
@@ -31,6 +39,15 @@ const Page = () => {
     if (appPage) return setPage(appPage);
   }, [name]);
 
+  const handleLogout = () => {
+    logout();
+    gotoHome();
+  };
+
+  const handleLogin = () => {
+    gotoLogin();
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -39,6 +56,35 @@ const Page = () => {
             <IonMenuButton />
           </IonButtons>
           <IonTitle>{page?.title}</IonTitle>
+          <IonButtons slot="end">
+            {user ? (
+              <IonButton
+                onClick={() => handleLogout()}
+                size="default"
+                fill="clear"
+              >
+                <IonIcon
+                  slot="end"
+                  ios={logOutOutline}
+                  md={logOutOutline}
+                ></IonIcon>
+                <IonLabel>Logout</IonLabel>
+              </IonButton>
+            ) : (
+              <IonButton
+                onClick={() => handleLogin()}
+                size="default"
+                fill="clear"
+              >
+                <IonIcon
+                  slot="end"
+                  ios={logOutOutline}
+                  md={logOutOutline}
+                ></IonIcon>
+                <IonLabel>Login</IonLabel>
+              </IonButton>
+            )}
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
 

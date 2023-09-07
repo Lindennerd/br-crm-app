@@ -2,172 +2,249 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonCol,
-  IonGrid,
+  IonButtons,
+  IonContent,
   IonIcon,
   IonItem,
   IonLabel,
-  IonRow,
-  ToastOptions,
-  useIonLoading,
+  IonPopover,
+  IonTitle,
+  IonToolbar,
+  useIonModal,
   useIonToast,
 } from "@ionic/react";
-import { pencilOutline } from "ionicons/icons";
+import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
+import {
+  settingsOutline,
+  settingsSharp,
+  syncCircleSharp,
+} from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useApi } from "../../api/security";
-import {
-  AddClientTypeForm,
-  AddConfigurationForm,
-  ConfigurationItem,
-} from "../../components/Configuration/AddConfigurationForm";
-import { AddConfigurationModal } from "../../components/Configuration/AddConfigurationModal";
+import { useFieldType } from "../../common/getFieldType";
+import { ClientTypeFieldsModal } from "../../components/Configuration/ClientTypeFieldsModal";
+import { ClientTypeModal } from "../../components/Configuration/ClientTypeModal";
 import { ClientConfiguration, FieldConfiguration } from "../../types/app.types";
-import "./ConfigurationPage.css";
 
 export const ConfigurationPage = () => {
-  const [present] = useIonToast();
-  const [presentLoading, dismissLoading] = useIonLoading();
-  const [open, setOpen] = useState<boolean>(false);
+  const [clientTypes, setClienTypes] = useState<ClientConfiguration[]>([]);
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
+
   const { getConfiguration, saveConfiguration } = useApi();
-  const [configuration, setConfiguration] = useState<ClientConfiguration[]>([]);
-  const [currentField, setCurrentField] = useState<
-    FieldConfiguration | undefined
-  >();
+  const [presentToast, dismissToast] = useIonToast();
+  const { getFieldType } = useFieldType();
+
+  const [presentClientTypeModal, dismissClientTypeModal] = useIonModal(
+    ClientTypeModal,
+    {
+      onDismiss: (data: string, role: string) =>
+        dismissClientTypeModal(data, role),
+    }
+  );
+
+  const [presentClientTypeFieldsModal, dismissClientTypeFieldsModal] =
+    useIonModal(ClientTypeFieldsModal, {
+      clientTypes: clientTypes,
+      onDismiss: (data?: ClientConfiguration | null, role?: string) =>
+        dismissClientTypeFieldsModal(data, role),
+    });
 
   useEffect(() => {
-    const fetchConfiguration = async () => {
-      const res = await getConfiguration();
-      setConfiguration(res);
+    const fetchClientTypes = async () => {
+      const configuration = await getConfiguration();
+      setClienTypes(configuration);
     };
 
-    fetchConfiguration().catch((err) => console.log(err));
+    fetchClientTypes();
   }, []);
 
-  const presentToast = (message: string, color: ToastOptions["color"]) => {
-    present({
-      message,
-      duration: 2000,
-      color: color,
-      position: "middle",
-    });
+  const syncConfiguration = () => {
+    Promise.all(
+      clientTypes.map(async (clientType) => {
+        //remove any temp id before saving
+        if (clientType.id!.includes("<tempId>_")) clientType.id = null;
+        const configuration = await saveConfiguration(clientType);
+        return configuration;
+      })
+    )
+      .then((res) => {
+        setHasChanges(false);
+        presentToast({
+          message: "Configurações salvas com sucesso",
+          duration: 2000,
+          color: "success",
+          position: "top",
+        });
+      })
+      .catch((err) => {
+        presentToast({
+          message: "Erro ao salvar configurações",
+          duration: 2000,
+          color: "danger",
+          position: "top",
+        });
+      });
   };
 
-  const handleAddClientType = (name: string) => {
-    if (configuration?.find((config) => config.name === name)) return;
-    if (configuration)
-      setConfiguration([...configuration, { name, fieldConfigurations: [] }]);
-    else setConfiguration([{ name, fieldConfigurations: [] }]);
+  const handleAddClientType = async (name: string) => {
+    if (!name) return;
+    if (name === "") return;
+    if (clientTypes.find((clientType) => clientType.name === name)) return;
+
+    const newClientType: ClientConfiguration = {
+      name,
+      fieldConfigurations: [],
+      id: "<tempId>_" + name,
+    };
+
+    setClienTypes([...clientTypes, newClientType]);
   };
 
-  const handleEditField = (field: FieldConfiguration) => {
-    setCurrentField(field);
-    setOpen(true);
+  const handleAddField = async (clientType: ClientConfiguration) => {
+    if (!clientType) return;
+    if (!clientType.name) return;
+    if (!clientType.fieldConfigurations) return;
+    if (clientType.fieldConfigurations.length === 0) return;
+
+    const clientTypeIndex = clientTypes.findIndex(
+      (ct) => ct.id === clientType.id
+    );
+    if (clientTypeIndex === -1) return;
+
+    const newClientTypes = [...clientTypes];
+    newClientTypes[clientTypeIndex] = clientType;
+
+    setClienTypes(newClientTypes);
+    setHasChanges(true);
   };
 
-  const handleAddOrEditField = (
+  const handleRemoveField = async (
     field: FieldConfiguration,
     clientTypeName: string
   ) => {
-    const newConfiguration = configuration?.map((config) => {
-      if (config.name === clientTypeName) {
-        const fieldIndex = config.fieldConfigurations.findIndex(
-          (f) => f.name === field.name
-        );
-        if (fieldIndex >= 0) {
-          config.fieldConfigurations[fieldIndex] = field;
-          return config;
-        } else {
-          return {
-            ...config,
-            fieldConfigurations: [...config.fieldConfigurations, field],
-          };
-        }
-      }
-      return config;
-    });
-    if (newConfiguration) setConfiguration(newConfiguration);
+    if (!field) return;
+    if (!field.name) return;
+    if (!clientTypeName) return;
+
+    const clientType = clientTypes.find((ct) => ct.name === clientTypeName);
+    if (!clientType) return;
+
+    const clientTypeIndex = clientTypes.findIndex(
+      (ct) => ct.id === clientType.id
+    );
+    if (clientTypeIndex === -1) return;
+
+    const fieldIndex = clientType.fieldConfigurations.findIndex(
+      (f) => f.name === field.name
+    );
+    if (fieldIndex === -1) return;
+
+    const newClientTypes = [...clientTypes];
+    newClientTypes[clientTypeIndex].fieldConfigurations?.splice(fieldIndex, 1);
+
+    setClienTypes(newClientTypes);
+    setHasChanges(true);
   };
 
-  const handleSaveChanges = (name: string) => {
-    const currentConfiguration = configuration?.find((c) => c.name === name);
-    if (currentConfiguration) {
-      presentLoading();
-      saveConfiguration(currentConfiguration)
-        .then(() =>
-          presentToast("Configurações salvas com sucesso", "success")
-        )
-        .catch(() =>
-          presentToast("Houve um erro ao salvar as configurações", "danger")
-        )
-        .finally(async () => await dismissLoading());
-    }
+  const openClientTypeModal = () => {
+    presentClientTypeModal({
+      onWillDismiss: (ev: CustomEvent<OverlayEventDetail>) => {
+        if (ev.detail.role === "save") {
+          handleAddClientType(ev.detail.data);
+        }
+      },
+    });
+  };
+
+  const openClientTypeFieldsModal = () => {
+    presentClientTypeFieldsModal({
+      onWillDismiss: (ev: CustomEvent<OverlayEventDetail>) => {
+        if (ev.detail.role === "save") {
+          handleAddField(ev.detail.data);
+        }
+      },
+    });
   };
 
   return (
     <>
-      <IonCard>
-        <IonCardHeader>
-          <IonCardTitle>Novo tipo de cliente</IonCardTitle>
-        </IonCardHeader>
-        <IonCardContent>
-          <AddClientTypeForm add={handleAddClientType} />
-        </IonCardContent>
-      </IonCard>
-      <IonAccordionGroup>
-        {configuration?.map((config, index) => {
-          return (
-            <IonAccordion key={index} value={config.name}>
-              <IonItem slot="header" color="light">
-                <IonLabel>{config.name}</IonLabel>
-              </IonItem>
-              <div
-                className="ion-padding"
-                slot="content"
-                style={{ color: "secondary" }}
+      <IonToolbar color="secondary">
+        <IonTitle>Configurações de Clientes</IonTitle>
+        <IonButtons slot="end">
+          <IonButton
+            disabled={!hasChanges}
+            onClick={(e) => syncConfiguration()}
+          >
+            Salvar Alterações
+            <IonIcon icon={syncCircleSharp} />
+          </IonButton>
+          <IonButton id="trigger-settings">
+            Alterar Configurações
+            <IonIcon md={settingsSharp} icon={settingsOutline}></IonIcon>
+          </IonButton>
+          <IonPopover trigger="trigger-settings" triggerAction="click">
+            <IonContent>
+              <IonButton
+                fill="clear"
+                color="primary"
+                onClick={(e) => openClientTypeModal()}
               >
-                <IonButton fill="clear" onClick={() => setOpen(true)}>
-                  Adicionar Campo
-                </IonButton>
-                <AddConfigurationModal isOpen={open} setIsOpen={setOpen}>
-                  <AddConfigurationForm
-                    currentField={currentField}
-                    addField={handleAddOrEditField}
-                    clientTypeName={config.name}
-                  />
-                </AddConfigurationModal>
-                <IonGrid>
-                  <IonRow
-                    style={{ fontWeight: "bold", backgroundColor: "#135d54" }}
-                  >
-                    <IonCol>Nome</IonCol>
-                    <IonCol>Tipo</IonCol>
-                    <IonCol>Valor Padrão</IonCol>
-                    <IonCol>Valores Possíveis</IonCol>
-                    <IonCol size="auto">
-                      <IonButton fill="clear" disabled={true}>
-                        <IonIcon icon={pencilOutline}></IonIcon>
-                      </IonButton>
-                    </IonCol>
-                  </IonRow>
-                  {config.fieldConfigurations.map((field, index) => {
-                    return (
-                      <ConfigurationItem
-                        key={index}
-                        item={field}
-                        clientTypeName={config.name}
-                        openForEdit={handleEditField}
-                      />
-                    );
-                  })}
-                </IonGrid>
-                <IonButton onClick={() => handleSaveChanges(config.name)}>
-                  Salvar Alterações
-                </IonButton>
-              </div>
+                Adicionar Tipo de Cliente
+              </IonButton>
+              <IonButton
+                fill="clear"
+                color="primary"
+                onClick={(e) => openClientTypeFieldsModal()}
+              >
+                Adicionar Campos
+              </IonButton>
+            </IonContent>
+          </IonPopover>
+        </IonButtons>
+      </IonToolbar>
+      <IonAccordionGroup>
+        {clientTypes?.length === 0 && (
+          <IonItem>Nenhuma configuração encontrada</IonItem>
+        )}
+        {clientTypes?.map((clientType) => {
+          return (
+            <IonAccordion value={clientType.id!} key={clientType.id}>
+              <IonItem slot="header">
+                <IonLabel>{clientType.name}</IonLabel>
+              </IonItem>
+              <IonAccordionGroup slot="content">
+                {clientType.fieldConfigurations.map((field) => {
+                  return (
+                    <div key={field.name}>
+                      <IonAccordion value={field.name}>
+                        <IonItem slot="header" color="tertiary">
+                          <IonLabel>
+                            {field.name} - {getFieldType(field.type)}
+                          </IonLabel>
+                        </IonItem>
+                        <IonItem slot="content">
+                          <IonLabel>
+                            Valor padrão: {field.defaultValue} - Valores
+                            Possiveis:
+                            {field.possibleValues?.join(",")}
+                          </IonLabel>
+                          <IonButtons>
+                            <IonButton
+                              fill="clear"
+                              color={"danger"}
+                              onClick={(e) =>
+                                handleRemoveField(field, clientType.name)
+                              }
+                            >
+                              Remover
+                            </IonButton>
+                          </IonButtons>
+                        </IonItem>
+                      </IonAccordion>
+                    </div>
+                  );
+                })}
+              </IonAccordionGroup>
             </IonAccordion>
           );
         })}

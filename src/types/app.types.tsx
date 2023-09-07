@@ -27,6 +27,7 @@ export enum UserRole {
 }
 
 export type ClientConfiguration = {
+  id: string | null;
   name: string;
   fieldConfigurations: FieldConfiguration[];
 };

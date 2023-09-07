@@ -30,7 +30,7 @@ export const useApi = () => {
     else return response.data;
   }
 
-  async function getConfiguration() {
+  async function getConfiguration(): Promise<ClientConfiguration[]> {
     await authenticate();
     const response = await http.get({
       url: `${baseUrl}/organization/getclientconfiguration`,

@@ -20,24 +20,7 @@ import { HomePage } from "../pages/Home/HomePage";
 import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { AppPage } from "./app.types";
 
-export const additionalPages: AppPage[] = [
-  {
-    id: "Configuracoes",
-    title: "Configurações",
-    url: "/page/Configuracoes",
-    iosIcon: settingsOutline,
-    mdIcon: settingsSharp,
-    page: <ConfigurationPage />,
-  },
-  {
-    id: "Users",
-    title: "Usuários",
-    url: "/page/users",
-    iosIcon: personOutline,
-    mdIcon: personSharp,
-    page: null,
-  },
-];
+export const additionalPages: AppPage[] = [];
 
 export const authenticationPages: AppPage[] = [
   {
@@ -82,5 +65,21 @@ export const modulePages: AppPage[] = [
     iosIcon: cashOutline,
     mdIcon: cashSharp,
     page: undefined,
+  },
+  {
+    id: "Configuracoes",
+    title: "Configurações",
+    url: "/page/Configuracoes",
+    iosIcon: settingsOutline,
+    mdIcon: settingsSharp,
+    page: <ConfigurationPage />,
+  },
+  {
+    id: "Users",
+    title: "Usuários",
+    url: "/page/users",
+    iosIcon: personOutline,
+    mdIcon: personSharp,
+    page: null,
   },
 ];

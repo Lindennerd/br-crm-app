@@ -1,5 +1,4 @@
 import {
-  IonButton,
   IonContent,
   IonIcon,
   IonItem,
@@ -11,44 +10,43 @@ import {
   IonNote,
 } from "@ionic/react";
 
-import { logOutOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useRouter } from "../../common/useRouter";
 import { useAuthContext } from "../../context/AuthContext";
 import { useMenuContext } from "../../context/MenuContext";
-import { AppPage } from "../../types/app.types";
-import { additionalPages, authenticationPages } from "../../types/pages";
+import { AppPage, UserRole } from "../../types/app.types";
+import { additionalPages } from "../../types/pages";
 import "./Menu.css";
 
 const Menu: React.FC = () => {
-  const { gotoHome } = useRouter();
-
   const [pages, setPages] = useState<AppPage[]>(additionalPages);
   const [activeModules, setActiveModules] = useState<AppPage[]>([]);
 
   const location = useLocation();
   const { modules } = useMenuContext();
-  const { user, logout } = useAuthContext();
+  const { user } = useAuthContext();
 
   useEffect(() => {
-    if (!user) setPages([...authenticationPages]);
-    else setPages(additionalPages);
+    setPages(additionalPages);
 
     if (!user) setActiveModules([]);
     else {
       const activeModules = modules.filter((module) => {
-        return user.modules.includes(module.id) || module.id === "home";
+        return (
+          user.modules.includes(module.id) ||
+          module.id === "home" ||
+          ((user.user.userRole === UserRole.Admin ||
+            user.user.userRole === UserRole.SysAdmin) &&
+            module.id === "Configuracoes") ||
+          ((user.user.userRole === UserRole.Admin ||
+            user.user.userRole === UserRole.SysAdmin) &&
+            module.id === "Users")
+        );
       });
 
       setActiveModules(activeModules);
     }
   }, [user]);
-
-  const handleLogout = () => {
-    logout();
-    gotoHome();
-  };
 
   return (
     <IonMenu contentId="main" type="push">
@@ -104,22 +102,6 @@ const Menu: React.FC = () => {
               </IonMenuToggle>
             );
           })}
-          {user && (
-            <IonItem>
-              <IonButton
-                onClick={() => handleLogout()}
-                size="default"
-                fill="clear"
-              >
-                <IonIcon
-                  slot="end"
-                  ios={logOutOutline}
-                  md={logOutOutline}
-                ></IonIcon>
-                <IonLabel>Logout</IonLabel>
-              </IonButton>
-            </IonItem>
-          )}
         </IonList>
       </IonContent>
     </IonMenu>
