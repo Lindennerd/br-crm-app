@@ -13,7 +13,7 @@ import {
   useIonModal,
   useIonToast,
 } from "@ionic/react";
-import { pencilSharp, trashBinSharp } from "ionicons/icons";
+import { pencilSharp, rocketSharp, trashBinSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useApi } from "../../api/security";
 import {
@@ -30,9 +30,11 @@ import {
   ClientConfiguration,
   ClientField,
 } from "../../types/app.types";
+import "./ClientsPage.css";
 
 export const ClientsPage = () => {
   const [presentLoading, setPresentLoading] = useState<boolean>();
+  const [presentConfirmDelete, setPresentConfirmDelete] = useState<boolean>();
   const [configuration, setConfiguration] = useState<ClientConfiguration[]>([]);
   const [selectedClientType, setSelectedClientType] =
     useState<ClientConfiguration | null>(null);
@@ -43,7 +45,8 @@ export const ClientsPage = () => {
   const [filters, setFilters] = useState<ClientField[] | null>(null);
 
   const [presentToast] = useIonToast();
-  const { getConfiguration, getClientsByType, saveClient } = useApi();
+  const { getConfiguration, getClientsByType, saveClient, removeClient } =
+    useApi();
 
   const [presentClientDetailsModal, dismissClientDetailsModal] = useIonModal(
     ClientDetailsModal,
@@ -209,7 +212,35 @@ export const ClientsPage = () => {
     openUpSertClientModal();
   };
 
-  const handleDeleteClient = (client: Client) => {};
+  const handleDeleteClient = (client: Client) => {
+    setPresentLoading(true);
+    removeClient(client.id)
+      .then((res) => {
+        setClients((prev) => {
+          const index = prev.findIndex((it) => it.id === client.id);
+          if (index === -1) return [...prev];
+          prev.splice(index, 1);
+          return [...prev];
+        });
+      })
+      .catch((err) => {
+        presentToast({
+          message: "Ocorreu um erro ao remover as informações de clientes",
+          duration: 2000,
+          position: "top",
+          color: "danger",
+        });
+      })
+      .finally(() => {
+        setPresentLoading(false);
+      });
+  };
+
+  function openConfirmDeleteDialog(client: Client) {
+    setClientEdit(client);
+    setPresentConfirmDelete(true);
+    console.log(presentConfirmDelete);
+  }
 
   return (
     <>
@@ -238,10 +269,9 @@ export const ClientsPage = () => {
             </IonButton>
           </IonButtons>
         </IonItem>
-      </IonToolbar>
-      <IonContent>
-        <IonItem color="light">
+        <IonItem color="light" className="ion-paddin-bottom">
           <IonSelect
+            disabled={!selectedClientType}
             style={{ marginRight: "1em" }}
             interface="popover"
             labelPlacement="stacked"
@@ -257,6 +287,7 @@ export const ClientsPage = () => {
             ))}
           </IonSelect>
           <IonButton
+            disabled={!selectedClientType}
             fill="clear"
             color="tertiary"
             onClick={(e) => presetFiltersModal()}
@@ -264,6 +295,8 @@ export const ClientsPage = () => {
             Filtros
           </IonButton>
         </IonItem>
+      </IonToolbar>
+      <IonContent>
         <IonList>
           {clients.map((client) => (
             <IonItem
@@ -281,6 +314,9 @@ export const ClientsPage = () => {
                 </p>
               </IonLabel>
               <IonButtons slot="end">
+                <IonButton>
+                  <IonIcon icon={rocketSharp} />
+                </IonButton>
                 <IonButton
                   onClick={(e) => {
                     e.stopPropagation();
@@ -289,7 +325,12 @@ export const ClientsPage = () => {
                 >
                   <IonIcon icon={pencilSharp} />
                 </IonButton>
-                <IonButton onClick={(e) => handleDeleteClient(client)}>
+                <IonButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClient(client);
+                  }}
+                >
                   <IonIcon icon={trashBinSharp} color="danger" />
                 </IonButton>
               </IonButtons>
@@ -300,30 +341,3 @@ export const ClientsPage = () => {
     </>
   );
 };
-
-/**
- * 
- * 
- *         <IonModal isOpen={openAddClientModal}>
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle>Adicionar Cliente</IonTitle>
-              <IonButtons slot="end">
-                <IonButton onClick={() => setOpenAddClientModal(false)}>
-                  Fechar
-                </IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className="ion-padding">
-            {selectedClientType !== null && (
-              <ClientForm
-                setIsOpen={setOpenAddClientModal}
-                saveClient={handleSaveClient}
-                configuration={selectedClientType}
-              />
-            )}
-          </IonContent>
-        </IonModal>
- * 
- */

@@ -2,9 +2,7 @@ import {
   IonButton,
   IonButtons,
   IonContent,
-  IonDatetime,
   IonHeader,
-  IonInput,
   IonItem,
   IonLabel,
   IonList,
@@ -17,6 +15,7 @@ import {
 } from "@ionic/react";
 import { useState } from "react";
 import { ClientField, FieldConfiguration } from "../../types/app.types";
+import { ClientForm } from "./ClientForm";
 
 export type ClientFiltersModalParams = {
   currentFilters: ClientField[] | null;
@@ -59,71 +58,6 @@ export const ClientFiltersModal = ({
       }
       return prev;
     });
-  };
-
-  const getFieldJsx = () => {
-    switch (selectedField!.type) {
-      case 0:
-        return (
-          <IonItem key={selectedField!.name}>
-            <IonLabel position="fixed">{selectedField!.name}</IonLabel>
-            {selectedField!.possibleValues?.every((it) => it === "") ? (
-              <IonInput
-                type="text"
-                value={getFieldValue()}
-                onIonChange={(e) => setFieldValue(e.target.value ?? "")}
-              ></IonInput>
-            ) : (
-              <IonSelect
-                interface="popover"
-                value={getFieldValue()}
-                onIonChange={(e) => setFieldValue(e.target.value ?? "")}
-              >
-                {selectedField!.possibleValues?.map((f) => (
-                  <IonSelectOption key={f} value={f}>
-                    {f}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            )}
-          </IonItem>
-        );
-      case 1:
-        return (
-          <IonItem key={selectedField!.name}>
-            <IonLabel position="floating">{selectedField!.name}</IonLabel>
-            <IonInput
-              type="number"
-              value={getFieldValue()}
-              onIonChange={(e) => setFieldValue(e.target.value ?? "")}
-            ></IonInput>
-          </IonItem>
-        );
-      case 2:
-        return (
-          <IonItem key={selectedField!.name}>
-            <IonLabel position="floating">{selectedField!.name}</IonLabel>
-            <IonDatetime
-              value={getFieldValue()}
-              onIonChange={(e) =>
-                setFieldValue(e.target.value?.toString() ?? "")
-              }
-            ></IonDatetime>
-          </IonItem>
-        );
-      // eslint-disable-next-line
-      default:
-        return (
-          <IonItem key={selectedField!.name}>
-            <IonLabel position="floating">{selectedField!.name}</IonLabel>
-            <IonInput
-              type="text"
-              value={getFieldValue()}
-              onIonChange={(e) => setFieldValue(e.target.value ?? "")}
-            ></IonInput>
-          </IonItem>
-        );
-    }
   };
 
   return (
@@ -183,7 +117,13 @@ export const ClientFiltersModal = ({
                 </IonSelectOption>
               ))}
             </IonSelect>
-            {selectedField && getFieldJsx()}
+            {selectedField && (
+              <ClientForm
+                selectedField={selectedField}
+                getFieldValue={getFieldValue}
+                setFieldValue={setFieldValue}
+              />
+            )}
           </IonItem>
         </IonList>
       </IonContent>

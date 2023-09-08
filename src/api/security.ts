@@ -7,7 +7,7 @@ import {
 } from "../types/app.types";
 
 export const useApi = () => {
-  const baseUrl: string = "https://brcrm-api.fly.dev";
+  const baseUrl: string = "http://localhost:5114";
   const headers = {
     "Content-Type": "application/json",
     Authorization: "",
@@ -76,11 +76,23 @@ export const useApi = () => {
     else return response.data;
   }
 
+  async function removeClient(id: string) {
+    await authenticate();
+    const response = await http.post({
+      url: `${baseUrl}/Client/RemoveClient/${id}`,
+      headers,
+    });
+
+    if (response.status > 299) throw new Error(response.data);
+    else return response.data;
+  }
+
   return {
     login,
     getConfiguration,
     getClientsByType,
     saveConfiguration,
+    removeClient,
     saveClient,
     logout: () => {},
   };
