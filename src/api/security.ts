@@ -72,7 +72,7 @@ export const useApi = () => {
       headers,
     });
 
-    if (!response.data || response.status > 299) throw new Error(response.data);
+    if (response.status > 299) throw new Error(response.data);
     else return response.data;
   }
 

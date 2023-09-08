@@ -2,52 +2,147 @@ import {
   IonButton,
   IonButtons,
   IonContent,
-  IonHeader,
+  IonIcon,
   IonItem,
-  IonModal,
+  IonLabel,
+  IonList,
+  IonLoading,
   IonSelect,
   IonSelectOption,
-  IonTitle,
   IonToolbar,
-  useIonLoading,
+  useIonModal,
   useIonToast,
 } from "@ionic/react";
+import { pencilSharp, trashBinSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useApi } from "../../api/security";
-import { ClientForm } from "../../components/Clients/ClientForm";
-import { Client, ClientConfiguration } from "../../types/app.types";
+import {
+  ClientChangeAction,
+  ClientChangeModal,
+} from "../../components/Clients/ClientChangeModal";
+import { ClientDetailsModal } from "../../components/Clients/ClientDetailsModal";
+import {
+  ClientFiltersAction,
+  ClientFiltersModal,
+} from "../../components/Clients/ClientFiltersModal";
+import {
+  Client,
+  ClientConfiguration,
+  ClientField,
+} from "../../types/app.types";
 
 export const ClientsPage = () => {
-  const [presentLoading, dismissLoading] = useIonLoading();
-  const [presentToast, dismissToast] = useIonToast();
-
-  const { getConfiguration, getClientsByType, saveClient } = useApi();
+  const [presentLoading, setPresentLoading] = useState<boolean>();
   const [configuration, setConfiguration] = useState<ClientConfiguration[]>([]);
   const [selectedClientType, setSelectedClientType] =
     useState<ClientConfiguration | null>(null);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [clientView, setClientView] = useState<Client | null>(null);
+  const [clientEdit, setClientEdit] = useState<Client | null>(null);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [filters, setFilters] = useState<ClientField[] | null>(null);
 
-  const [openAddClientModal, setOpenAddClientModal] = useState(false);
+  const [presentToast] = useIonToast();
+  const { getConfiguration, getClientsByType, saveClient } = useApi();
+
+  const [presentClientDetailsModal, dismissClientDetailsModal] = useIonModal(
+    ClientDetailsModal,
+    {
+      client: clientView,
+      onDismiss: () => {
+        setClientView(null);
+        dismissClientDetailsModal();
+      },
+    }
+  );
+
+  const [presentClientChange, dismissClientChange] = useIonModal(
+    ClientChangeModal,
+    {
+      client: clientEdit,
+      configuration: selectedClientType,
+      onDismiss: (data: Client | null, action: ClientChangeAction) => {
+        dismissClientChange();
+        if (action == "cancel") {
+          return;
+        }
+        if (action == "add") {
+          handleSaveClient(data as Client);
+          return;
+        }
+        if (action == "edit") {
+          handleSaveClient(data as Client);
+        }
+      },
+    }
+  );
+
+  const [presetFiltersModal, dismissPresentFiltersModal] = useIonModal(
+    ClientFiltersModal,
+    {
+      currentFilters: filters,
+      fields: selectedClientType?.fieldConfigurations,
+      onDismiss: (data: ClientField[] | null, action: ClientFiltersAction) => {
+        dismissPresentFiltersModal();
+        if (action == "cancel") {
+          return;
+        }
+        if (action == "apply") {
+          setFilters(data);
+        }
+      },
+    }
+  );
+
+  const openUpSertClientModal = () => {
+    presentClientChange({
+      onWillDismiss: (e: any) => {
+        setClientEdit(null);
+      },
+    });
+  };
 
   useEffect(() => {
-    const fetchConfiguration = async () => {
-      const res = await getConfiguration();
-      setConfiguration(res);
-    };
-
-    fetchConfiguration().catch((err) => console.log(err));
+    fetchConfiguration()
+      .then(() => setPresentLoading(false))
+      .catch((err) => {
+        setPresentLoading(false);
+        presentToast({
+          message: "Ocorreu um erro ao buscar a configuração",
+          duration: 2000,
+          position: "top",
+          color: "danger",
+        });
+      });
   }, []);
 
   useEffect(() => {
-    const fetchClients = async () => {
-      const res = await getClientsByType({
-        page: 1,
-        size: 10,
-        clientType: selectedClientType?.name ?? "",
+    fetchClients()
+      .then(() => setPresentLoading(false))
+      .catch((err) => {
+        setPresentLoading(false);
+        presentToast({
+          message: "Ocorreu um erro ao buscar as informações de clientes",
+          duration: 2000,
+          position: "top",
+          color: "danger",
+        });
       });
-    };
-
-    fetchClients().catch((err) => console.log(err));
   }, [selectedClientType]);
+
+  useEffect(() => {
+    fetchClients()
+      .then(() => setPresentLoading(false))
+      .catch((err) => {
+        setPresentLoading(false);
+        presentToast({
+          message: "Ocorreu um erro ao buscar as informações de clientes",
+          duration: 2000,
+          position: "top",
+          color: "danger",
+        });
+      });
+  }, [sortField]);
 
   const handlSelectType = (event: any) => {
     const target = event.target as HTMLInputElement;
@@ -57,25 +152,70 @@ export const ClientsPage = () => {
 
   const handleSaveClient = (client: Client) => {
     if (selectedClientType == null) return;
+    setPresentLoading(true);
 
-    presentLoading("Salvando Cliente...");
     saveClient({ ...client, clientType: selectedClientType.name })
-      .then((res) =>
+      .then((res) => {
+        setPresentLoading(false);
+        setClients((prev) => {
+          const index = prev.findIndex((it) => it.id === client.id);
+          if (index === -1) return [...prev, client];
+          prev[index] = client;
+          return [...prev];
+        });
+      })
+      .catch((err) => {
+        setPresentLoading(false);
         presentToast({
-          message: "Cliente salvo com sucesso!",
+          message: "Ocorreu um erro ao salvar as informações de clientes",
           duration: 2000,
-          position: "middle",
-          color: "success",
-        })
-      )
-      .catch((err) => presentToast(err.message, 2000))
-      .finally(() => dismissLoading());
+          position: "top",
+          color: "danger",
+        });
+      });
   };
+
+  const fetchClients = async () => {
+    if (selectedClientType?.name == "") return;
+    setPresentLoading(true);
+    const clients = (await getClientsByType({
+      page: 1,
+      //TODO! Implement Infinit Scroll pagination
+      pageSize: 1000,
+      clientType: selectedClientType?.name ?? "",
+      orderBy: sortField
+        ? {
+            fieldName: sortField,
+          }
+        : null,
+    })) as Client[];
+
+    setClients([...clients]);
+  };
+
+  const fetchConfiguration = async () => {
+    setPresentLoading(true);
+    const res = await getConfiguration();
+    setConfiguration(res);
+  };
+
+  const handleViewClientDetails = (client: Client) => {
+    setClientView(client);
+    presentClientDetailsModal();
+  };
+
+  const handleEditClient = (client: Client) => {
+    setClientEdit(client);
+    openUpSertClientModal();
+  };
+
+  const handleDeleteClient = (client: Client) => {};
 
   return (
     <>
+      <IonLoading isOpen={presentLoading} message="Carregando..." />
       <IonToolbar>
-        <IonItem>
+        <IonItem color="primary">
           <IonSelect
             interface="popover"
             onIonChange={handlSelectType}
@@ -87,18 +227,84 @@ export const ClientsPage = () => {
               </IonSelectOption>
             ))}
           </IonSelect>
-        </IonItem>
-        <IonItem slot="end">
-          <IonButton
-            onClick={() => setOpenAddClientModal(true)}
-            disabled={selectedClientType == null}
-          >
-            Adicionar
-          </IonButton>
+          <IonButtons slot="end">
+            <IonButton
+              fill="outline"
+              color="success"
+              onClick={() => openUpSertClientModal()}
+              disabled={selectedClientType == null}
+            >
+              Adicionar
+            </IonButton>
+          </IonButtons>
         </IonItem>
       </IonToolbar>
-      <IonContent className="ion-padding">
-        <IonModal isOpen={openAddClientModal}>
+      <IonContent>
+        <IonItem color="light">
+          <IonSelect
+            style={{ marginRight: "1em" }}
+            interface="popover"
+            labelPlacement="stacked"
+            label="Organizar por"
+            placeholder="Campo"
+            value={sortField}
+            onIonChange={(e) => setSortField(e.target.value)}
+          >
+            {selectedClientType?.fieldConfigurations.map((config) => (
+              <IonSelectOption key={config.name} value={config.name}>
+                {config.name}
+              </IonSelectOption>
+            ))}
+          </IonSelect>
+          <IonButton
+            fill="clear"
+            color="tertiary"
+            onClick={(e) => presetFiltersModal()}
+          >
+            Filtros
+          </IonButton>
+        </IonItem>
+        <IonList>
+          {clients.map((client) => (
+            <IonItem
+              key={client.id}
+              detail={true}
+              button
+              onClick={(e) => handleViewClientDetails(client)}
+            >
+              <IonLabel>
+                <h3>{client.fieldValues[0].value}</h3>
+                <p>
+                  {client.fieldValues
+                    .slice(1, 5)
+                    .map((f) => `${f.field.name}: ${f.value} `)}
+                </p>
+              </IonLabel>
+              <IonButtons slot="end">
+                <IonButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditClient(client);
+                  }}
+                >
+                  <IonIcon icon={pencilSharp} />
+                </IonButton>
+                <IonButton onClick={(e) => handleDeleteClient(client)}>
+                  <IonIcon icon={trashBinSharp} color="danger" />
+                </IonButton>
+              </IonButtons>
+            </IonItem>
+          ))}
+        </IonList>
+      </IonContent>
+    </>
+  );
+};
+
+/**
+ * 
+ * 
+ *         <IonModal isOpen={openAddClientModal}>
           <IonHeader>
             <IonToolbar>
               <IonTitle>Adicionar Cliente</IonTitle>
@@ -119,7 +325,5 @@ export const ClientsPage = () => {
             )}
           </IonContent>
         </IonModal>
-      </IonContent>
-    </>
-  );
-};
+ * 
+ */

@@ -47,16 +47,21 @@ export enum FieldType {
 
 export type GetClientsRequest = {
   page: number;
-  size: number;
+  pageSize: number;
   clientType: string;
+  orderBy: OrderBy | null;
 };
 
+export type OrderBy = {
+  fieldName: string;
+};
 export type ClientField = {
   value: string;
   field: FieldConfiguration;
 };
 
 export type Client = {
+  id: string;
   clientType: string;
-  values: ClientField[];
+  fieldValues: ClientField[];
 };
