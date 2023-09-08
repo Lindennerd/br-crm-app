@@ -116,7 +116,7 @@ export const ClientChangeModal = ({
                         setFieldValue(e.target.value ?? "", field)
                       }
                     >
-                      {field.possibleValues!.map((f) => (
+                      {field.possibleValues?.map((f) => (
                         <IonSelectOption key={f} value={f}>
                           {f}
                         </IonSelectOption>

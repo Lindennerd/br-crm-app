@@ -79,7 +79,7 @@ export const ClientFiltersModal = ({
                 value={getFieldValue()}
                 onIonChange={(e) => setFieldValue(e.target.value ?? "")}
               >
-                {selectedField!.possibleValues!.map((f) => (
+                {selectedField!.possibleValues?.map((f) => (
                   <IonSelectOption key={f} value={f}>
                     {f}
                   </IonSelectOption>
