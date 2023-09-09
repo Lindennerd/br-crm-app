@@ -81,7 +81,7 @@ export const ClientFiltersModal = ({
       <IonContent>
         <IonGrid>
           <IonRow>
-            <IonCol>
+            <IonCol size="10">
               <IonSelect
                 fill="solid"
                 interface="popover"
@@ -98,8 +98,6 @@ export const ClientFiltersModal = ({
                   </IonSelectOption>
                 ))}
               </IonSelect>
-            </IonCol>
-            <IonCol size="5">
               {selectedField && (
                 <ClientForm
                   selectedField={selectedField}
