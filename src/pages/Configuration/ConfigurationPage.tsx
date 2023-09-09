@@ -20,7 +20,7 @@ import {
   syncCircleSharp,
 } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { useApi } from "../../api/security";
+import { useConfigurationApi } from "../../api/useConfigurationApi";
 import { useFieldType } from "../../common/getFieldType";
 import { ClientTypeFieldsModal } from "../../components/Configuration/ClientTypeFieldsModal";
 import { ClientTypeModal } from "../../components/Configuration/ClientTypeModal";
@@ -30,8 +30,8 @@ export const ConfigurationPage = () => {
   const [clientTypes, setClienTypes] = useState<ClientConfiguration[]>([]);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
 
-  const { getConfiguration, saveConfiguration } = useApi();
-  const [presentToast, dismissToast] = useIonToast();
+  const { getConfiguration, saveConfiguration } = useConfigurationApi();
+  const [presentToast] = useIonToast();
   const { getFieldType } = useFieldType();
 
   const [presentClientTypeModal, dismissClientTypeModal] = useIonModal(

@@ -1,12 +1,16 @@
 import {
   IonButton,
   IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
   IonContent,
   IonIcon,
   IonItem,
   IonLabel,
   IonList,
   IonLoading,
+  IonModal,
   IonSelect,
   IonSelectOption,
   IonToolbar,
@@ -15,7 +19,8 @@ import {
 } from "@ionic/react";
 import { pencilSharp, rocketSharp, trashBinSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { useApi } from "../../api/security";
+import { useClientApi } from "../../api/useClientApi";
+import { useConfigurationApi } from "../../api/useConfigurationApi";
 import {
   ClientChangeAction,
   ClientChangeModal,
@@ -34,7 +39,8 @@ import "./ClientsPage.css";
 
 export const ClientsPage = () => {
   const [presentLoading, setPresentLoading] = useState<boolean>();
-  const [presentConfirmDelete, setPresentConfirmDelete] = useState<boolean>();
+  const [presentConfirmDelete, setPresentConfirmDelete] =
+    useState<boolean>(false);
   const [configuration, setConfiguration] = useState<ClientConfiguration[]>([]);
   const [selectedClientType, setSelectedClientType] =
     useState<ClientConfiguration | null>(null);
@@ -42,11 +48,12 @@ export const ClientsPage = () => {
   const [clientView, setClientView] = useState<Client | null>(null);
   const [clientEdit, setClientEdit] = useState<Client | null>(null);
   const [sortField, setSortField] = useState<string | null>(null);
-  const [filters, setFilters] = useState<ClientField[] | null>(null);
+  const [filters, setFilters] = useState<ClientField[]>([]);
 
   const [presentToast] = useIonToast();
-  const { getConfiguration, getClientsByType, saveClient, removeClient } =
-    useApi();
+  const { getClientsByType, saveClient, removeClient } = useClientApi();
+
+  const { getConfiguration } = useConfigurationApi();
 
   const [presentClientDetailsModal, dismissClientDetailsModal] = useIonModal(
     ClientDetailsModal,
@@ -85,7 +92,7 @@ export const ClientsPage = () => {
     {
       currentFilters: filters,
       fields: selectedClientType?.fieldConfigurations,
-      onDismiss: (data: ClientField[] | null, action: ClientFiltersAction) => {
+      onDismiss: (data: ClientField[], action: ClientFiltersAction) => {
         dismissPresentFiltersModal();
         if (action == "cancel") {
           return;
@@ -107,45 +114,63 @@ export const ClientsPage = () => {
 
   useEffect(() => {
     fetchConfiguration()
-      .then(() => setPresentLoading(false))
       .catch((err) => {
-        setPresentLoading(false);
         presentToast({
           message: "Ocorreu um erro ao buscar a configuração",
           duration: 2000,
           position: "top",
           color: "danger",
         });
+      })
+      .finally(() => {
+        setPresentLoading(false);
       });
   }, []);
 
   useEffect(() => {
     fetchClients()
-      .then(() => setPresentLoading(false))
       .catch((err) => {
-        setPresentLoading(false);
         presentToast({
           message: "Ocorreu um erro ao buscar as informações de clientes",
           duration: 2000,
           position: "top",
           color: "danger",
         });
+      })
+      .finally(() => {
+        setPresentLoading(false);
       });
   }, [selectedClientType]);
 
   useEffect(() => {
     fetchClients()
-      .then(() => setPresentLoading(false))
       .catch((err) => {
-        setPresentLoading(false);
         presentToast({
           message: "Ocorreu um erro ao buscar as informações de clientes",
           duration: 2000,
           position: "top",
           color: "danger",
         });
+      })
+      .finally(() => {
+        setPresentLoading(false);
       });
   }, [sortField]);
+
+  useEffect(() => {
+    fetchClients()
+      .catch((err) => {
+        presentToast({
+          message: "Ocorreu um erro ao buscar as informações de clientes",
+          duration: 2000,
+          position: "top",
+          color: "danger",
+        });
+      })
+      .finally(() => {
+        setPresentLoading(false);
+      });
+  }, [filters]);
 
   const handlSelectType = (event: any) => {
     const target = event.target as HTMLInputElement;
@@ -186,6 +211,10 @@ export const ClientsPage = () => {
       //TODO! Implement Infinit Scroll pagination
       pageSize: 1000,
       clientType: selectedClientType?.name ?? "",
+      fieldsFilter: filters.map((it) => ({
+        fieldName: it.field.name,
+        fieldValue: it.value,
+      })),
       orderBy: sortField
         ? {
             fieldName: sortField,
@@ -212,12 +241,13 @@ export const ClientsPage = () => {
     openUpSertClientModal();
   };
 
-  const handleDeleteClient = (client: Client) => {
+  const handleDeleteClient = () => {
+    if (clientEdit == null) return;
     setPresentLoading(true);
-    removeClient(client.id)
+    removeClient(clientEdit.id)
       .then((res) => {
         setClients((prev) => {
-          const index = prev.findIndex((it) => it.id === client.id);
+          const index = prev.findIndex((it) => it.id === clientEdit.id);
           if (index === -1) return [...prev];
           prev.splice(index, 1);
           return [...prev];
@@ -232,15 +262,10 @@ export const ClientsPage = () => {
         });
       })
       .finally(() => {
+        setClientEdit(null);
         setPresentLoading(false);
       });
   };
-
-  function openConfirmDeleteDialog(client: Client) {
-    setClientEdit(client);
-    setPresentConfirmDelete(true);
-    console.log(presentConfirmDelete);
-  }
 
   return (
     <>
@@ -292,7 +317,7 @@ export const ClientsPage = () => {
             color="tertiary"
             onClick={(e) => presetFiltersModal()}
           >
-            Filtros
+            Filtros ({filters.length})
           </IonButton>
         </IonItem>
       </IonToolbar>
@@ -328,7 +353,8 @@ export const ClientsPage = () => {
                 <IonButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeleteClient(client);
+                    setClientEdit(client);
+                    setPresentConfirmDelete(true);
                   }}
                 >
                   <IonIcon icon={trashBinSharp} color="danger" />
@@ -338,6 +364,48 @@ export const ClientsPage = () => {
           ))}
         </IonList>
       </IonContent>
+      <IonModal
+        isOpen={presentConfirmDelete}
+        onWillDismiss={(e) => setPresentConfirmDelete(false)}
+      >
+        <IonCard>
+          <IonCardHeader>
+            <IonLabel>
+              <h1>Tem certeza que deseja excluir o cliente?</h1>
+            </IonLabel>
+          </IonCardHeader>
+          <IonCardContent>
+            <IonButtons
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "2em",
+              }}
+            >
+              <IonButton
+                fill="solid"
+                color="success"
+                onClick={(e) => {
+                  handleDeleteClient();
+                  setPresentConfirmDelete(false);
+                }}
+              >
+                Sim
+              </IonButton>
+              <IonButton
+                fill="solid"
+                color="danger"
+                onClick={(e) => {
+                  setClientEdit(null);
+                  setPresentConfirmDelete(false);
+                }}
+              >
+                Não
+              </IonButton>
+            </IonButtons>
+          </IonCardContent>
+        </IonCard>
+      </IonModal>
     </>
   );
 };

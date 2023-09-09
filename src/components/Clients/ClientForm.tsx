@@ -9,7 +9,7 @@ import { FieldConfiguration } from "../../types/app.types";
 
 export type ClientFormProps = {
   selectedField: FieldConfiguration;
-  getFieldValue: (field: FieldConfiguration) => string;
+  getFieldValue: (field: FieldConfiguration) => string | number;
   setFieldValue: (value: string | number, field: FieldConfiguration) => void;
 };
 export const ClientForm = ({

@@ -49,6 +49,7 @@ export type GetClientsRequest = {
   page: number;
   pageSize: number;
   clientType: string;
+  fieldsFilter: FieldsFilter[] | null;
   orderBy: OrderBy | null;
 };
 
@@ -56,7 +57,7 @@ export type OrderBy = {
   fieldName: string;
 };
 export type ClientField = {
-  value: string;
+  value: string | number;
   field: FieldConfiguration;
 };
 
@@ -64,4 +65,9 @@ export type Client = {
   id: string;
   clientType: string;
   fieldValues: ClientField[];
+};
+
+export type FieldsFilter = {
+  fieldName: string;
+  fieldValue: string | number;
 };
