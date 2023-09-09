@@ -8,7 +8,8 @@ export const useApi = () => {
   const { push } = useIonRouter();
 
   const baseUrl: string = "https://brcrm-api.fly.dev";
-  const { headers, responseCache, clearCache } = useResponseCacheContext();
+  const { headers, getCache, setCache, hasKey, clearCache } =
+    useResponseCacheContext();
 
   async function authenticate() {
     const authData: UserData = await getStored("authInfo");
@@ -22,7 +23,7 @@ export const useApi = () => {
 
   async function get<TResponse>(url: string): Promise<TResponse> {
     await authenticate();
-    if (responseCache.has(url)) return responseCache.get(url);
+    if (hasKey(url) && getCache(url)) return getCache(url);
 
     const response = await http.get({
       url: new URL(url, baseUrl).toString(),
@@ -37,7 +38,7 @@ export const useApi = () => {
     if (response.status > 299 && response.status !== 401)
       throw new Error(response.data);
 
-    if (!responseCache.has(url)) responseCache.set(url, response.data);
+    if (!hasKey(url)) setCache(url, response.data, 60);
 
     return response.data;
   }
@@ -50,8 +51,11 @@ export const useApi = () => {
     await authenticate();
 
     if (shouldClearCache) clearCache();
-    if (responseCache.has(JSON.stringify({ url, data })))
-      responseCache.get(JSON.stringify({ url, data }));
+    if (
+      hasKey(JSON.stringify({ url, data })) &&
+      getCache(JSON.stringify({ url, data }))
+    )
+      getCache(JSON.stringify({ url, data }));
 
     const response = await http.post({
       url: new URL(url, baseUrl).toString(),
@@ -67,8 +71,8 @@ export const useApi = () => {
     if (response.status > 299 && response.status !== 401)
       throw new Error(response.data);
 
-    if (!responseCache.has(JSON.stringify({ url, data })))
-      responseCache.set(JSON.stringify({ url, data }), response.data);
+    if (!hasKey(JSON.stringify({ url, data })))
+      setCache(JSON.stringify({ url, data }), response.data, 60);
 
     return response.data;
   }
