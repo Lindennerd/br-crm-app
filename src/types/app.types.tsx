@@ -89,7 +89,7 @@ export type OrderBy = {
   fieldName: string;
 };
 export type ClientField = {
-  value: string;
+  value: string | number;
   field: FieldConfiguration;
 };
 

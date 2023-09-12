@@ -1,18 +1,23 @@
 import {
   IonButton,
   IonButtons,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
   IonListHeader,
   IonPage,
+  IonRow,
   IonSelect,
   IonSelectOption,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { trashBinSharp } from "ionicons/icons";
 import { useState } from "react";
 import { ClientField, FieldConfiguration } from "../../types/app.types";
 import { ClientForm } from "./ClientForm";
@@ -43,21 +48,10 @@ export const ClientFiltersModal = ({
   };
 
   const setFieldValue = (value: string | number) => {
-    setFilters((prev) => {
-      if (!prev) prev = [];
-      const fieldValue = prev?.find(
-        (it) => it.field.name === selectedField!.name
-      );
-      if (fieldValue) {
-        fieldValue.value = value.toString();
-      } else {
-        prev?.push({
-          field: selectedField!,
-          value: value.toString(),
-        });
-      }
-      return prev;
-    });
+    const newFilters = filters.filter(
+      (it) => it.field.name !== selectedField!.name
+    );
+    setFilters([...newFilters, { field: selectedField!, value }]);
   };
 
   return (
@@ -77,7 +71,7 @@ export const ClientFiltersModal = ({
             <IonButton
               color="success"
               fill="clear"
-              onClick={(e) => onDismiss(null, "apply")}
+              onClick={(e) => onDismiss(filters, "apply")}
             >
               Salvar
             </IonButton>
@@ -85,6 +79,40 @@ export const ClientFiltersModal = ({
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonGrid>
+          <IonRow>
+            <IonCol size="10">
+              <IonSelect
+                fill="solid"
+                interface="popover"
+                value={selectedField?.name}
+                onIonChange={(e) =>
+                  setSelectedField(
+                    fields.find((f) => f.name === e.target.value) ?? null
+                  )
+                }
+              >
+                {fields.map((field) => (
+                  <IonSelectOption value={field.name} key={field.name}>
+                    {field.name}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+              {selectedField && (
+                <ClientForm
+                  selectedField={selectedField}
+                  getFieldValue={getFieldValue}
+                  setFieldValue={setFieldValue}
+                />
+              )}
+            </IonCol>
+            <IonCol>
+              <IonButton>
+                <IonLabel>Adicionar</IonLabel>
+              </IonButton>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
         <IonList>
           <IonListHeader>
             <IonLabel>Filtros Atuais</IonLabel>
@@ -94,37 +122,20 @@ export const ClientFiltersModal = ({
               <IonLabel key={filter.field.name}>
                 {filter.field.name}: {filter.value}
               </IonLabel>
+              <IonButtons slot="end">
+                <IonButton
+                  onClick={(e) => {
+                    const newFilters = filters.filter(
+                      (it) => it.field.name !== filter.field.name
+                    );
+                    setFilters(newFilters);
+                  }}
+                >
+                  <IonIcon icon={trashBinSharp} color="danger" />
+                </IonButton>
+              </IonButtons>
             </IonItem>
           ))}
-        </IonList>
-
-        <IonList>
-          <IonListHeader>
-            <IonLabel>Adicionar Filtros</IonLabel>
-          </IonListHeader>
-          <IonItem>
-            <IonSelect
-              value={selectedField?.name}
-              onIonChange={(e) =>
-                setSelectedField(
-                  fields.find((f) => f.name === e.target.value) ?? null
-                )
-              }
-            >
-              {fields.map((field) => (
-                <IonSelectOption value={field.name} key={field.name}>
-                  {field.name}
-                </IonSelectOption>
-              ))}
-            </IonSelect>
-            {selectedField && (
-              <ClientForm
-                selectedField={selectedField}
-                getFieldValue={getFieldValue}
-                setFieldValue={setFieldValue}
-              />
-            )}
-          </IonItem>
         </IonList>
       </IonContent>
     </IonPage>
