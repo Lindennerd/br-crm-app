@@ -11,6 +11,8 @@ import {
   logInSharp,
   personOutline,
   personSharp,
+  rocketOutline,
+  rocketSharp,
   settingsOutline,
   settingsSharp,
 } from "ionicons/icons";
@@ -19,6 +21,7 @@ import { ConfigurationPage } from "../pages/Configuration/ConfigurationPage";
 import { HomePage } from "../pages/Home/HomePage";
 import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { AppPage } from "./app.types";
+import { ProcessPage } from "../pages/ProcessPage/ProcessPage";
 
 export const additionalPages: AppPage[] = [];
 
@@ -65,6 +68,14 @@ export const modulePages: AppPage[] = [
     iosIcon: cashOutline,
     mdIcon: cashSharp,
     page: undefined,
+  },
+  {
+    title: "Processos",
+    id: "ProcessManagement",
+    url: "/page/ProcessManagement",
+    iosIcon: rocketOutline,
+    mdIcon: rocketSharp,
+    page: <ProcessPage />,
   },
   {
     id: "Configuracoes",

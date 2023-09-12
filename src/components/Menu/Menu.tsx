@@ -33,7 +33,9 @@ const Menu: React.FC = () => {
     else {
       const activeModules = modules.filter((module) => {
         return (
-          user.modules.includes(module.id) ||
+          user.organization.licensing.availableModules.modules.some(
+            (m) => m.moduleName == module.id
+          ) ||
           module.id === "home" ||
           ((user.user.userRole === UserRole.Admin ||
             user.user.userRole === UserRole.SysAdmin) &&
@@ -52,7 +54,7 @@ const Menu: React.FC = () => {
     <IonMenu contentId="main" type="push">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>{user?.name ?? "BrCRM Solutions"}</IonListHeader>
+          <IonListHeader>{user?.organization.name ?? "BrCRM Solutions"}</IonListHeader>
           <IonNote>Powered By BrCRM</IonNote>
           {activeModules.map((appPage, index) => {
             return (

@@ -1,9 +1,11 @@
 import {
   IonButton,
   IonButtons,
+  IonCheckbox,
   IonContent,
   IonHeader,
   IonInput,
+  IonLabel,
   IonPage,
   IonSelect,
   IonSelectOption,
@@ -90,6 +92,7 @@ export const ClientTypeFieldsModal = ({
           {selectedClientType && (
             <>
               <IonInput
+                style={{ marginBottom: "1em" }}
                 type="text"
                 placeholder="Nome do tipo de campo"
                 label="Nome"
@@ -100,6 +103,7 @@ export const ClientTypeFieldsModal = ({
                 }
               />
               <IonSelect
+                style={{ marginBottom: "1em" }}
                 label="Tipo do campo"
                 labelPlacement="stacked"
                 interface="popover"
@@ -113,6 +117,7 @@ export const ClientTypeFieldsModal = ({
                 <IonSelectOption value="2">Data</IonSelectOption>
               </IonSelect>
               <IonInput
+                style={{ marginBottom: "1em" }}
                 label="Valor Padrão"
                 labelPlacement="stacked"
                 value={field.defaultValue}
@@ -121,6 +126,7 @@ export const ClientTypeFieldsModal = ({
                 }
               />
               <IonInput
+                style={{ marginBottom: "1em" }}
                 label="Valores Possíveis"
                 labelPlacement="stacked"
                 placeholder="Valores separados por vírgula"
@@ -130,6 +136,27 @@ export const ClientTypeFieldsModal = ({
                     ...field,
                     possibleValues: e.detail.value!.split(","),
                   })
+                }
+              />
+
+              <IonCheckbox
+                style={{ marginBottom: "1em" }}
+                checked={field.required}
+                onIonChange={(e) =>
+                  setField({ ...field, required: e.target.checked })
+                }
+              >
+                Obrigatório?
+              </IonCheckbox>
+              <IonInput
+                style={{ marginBottom: "1em" }}
+                label="Ordem"
+                labelPlacement="stacked"
+                type="number"
+                min={1}
+                value={field.order}
+                onIonChange={(e) =>
+                  setField({ ...field, order: Number(e.detail.value!) })
                 }
               />
             </>

@@ -21,7 +21,7 @@ export const useApi = () => {
   async function login(user: string, password: string) {
     const data = { user, password };
     const response = await http.post({
-      url: `${baseUrl}/security/login`,
+      url: new URL('security/login', baseUrl).toString(),
       data,
       headers,
     });
@@ -89,11 +89,6 @@ export const useApi = () => {
 
   return {
     login,
-    getConfiguration,
-    getClientsByType,
-    saveConfiguration,
-    removeClient,
-    saveClient,
-    logout: () => {},
+    logout: () => { },
   };
 };

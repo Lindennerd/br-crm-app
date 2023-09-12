@@ -155,20 +155,19 @@ export const ClientsPage = () => {
 
   const handleSaveClient = (client: Client) => {
     if (selectedClientType == null) return;
-    setPresentLoading(true);
 
     saveClient({ ...client, clientType: selectedClientType.name })
       .then((res) => {
-        setPresentLoading(false);
         setClients((prev) => {
-          const index = prev.findIndex((it) => it.id === client.id);
-          if (index === -1) return [...prev, client];
+          const index = prev.findIndex(
+            (it) => it.id === client.id && it.id != null && it.id != ""
+          );
+          if (index === -1) return [...prev, {...client, id: res.clientId}];
           prev[index] = client;
           return [...prev];
         });
       })
       .catch((err) => {
-        setPresentLoading(false);
         presentToast({
           message: "Ocorreu um erro ao salvar as informações de clientes",
           duration: 2000,
@@ -185,15 +184,26 @@ export const ClientsPage = () => {
       page: 1,
       //TODO! Implement Infinit Scroll pagination
       pageSize: 1000,
+      exact: false,
       clientType: selectedClientType?.name ?? "",
+      fieldsFilter:
+        filters && filters.length > 0
+          ? new Map(filters.map((f) => [f.field.name, f.value.toString()]))
+          : null,
       orderBy: sortField
         ? {
             fieldName: sortField,
           }
         : null,
     })) as Client[];
-
-    setClients([...clients]);
+    setClients((prev) => {
+      return clients.map((client) => {
+        return {
+          ...client,
+          fieldValues: new Map(Object.entries(client.fieldValues as Object)),
+        };
+      });
+    });
   };
 
   const fetchConfiguration = async () => {
@@ -236,10 +246,10 @@ export const ClientsPage = () => {
       });
   };
 
-  function openConfirmDeleteDialog(client: Client) {
-    setClientEdit(client);
-    setPresentConfirmDelete(true);
-    console.log(presentConfirmDelete);
+  function getFirstValue(client: Client): import("react").ReactNode {
+    if (!client.fieldValues) return null;
+    const value = client.fieldValues.entries().next().value;
+    return `${value[0]}: ${value[1]}`;
   }
 
   return (
@@ -306,11 +316,11 @@ export const ClientsPage = () => {
               onClick={(e) => handleViewClientDetails(client)}
             >
               <IonLabel>
-                <h3>{client.fieldValues[0].value}</h3>
+                <h3>{getFirstValue(client)}</h3>
                 <p>
-                  {client.fieldValues
+                  {Array.from(client.fieldValues)
                     .slice(1, 5)
-                    .map((f) => `${f.field.name}: ${f.value} `)}
+                    .map((f) => `${f[0]}: ${f[1]} `)}
                 </p>
               </IonLabel>
               <IonButtons slot="end">

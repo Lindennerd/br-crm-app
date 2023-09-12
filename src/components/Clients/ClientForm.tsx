@@ -9,7 +9,7 @@ import { FieldConfiguration } from "../../types/app.types";
 
 export type ClientFormProps = {
   selectedField: FieldConfiguration;
-  getFieldValue: (field: FieldConfiguration) => string;
+  getFieldValue: (field: FieldConfiguration) => string | number | null | undefined;
   setFieldValue: (value: string | number, field: FieldConfiguration) => void;
 };
 export const ClientForm = ({
@@ -23,7 +23,7 @@ export const ClientForm = ({
         return (
           <IonItem key={selectedField.name} className="ion-margin-bottom">
             <IonLabel position="stacked">{selectedField.name}</IonLabel>
-            {selectedField.possibleValues?.every((it) => it === "") ? (
+            {!selectedField.possibleValues || selectedField.possibleValues?.every((it) => it === "") ? (
               <IonInput
                 type="text"
                 value={getFieldValue(selectedField)}

@@ -35,29 +35,18 @@ export const ClientChangeModal = ({
     value: string | number,
     field: FieldConfiguration
   ): void {
-    //set or edit fields
     return setChangeClient((prev) => {
-      if (!prev.fieldValues) prev.fieldValues = [];
-      const fieldValue = prev.fieldValues?.find(
-        (it) => it.field.name === field.name
-      );
-      if (fieldValue) {
-        fieldValue.value = value.toString();
-      } else {
-        prev.fieldValues?.push({
-          field: field,
-          value: value.toString(),
-        });
-      }
+      if (!prev.fieldValues) prev.fieldValues = new Map<string, string>();
+      prev.fieldValues = prev.fieldValues.set(field.name, value.toString());
       return prev;
     });
   }
 
-  function getFieldValue(field: FieldConfiguration): string {
-    const fieldValue = changeClient.fieldValues?.find(
-      (it) => it.field.name === field.name
-    );
-    return fieldValue?.value ?? "";
+  function getFieldValue(
+    field: FieldConfiguration
+  ): string | number | null | undefined {
+    if (!changeClient.fieldValues) return null;
+    return changeClient.fieldValues.get(field.name);
   }
 
   return (

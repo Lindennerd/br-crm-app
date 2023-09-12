@@ -30,10 +30,10 @@ export const ClientDetailsModal = ({
       </IonHeader>
       <IonContent className="ion-padding">
         <IonList>
-          {client?.fieldValues.map((fieldValue, index) => (
-            <IonItem key={`${fieldValue.field.name}_${index}`}>
+          {client?.fieldValues && Array.from(client?.fieldValues).map(([fieldName, fieldValue], index) => (
+            <IonItem key={fieldName}>
               <IonLabel>
-                {fieldValue.field.name}: {fieldValue.value}
+                {fieldName}: {fieldValue}
               </IonLabel>
             </IonItem>
           ))}

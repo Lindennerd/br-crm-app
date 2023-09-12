@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useApi } from "../api/security";
 import { createStore, get, remove, set } from "../common/storage";
-import { UserData, UserRole } from "../types/app.types";
+import { UserData } from "../types/app.types";
 import { childrenProp } from "../types/react.types";
 
 interface IAuthContext {
@@ -14,17 +14,8 @@ const contextValue: IAuthContext = {
   login: async (user: string, password: string) => {
     return new Promise((res, rej) => { });
   },
-  logout: () => { },
-  user: {
-    modules: [],
-    name: '',
-    token: '',
-    user: {
-      name: '',
-      userName: '',
-      userRole: UserRole.User
-    }
-  },
+  logout: () => {},
+  user: {} as UserData,
 };
 
 const context = createContext<IAuthContext>(contextValue);

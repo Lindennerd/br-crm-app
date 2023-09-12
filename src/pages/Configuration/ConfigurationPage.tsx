@@ -59,31 +59,29 @@ export const ConfigurationPage = () => {
   }, []);
 
   const syncConfiguration = () => {
-    Promise.all(
-      clientTypes.map(async (clientType) => {
-        //remove any temp id before saving
-        if (clientType.id!.includes("<tempId>_")) clientType.id = null;
-        const configuration = await saveConfiguration(clientType);
-        return configuration;
-      })
-    )
-      .then((res) => {
-        setHasChanges(false);
-        presentToast({
-          message: "Configurações salvas com sucesso",
-          duration: 2000,
-          color: "success",
-          position: "top",
+    clientTypes.map(async (clientType) => {
+      //remove any temp id before saving
+      if (clientType.id && clientType.id.includes("<tempId>_")) clientType.id = null;
+      await saveConfiguration(clientType)
+        .then((res) => {
+          setHasChanges(false);
+          presentToast({
+            message: "Configurações salvas com sucesso",
+            duration: 2000,
+            color: "success",
+            position: "top",
+          });
+        })
+        .catch((err) => {
+          presentToast({
+            message: "Erro ao salvar configurações",
+            duration: 2000,
+            color: "danger",
+            position: "top",
+          });
+          debugger;
         });
-      })
-      .catch((err) => {
-        presentToast({
-          message: "Erro ao salvar configurações",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      });
+    });
   };
 
   const handleAddClientType = async (name: string) => {

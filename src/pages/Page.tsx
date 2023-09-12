@@ -94,7 +94,6 @@ const Page = () => {
             <IonTitle size="large">{name}</IonTitle>
           </IonToolbar>
         </IonHeader>
-
         {page?.page ?? <ExploreContainer name={name} />}
       </IonContent>
     </IonPage>
