@@ -1,0 +1,19 @@
+/* Scoped components require higher specificity to customize */
+ion-searchbar.custom {
+    --background: #ffffff00;
+    --color: #fff;
+    --placeholder-color: #fff;
+    --icon-color: #fff;
+    --clear-button-color: #fff;
+    --clear-button-show: true;
+    --border-radius: 4px;
+    --box-shadow: none;
+  }
+  
+  ion-searchbar.ios.custom {
+    --cancel-button-color: #fff;
+  }
+  
+  ion-searchbar.md.custom {
+    --cancel-button-color: #fff;
+  }
