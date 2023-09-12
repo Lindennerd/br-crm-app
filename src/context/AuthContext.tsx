@@ -15,16 +15,7 @@ const contextValue: IAuthContext = {
     return new Promise((res, rej) => {});
   },
   logout: () => {},
-  user: {
-    modules: [],
-    name: "",
-    token: "",
-    user: {
-      name: "",
-      userName: "",
-      userRole: UserRole.User,
-    },
-  },
+  user: {} as UserData,
 };
 
 const context = createContext<IAuthContext>(contextValue);

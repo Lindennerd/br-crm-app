@@ -42,11 +42,8 @@ export const ClientChangeModal = ({
     });
   }
 
-  function getFieldValue(field: FieldConfiguration): string | number | null {
-    const fieldValue = changeClient.fieldValues?.find(
-      (it) => it.field.name === field.name
-    );
-    return fieldValue?.value ?? "";
+  function getFieldValue(field: string) {
+    return changeClient.fieldValues.get(field);
   }
 
   return (

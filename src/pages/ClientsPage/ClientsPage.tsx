@@ -187,7 +187,7 @@ export const ClientsPage = () => {
           const index = prev.findIndex(
             (it) => it.id === client.id && it.id != null && it.id != ""
           );
-          if (index === -1) return [...prev, {...client, id: res.clientId}];
+          if (index === -1) return [...prev, { ...client, id: res.clientId }];
           prev[index] = client;
           return [...prev];
         });
@@ -205,16 +205,17 @@ export const ClientsPage = () => {
   const fetchClients = async () => {
     if (selectedClientType?.name == "") return;
     setPresentLoading(true);
+    const fieldsMap = new Map<string, string>();
+    filters.forEach((filter) => {
+      fieldsMap.set(filter.field.name, filter.value.toString());
+    });
     const clients = (await getClientsByType({
       page: 1,
       //TODO! Implement Infinit Scroll pagination
       pageSize: 1000,
       exact: false,
       clientType: selectedClientType?.name ?? "",
-      fieldsFilter: filters.map((it) => ({
-        fieldName: it.field.name,
-        fieldValue: it.value,
-      })),
+      fieldsFilter: fieldsMap,
       orderBy: sortField
         ? {
             fieldName: sortField,

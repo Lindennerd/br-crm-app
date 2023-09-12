@@ -9,7 +9,7 @@ import { FieldConfiguration } from "../../types/app.types";
 
 export type ClientFormProps = {
   selectedField: FieldConfiguration;
-  getFieldValue: (field: FieldConfiguration) => string | number | null;
+  getFieldValue: (field: string) => string | number| undefined;
   setFieldValue: (value: string | number, field: FieldConfiguration) => void;
 };
 export const ClientForm = ({
@@ -26,7 +26,7 @@ export const ClientForm = ({
             {!selectedField.possibleValues || selectedField.possibleValues?.every((it) => it === "") ? (
               <IonInput
                 type="text"
-                value={getFieldValue(selectedField)}
+                value={getFieldValue(selectedField.name)}
                 onIonChange={(e) =>
                   setFieldValue(e.target.value ?? "", selectedField)
                 }
@@ -34,7 +34,7 @@ export const ClientForm = ({
             ) : (
               <IonSelect
                 interface="popover"
-                value={getFieldValue(selectedField)}
+                value={getFieldValue(selectedField.name)}
                 onIonChange={(e) =>
                   setFieldValue(e.target.value ?? "", selectedField)
                 }
@@ -54,7 +54,7 @@ export const ClientForm = ({
             <IonLabel position="stacked">{selectedField.name}</IonLabel>
             <IonInput
               type="number"
-              value={getFieldValue(selectedField)}
+              value={getFieldValue(selectedField.name)}
               onIonChange={(e) =>
                 setFieldValue(e.target.value ?? "", selectedField)
               }
@@ -67,7 +67,7 @@ export const ClientForm = ({
             <IonLabel position="stacked">{selectedField.name}</IonLabel>
             <IonInput
               type="date"
-              value={getFieldValue(selectedField)}
+              value={getFieldValue(selectedField.name)}
               onIonChange={(e) =>
                 setFieldValue(e.target.value?.toString() ?? "", selectedField)
               }
@@ -81,7 +81,7 @@ export const ClientForm = ({
             <IonLabel position="stacked">{selectedField.name}</IonLabel>
             <IonInput
               type="text"
-              value={getFieldValue(selectedField)}
+              value={getFieldValue(selectedField.name)}
               onIonChange={(e) =>
                 setFieldValue(e.target.value ?? "", selectedField)
               }
