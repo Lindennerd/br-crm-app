@@ -318,8 +318,8 @@ export const ClientsPage = () => {
             value={sortField}
             onIonChange={(e) => setSortField(e.target.value)}
           >
-            {selectedClientType?.fieldConfigurations.map((config) => (
-              <IonSelectOption key={config.name} value={config.name}>
+            {selectedClientType?.fieldConfigurations.map((config, index) => (
+              <IonSelectOption key={index} value={config.name}>
                 {config.name}
               </IonSelectOption>
             ))}

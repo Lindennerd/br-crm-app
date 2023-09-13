@@ -39,6 +39,7 @@ export const ProcessAdditionalDataForm = () => {
             <IonInput
               label="Nome"
               fill="solid"
+              labelPlacement="floating"
                 value={fieldValue.field}
               onIonChange={(e) =>
                 setFieldValue((prev) => ({
@@ -52,6 +53,7 @@ export const ProcessAdditionalDataForm = () => {
             <IonInput
               label="Valor"
               fill="solid"
+              labelPlacement="floating"
               value={fieldValue.value}
               onIonChange={(e) =>
                 setFieldValue((prev) => ({

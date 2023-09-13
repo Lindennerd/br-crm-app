@@ -118,6 +118,15 @@ export type Process = {
   status: ProcessStatus;
   events: ProcessEvent[];
   comments: ProcessComment[];
+  tasks: ProcessTask[];
+}
+
+export type ProcessTask = {
+  id: string;
+  title: string;
+  createdAt: Date;
+  completedAt: Date;
+  isCompleted: boolean;
 }
 
 export type ProcessEvent = {

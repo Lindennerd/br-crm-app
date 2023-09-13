@@ -17,7 +17,7 @@ export const useApi = () => {
       headers.set("Authorization", authData ? `Bearer ${authData.token}` : "");
     else {
       remove("authInfo");
-      push("pages/login", "forward", "replace");
+      push("page/login", "forward", "replace");
     }
   }
 
@@ -32,7 +32,7 @@ export const useApi = () => {
 
     if (response.status === 401) {
       remove("authInfo");
-      push("/login", "forward", "replace");
+      push("page/login", "forward", "replace");
     }
 
     if (response.status > 299 && response.status !== 401)

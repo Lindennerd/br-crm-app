@@ -12,7 +12,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { Process } from "../../types/app.types";
+import { Process, ProcessTask } from "../../types/app.types";
 import { closeSharp } from "ionicons/icons";
 import { useState } from "react";
 import { ProcessInitialDataForm } from "./ProcessInitialDataForm";
@@ -46,7 +46,9 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
             </IonButton>
           </IonButtons>
           <IonTitle>
-            {process ? `Editar processo ${process.title}` : "Novo processo"}
+            {process.title
+              ? `Editar processo ${process.title}`
+              : "Novo processo"}
           </IonTitle>
           <IonButtons slot="end">
             <IonButton

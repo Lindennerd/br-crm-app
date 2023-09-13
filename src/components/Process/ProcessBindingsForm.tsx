@@ -191,6 +191,7 @@ export const ProcessBindingsForms = () => {
       <IonList>
         {clientsSearchResult.map((client) => (
           <IonItem
+            key={client.id}
             color={
               selectedClient && client.id === selectedClient.id
                 ? "success"
@@ -204,8 +205,12 @@ export const ProcessBindingsForms = () => {
                   setSelectedClient((prev) => {
                     return prev?.id === client.id ? null : client;
                   });
-                  changeProcess.client = client.id
-                  setChangeProcess(changeProcess);
+                  setChangeProcess(state => {
+                    return {
+                      ...state,
+                      client: client.id
+                    }
+                  });
                 }}
               >
                 <IonIcon icon={checkmarkSharp}></IonIcon>
