@@ -29,8 +29,15 @@ export const ProcessPage = () => {
     {
       process: selectedProcess,
       onDismiss: (data, action) => {
-        if (action === "add" && data) controller.add(data);
-        if (action === "edit" && data) controller.add(data);
+        if (action === "add" && data) {
+          console.log("add");
+          controller.add(data);
+        }
+        if (action === "edit" && data) {
+          console.log("edit");
+
+          controller.add(data);
+        }
         setSelectedProcess(null);
         dismissAddProcessModal();
       },

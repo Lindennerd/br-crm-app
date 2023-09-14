@@ -11,7 +11,7 @@ import {
   IonList,
   IonItem,
 } from "@ionic/react";
-import { addSharp, checkmarkSharp, trashSharp } from "ionicons/icons";
+import { addSharp, checkmarkSharp, closeSharp, trashSharp } from "ionicons/icons";
 import { changeProcessAtom } from "./ChangeProcessModal";
 import { useAtom } from "jotai";
 import { useState } from "react";
@@ -40,7 +40,7 @@ export const ProcessAdditionalDataForm = () => {
               label="Nome"
               fill="solid"
               labelPlacement="floating"
-                value={fieldValue.field}
+              value={fieldValue.field}
               onIonChange={(e) =>
                 setFieldValue((prev) => ({
                   ...prev,
@@ -68,9 +68,13 @@ export const ProcessAdditionalDataForm = () => {
               fill="clear"
               style={{ height: "100%" }}
               onClick={(e) => {
-                if(process.additionalData == null) process.additionalData = new Map<string, string>();
+                if (process.additionalData == null)
+                  process.additionalData = new Map<string, string>();
                 process.additionalData.set(fieldValue.field, fieldValue.value);
-                setProcess((prev) => ({ ...prev, additionalData: process.additionalData }));
+                setProcess((prev) => ({
+                  ...prev,
+                  additionalData: process.additionalData,
+                }));
                 setFieldValue({ field: "", value: "" });
               }}
             >
@@ -87,11 +91,18 @@ export const ProcessAdditionalDataForm = () => {
                 {field}: {value}
               </IonLabel>
               <IonButtons slot="end">
-                <IonButton fill="clear" color="danger" onClick={e => {
+                <IonButton
+                  fill="clear"
+                  color="danger"
+                  onClick={(e) => {
                     process.additionalData?.delete(field);
-                    setProcess((prev) => ({ ...prev, additionalData: process.additionalData }));
-                }}>
-                  <IonIcon icon={trashSharp}></IonIcon>
+                    setProcess((prev) => ({
+                      ...prev,
+                      additionalData: process.additionalData,
+                    }));
+                  }}
+                >
+                  <IonIcon icon={closeSharp}></IonIcon>
                 </IonButton>
               </IonButtons>
             </IonItem>

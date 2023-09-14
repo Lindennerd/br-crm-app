@@ -11,13 +11,19 @@ import {
   IonSegmentButton,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from "@ionic/react";
 import { Process, ProcessTask } from "../../types/app.types";
-import { closeSharp } from "ionicons/icons";
+import {
+  addCircleSharp,
+  closeSharp,
+  linkSharp,
+  listSharp,
+} from "ionicons/icons";
 import { useState } from "react";
 import { ProcessInitialDataForm } from "./ProcessInitialDataForm";
 import { ProcessAdditionalDataForm } from "./ProcessAdditionalDataForm";
-import { ProcessBindingsForms } from "./ProcessBindingsForm";
+import { ProcessBindingsForms } from "./ProcessBindingForm/ProcessBindingsForm";
 import { atom, useAtom } from "jotai";
 
 export const changeProcessAtom = atom<Process>({} as Process);
@@ -27,11 +33,33 @@ export type ChangeProcessModalProps = {
 };
 
 export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
-  const [process] = useAtom(changeProcessAtom);
+  const [process, setProcess] = useAtom(changeProcessAtom);
+  const [presentToast] = useIonToast();
 
   const [segment, setSegment] = useState<
     "bindings" | "initial-data" | "additional-data"
   >("bindings");
+
+  function errorToast(message: string) {
+    presentToast({
+      message,
+      color: "danger",
+      duration: 2000,
+      position: "top",
+    });
+  }
+
+  function handleSave() {
+    if (process.title == null || process.title == "")
+      return errorToast("O nome do processo não pode ser vazio");
+    if (process.description == null || process.description == "")
+      return errorToast("A descrição do processo não pode ser vazia");
+    if (process.client == null || process.client == "")
+      return errorToast("O cliente do processo não pode ser vazio");
+
+    props.onDismiss(process, process.id == null ? "add" : "edit");
+    setProcess({} as Process);
+  }
 
   return (
     <IonPage>
@@ -54,9 +82,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
             <IonButton
               color="success"
               fill="clear"
-              onClick={(e) =>
-                props.onDismiss(process, process == null ? "add" : "edit")
-              }
+              onClick={(e) => handleSave()}
             >
               Salvar
             </IonButton>
@@ -75,13 +101,13 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
             onIonChange={(e) => setSegment(e.detail.value as any)}
           >
             <IonSegmentButton value="bindings">
-              <IonLabel>Vículos</IonLabel>
+              <IonIcon icon={linkSharp}></IonIcon>
             </IonSegmentButton>
             <IonSegmentButton value="initial-data">
-              <IonLabel>Dados Principais</IonLabel>
+              <IonIcon icon={listSharp}></IonIcon>
             </IonSegmentButton>
             <IonSegmentButton value="additional-data">
-              <IonLabel>Dados Adicionais</IonLabel>
+              <IonIcon icon={addCircleSharp}></IonIcon>
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>

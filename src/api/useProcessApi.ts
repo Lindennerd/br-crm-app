@@ -33,9 +33,5 @@ export const useProcessApi = () => {
     getAllProcesses: async (page: number, pageSize: number): Promise<Process[]> => {
         return await get(`/Process/FilterProcesses?page=${page}&pageSize=${pageSize}`);
     },
-
-    getConfigurations: async (): Promise<ProcessConfiguration[]> => {
-        return await get(`/Organization/GetProcessConfiguration`);
-    }
   };
 };

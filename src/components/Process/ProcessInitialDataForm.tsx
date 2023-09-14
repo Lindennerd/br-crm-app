@@ -108,6 +108,7 @@ export const ProcessInitialDataForm = () => {
             labelPlacement="floating"
             value={edittingTask}
             onIonInput={(e) => setEdittingTask(e.detail.value ?? "")}
+            onKeyDown={e => e.key === "Enter" && handleAddTask()}
           />
           <IonButtons slot="end">
             <IonButton fill="solid" color="primary" onClick={e => handleAddTask()}>

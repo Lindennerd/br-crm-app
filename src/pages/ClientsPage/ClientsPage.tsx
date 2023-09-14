@@ -53,7 +53,7 @@ export const ClientsPage = () => {
   const [presentToast] = useIonToast();
   const { getClientsByType, saveClient, removeClient } = useClientApi();
 
-  const { getConfiguration } = useConfigurationApi();
+  const { getClientConfiguration } = useConfigurationApi();
 
   const [presentClientDetailsModal, dismissClientDetailsModal] = useIonModal(
     ClientDetailsModal,
@@ -234,7 +234,7 @@ export const ClientsPage = () => {
 
   const fetchConfiguration = async () => {
     setPresentLoading(true);
-    const res = await getConfiguration();
+    const res = await getClientConfiguration();
     setConfiguration(res);
   };
 

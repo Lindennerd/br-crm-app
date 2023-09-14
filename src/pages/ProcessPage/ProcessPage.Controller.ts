@@ -2,6 +2,8 @@ import { atom, useAtom } from "jotai";
 import { Process, ProcessConfiguration } from "../../types/app.types";
 import { useProcessApi } from "../../api/useProcessApi";
 import { useIonToast } from "@ionic/react";
+import { useConfigurationApi } from "../../api/useConfigurationApi";
+import { changeProcessAtom } from "../../components/Process/ChangeProcessModal";
 
 export const processAtom = atom<{ processes: Process[]; loading: boolean }>({
   processes: [],
@@ -12,7 +14,8 @@ export const useProcessPageController = () => {
   const [presentToast] = useIonToast();
 
   const [processes, setProcesses] = useAtom(processAtom);
-  const { getAllProcesses, getConfigurations } = useProcessApi();
+  const { getProcessConfiguration } = useConfigurationApi();
+  const { getAllProcesses, create } = useProcessApi();
 
   function errorToast(message: string) {
     presentToast({
@@ -24,7 +27,7 @@ export const useProcessPageController = () => {
 
   return {
     getConfigurations: async (): Promise<ProcessConfiguration[]> => {
-        return await getConfigurations();
+        return await getProcessConfiguration();
     },
 
     load: async () => {
@@ -58,6 +61,7 @@ export const useProcessPageController = () => {
 
     add: async (process: Process) => {
         try {
+            await create(process);
             setProcesses((state) => ({
             ...state,
             processes: [...state.processes, process],
@@ -66,7 +70,6 @@ export const useProcessPageController = () => {
             errorToast((error as Error).message);
         }
     },
-
     filter: async (filter: string) => {}
   };
 };

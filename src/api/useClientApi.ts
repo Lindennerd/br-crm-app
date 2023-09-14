@@ -1,13 +1,24 @@
 import { Client, GetClientsRequest } from "../types/app.types";
 import { useApi } from "./useApi";
+import { useMapUtils } from "./useMapUtils";
 export const useClientApi = () => {
   const { post } = useApi();
+  const {  objectToMap, mapToObject } = useMapUtils();
   return {
     getClientsByType: async (request: GetClientsRequest): Promise<Client[]> => {
       if (request.clientType === "") return [];
-      return await post("/Client/GetClients", {
-        ...request,
-        fieldsFilter: Object.fromEntries(request.fieldsFilter ?? []),
+      const clients = await post<GetClientsRequest, Client[]>(
+        "/Client/GetClients",
+        {
+          ...request,
+          fieldsFilter: mapToObject(request.fieldsFilter),
+        }
+      );
+      return clients.map((client) => {
+        return {
+          ...client,
+          fields: objectToMap(client.fieldValues),
+        };
       });
     },
     removeClient: async (clientId: string) => {
