@@ -22,21 +22,23 @@ export const ProcessInitialDataForm = () => {
   function handleAddTask() {
     if (!edittingTask) return;
 
-    setProcess(process => ({
+    setProcess((process) => ({
       ...process,
-      tasks: [...process.tasks ?? [], {
-        title: edittingTask,
-        isCompleted: false
-      } as ProcessTask]
+      tasks: [
+        ...(process.tasks ?? []),
+        {
+          title: edittingTask,
+        } as ProcessTask,
+      ],
     }));
 
     setEdittingTask("");
   }
 
   function handleRemoveTask(title: string) {
-    setProcess(process => ({
+    setProcess((process) => ({
       ...process,
-      tasks: process.tasks?.filter(task => task.title !== title)
+      tasks: process.tasks?.filter((task) => task.title !== title),
     }));
 
     setEdittingTask("");
@@ -47,7 +49,6 @@ export const ProcessInitialDataForm = () => {
       <IonInput
         label="Nome do processo"
         labelPlacement="floating"
-        fill="solid"
         value={process?.title}
         onIonChange={(e) =>
           setProcess({
@@ -60,7 +61,6 @@ export const ProcessInitialDataForm = () => {
       <IonTextarea
         label="Descrição do processo"
         labelPlacement="floating"
-        fill="solid"
         value={process?.description}
         onIonChange={(e) =>
           setProcess({
@@ -75,7 +75,6 @@ export const ProcessInitialDataForm = () => {
         min={1}
         label="Prazo em dias"
         labelPlacement="floating"
-        fill="solid"
         value={process?.SLA}
         onIonChange={(e) =>
           setProcess({
@@ -88,7 +87,6 @@ export const ProcessInitialDataForm = () => {
       <IonInput
         label="Responsável"
         labelPlacement="floating"
-        fill="solid"
         value={process?.executor}
         onIonChange={(e) =>
           setProcess({
@@ -108,10 +106,14 @@ export const ProcessInitialDataForm = () => {
             labelPlacement="floating"
             value={edittingTask}
             onIonInput={(e) => setEdittingTask(e.detail.value ?? "")}
-            onKeyDown={e => e.key === "Enter" && handleAddTask()}
+            onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
           />
           <IonButtons slot="end">
-            <IonButton fill="solid" color="primary" onClick={e => handleAddTask()}>
+            <IonButton
+              fill="solid"
+              color="primary"
+              onClick={(e) => handleAddTask()}
+            >
               <IonIcon icon={addSharp}></IonIcon>
             </IonButton>
           </IonButtons>
@@ -120,10 +122,13 @@ export const ProcessInitialDataForm = () => {
           <IonItem key={index}>
             <IonLabel>{task.title}</IonLabel>
             <IonButtons slot="end">
-            <IonButton color="danger" onClick={e => handleRemoveTask(task.title)}>
-              <IonIcon icon={closeSharp}></IonIcon>
-            </IonButton>
-          </IonButtons>
+              <IonButton
+                color="danger"
+                onClick={(e) => handleRemoveTask(task.title)}
+              >
+                <IonIcon icon={closeSharp}></IonIcon>
+              </IonButton>
+            </IonButtons>
           </IonItem>
         ))}
       </IonList>

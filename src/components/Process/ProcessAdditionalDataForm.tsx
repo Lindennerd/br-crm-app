@@ -11,7 +11,12 @@ import {
   IonList,
   IonItem,
 } from "@ionic/react";
-import { addSharp, checkmarkSharp, closeSharp, trashSharp } from "ionicons/icons";
+import {
+  addSharp,
+  checkmarkSharp,
+  closeSharp,
+  trashSharp,
+} from "ionicons/icons";
 import { changeProcessAtom } from "./ChangeProcessModal";
 import { useAtom } from "jotai";
 import { useState } from "react";
@@ -27,18 +32,12 @@ export const ProcessAdditionalDataForm = () => {
     <>
       <IonToolbar>
         <IonLabel>Dados Adicionais do processo</IonLabel>
-        <IonButtons slot="end">
-          <IonButton fill="solid" color="primary">
-            <IonIcon icon={addSharp}></IonIcon>
-          </IonButton>
-        </IonButtons>
       </IonToolbar>
       <IonGrid>
         <IonRow>
           <IonCol>
             <IonInput
               label="Nome"
-              fill="solid"
               labelPlacement="floating"
               value={fieldValue.field}
               onIonChange={(e) =>
@@ -52,7 +51,7 @@ export const ProcessAdditionalDataForm = () => {
           <IonCol>
             <IonInput
               label="Valor"
-              fill="solid"
+              
               labelPlacement="floating"
               value={fieldValue.value}
               onIonChange={(e) =>
@@ -65,17 +64,19 @@ export const ProcessAdditionalDataForm = () => {
           </IonCol>
           <IonCol size="1">
             <IonButton
-              fill="clear"
+              fill="solid"
               style={{ height: "100%" }}
               onClick={(e) => {
                 if (process.additionalData == null)
                   process.additionalData = new Map<string, string>();
-                process.additionalData.set(fieldValue.field, fieldValue.value);
-                setProcess((prev) => ({
-                  ...prev,
-                  additionalData: process.additionalData,
-                }));
-                setFieldValue({ field: "", value: "" });
+                if(fieldValue.field && fieldValue.value) {
+                  process.additionalData.set(fieldValue.field, fieldValue.value);
+                  setProcess((prev) => ({
+                    ...prev,
+                    additionalData: process.additionalData,
+                  }));
+                  setFieldValue({ field: "", value: "" });
+                }
               }}
             >
               <IonIcon icon={checkmarkSharp}></IonIcon>

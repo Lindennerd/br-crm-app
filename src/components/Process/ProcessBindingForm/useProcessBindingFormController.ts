@@ -44,10 +44,11 @@ export const useProcessBindingFormController = () => {
       processConfigurations: ProcessConfiguration[],
       clientConfigurations: ClientConfiguration[]
     ) => {
+
       setState((prev) => {
         return {
           ...prev,
-          configurations: processConfigurations,
+          processConfigurations: processConfigurations,
           clientConfigurations: clientConfigurations,
         };
       });
@@ -99,9 +100,8 @@ export const useProcessBindingFormController = () => {
       });
     },
 
-    setSelectedClientType: (id: string | undefined | null) => {
-      if (!id) return;
-      const configuration = state.clientConfigurations.find((c) => c.id === id);
+    setSelectedClientType: (configuration: ClientConfiguration | null) => {
+      if (!configuration) return;
       setState((prev) => {
         return {
           ...prev,

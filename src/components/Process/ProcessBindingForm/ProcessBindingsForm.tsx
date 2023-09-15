@@ -34,7 +34,7 @@ export const ProcessBindingsForms = () => {
     Promise.all([getProcessConfiguration(), getClientConfiguration()]).then(
       ([processConfigurations, clientConfiguration]) =>
         controller.loadConfigurations(
-          processConfigurations,
+        processConfigurations,
           clientConfiguration
         )
     );
@@ -83,7 +83,7 @@ export const ProcessBindingsForms = () => {
               <SelectClientType
                 clientTypes={controller.state.clientConfigurations}
                 onSelected={(clientType) =>
-                  controller.setSelectedClientType(clientType.id)
+                  controller.setSelectedClientType(clientType)
                 }
               />
             </IonCol>

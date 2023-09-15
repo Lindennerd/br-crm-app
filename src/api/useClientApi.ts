@@ -22,10 +22,14 @@ export const useClientApi = () => {
       });
     },
     removeClient: async (clientId: string) => {
-      return await post("/Client/RemoveClient", clientId, true);
+      return await post("/Client/RemoveClient/"+ clientId, true);
     },
     saveClient: async (client: Client): Promise<{ clientId: string }> => {
-      return await post("/Client/UpsertClient", client, true);
+      return await post("/Client/UpsertClient", {
+        id: client.id,
+        clientType: client.clientType,
+        fieldValues: mapToObject(client.fieldValues),
+      }, true);
     },
   };
 };

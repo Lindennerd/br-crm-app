@@ -43,7 +43,7 @@ export const ClientChangeModal = ({
   }
 
   function getFieldValue(field: string) {
-    return changeClient.fieldValues.get(field);
+    return changeClient.fieldValues?.get(field);
   }
 
   return (

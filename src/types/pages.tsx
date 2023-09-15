@@ -78,8 +78,8 @@ export const modulePages: AppPage[] = [
     page: <ProcessPage />,
   },
   {
-    id: "Configuracoes",
     title: "Configurações",
+    id: "Configuracoes",
     url: "/page/Configuracoes",
     iosIcon: settingsOutline,
     mdIcon: settingsSharp,

@@ -11,7 +11,7 @@ export const useConfigurationApi = () => {
     getProcessConfiguration: async (): Promise<ProcessConfiguration[]> => {
       return await get(`/Organization/GetProcessConfiguration`);
   },
-    saveConfiguration: async (config: ClientConfiguration) => {
+    saveConfiguration: async (config: ClientConfiguration) : Promise<{clientConfigurationId: string}> => {
       return await post("/organization/configureclients", config, true);
     },
   };

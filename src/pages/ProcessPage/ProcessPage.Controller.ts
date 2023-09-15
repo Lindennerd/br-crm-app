@@ -58,7 +58,7 @@ export const useProcessPageController = () => {
         errorToast((error as Error).message);
       }
     },
-
+    
     add: async (process: Process) => {
         try {
             await create(process);

@@ -17,7 +17,13 @@ import {
   useIonModal,
   useIonToast,
 } from "@ionic/react";
-import { pencilSharp, rocketSharp, trashBinSharp } from "ionicons/icons";
+import {
+  addSharp,
+  filterSharp,
+  pencilSharp,
+  rocketSharp,
+  trashBinSharp,
+} from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useClientApi } from "../../api/useClientApi";
 import { useConfigurationApi } from "../../api/useConfigurationApi";
@@ -36,6 +42,7 @@ import {
   ClientField,
 } from "../../types/app.types";
 import "./ClientsPage.css";
+import { useEffectOnce } from "../../common/useEffectOnce";
 
 export const ClientsPage = () => {
   const [presentLoading, setPresentLoading] = useState<boolean>();
@@ -112,7 +119,7 @@ export const ClientsPage = () => {
     });
   };
 
-  useEffect(() => {
+  useEffectOnce(() => {
     fetchConfiguration()
       .catch((err) => {
         presentToast({
@@ -125,7 +132,7 @@ export const ClientsPage = () => {
       .finally(() => {
         setPresentLoading(false);
       });
-  }, []);
+  });
 
   useEffect(() => {
     fetchClients()
@@ -233,7 +240,6 @@ export const ClientsPage = () => {
   };
 
   const fetchConfiguration = async () => {
-    setPresentLoading(true);
     const res = await getClientConfiguration();
     setConfiguration(res);
   };
@@ -277,7 +283,7 @@ export const ClientsPage = () => {
   function getFirstValue(client: Client): import("react").ReactNode {
     if (!client.fieldValues) return null;
     const value = client.fieldValues.entries().next().value;
-    return `${value[0]}: ${value[1]}`;
+    return value && `${value[0]}: ${value[1]}`;
   }
 
   return (
@@ -298,42 +304,42 @@ export const ClientsPage = () => {
           </IonSelect>
           <IonButtons slot="end">
             <IonButton
-              fill="outline"
-              color="success"
+              fill="solid"
+              color="secondary"
               onClick={() => openUpSertClientModal()}
               disabled={selectedClientType == null}
             >
-              Adicionar
+              <IonIcon icon={addSharp} />
+            </IonButton>
+            <IonButton
+              disabled={!selectedClientType}
+              fill="solid"
+              color="secondary"
+              onClick={(e) => presetFiltersModal()}
+            >
+              <IonIcon icon={filterSharp} />({filters.length})
             </IonButton>
           </IonButtons>
         </IonItem>
-        <IonItem color="light" className="ion-paddin-bottom">
-          <IonSelect
-            disabled={!selectedClientType}
-            style={{ marginRight: "1em" }}
-            interface="popover"
-            labelPlacement="stacked"
-            label="Organizar por"
-            placeholder="Campo"
-            value={sortField}
-            onIonChange={(e) => setSortField(e.target.value)}
-          >
-            {selectedClientType?.fieldConfigurations.map((config, index) => (
-              <IonSelectOption key={index} value={config.name}>
-                {config.name}
-              </IonSelectOption>
-            ))}
-          </IonSelect>
-          <IonButton
-            disabled={!selectedClientType}
-            fill="clear"
-            color="tertiary"
-            onClick={(e) => presetFiltersModal()}
-          >
-            Filtros ({filters.length})
-          </IonButton>
-        </IonItem>
       </IonToolbar>
+      <IonItem color="light" className="ion-paddin-bottom">
+        <IonSelect
+          disabled={!selectedClientType}
+          style={{ marginRight: "1em" }}
+          interface="popover"
+          labelPlacement="stacked"
+          label="Organizar por"
+          placeholder="Campo"
+          value={sortField}
+          onIonChange={(e) => setSortField(e.target.value)}
+        >
+          {selectedClientType?.fieldConfigurations.map((config, index) => (
+            <IonSelectOption key={index} value={config.name}>
+              {config.name}
+            </IonSelectOption>
+          ))}
+        </IonSelect>
+      </IonItem>
       <IonContent>
         <IonList>
           {clients.map((client) => (
