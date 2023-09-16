@@ -103,11 +103,11 @@ export type Process = {
   id: string;
   title: string;
   description: string;
-  client: string;
+  client: Client[];
   additionalData: Map<string, string>;
   StartedAt: Date;
   FinishedAt: Date;
-  SLA: number;
+  sla: number;
   createdAt: Date;
   updatedAt: Date;
   executor: string;
@@ -122,10 +122,10 @@ export type Process = {
 }
 
 export type ProcessTask = {
-  id: string;
+  id: string | null;
   title: string;
   createdAt: Date;
-  completedAt: Date;
+  completedAt: Date | null;
   isCompleted: boolean;
 }
 
@@ -153,9 +153,14 @@ export enum ProcessStatus {
 export type ProcessFilter = {
   page: number;
   pageSize: number;
-  clientId: string;
-  processId: string;
-  onlyActive: boolean;
+  clientName: string | null;
+  clientId: string | null;
+  title: string | null;
+  createdAt: Date | null;
+  finishedAt: Date | null;
+  processStatus: ProcessStatus | null;
+  isDelayed: boolean | null;
+  isAlmostDelayed: boolean | null;
 }
 
 export type ProcessConfiguration = {
@@ -164,5 +169,6 @@ export type ProcessConfiguration = {
   description: string;
   sla: number;
   executor: string;
+  tasks: ProcessTask[];
   additionalData: Map<string, string>;
 }

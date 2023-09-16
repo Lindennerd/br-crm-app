@@ -25,6 +25,7 @@ import { ProcessInitialDataForm } from "./ProcessInitialDataForm";
 import { ProcessAdditionalDataForm } from "./ProcessAdditionalDataForm";
 import { ProcessBindingsForms } from "./ProcessBindingForm/ProcessBindingsForm";
 import { atom, useAtom } from "jotai";
+import { processBindingFormsState } from "./ProcessBindingForm/useProcessBindingFormController";
 
 export const changeProcessAtom = atom<Process>({} as Process);
 
@@ -33,7 +34,9 @@ export type ChangeProcessModalProps = {
 };
 
 export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
-  const [process, setProcess] = useAtom(changeProcessAtom);
+
+  const [process] = useAtom(changeProcessAtom);
+  const [processBinding] = useAtom(processBindingFormsState)
   const [presentToast] = useIonToast();
 
   const [segment, setSegment] = useState<
@@ -54,11 +57,10 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
       return errorToast("O nome do processo não pode ser vazio");
     if (process.description == null || process.description == "")
       return errorToast("A descrição do processo não pode ser vazia");
-    if (process.client == null || process.client == "")
+    if (process.client == null)
       return errorToast("O cliente do processo não pode ser vazio");
 
     props.onDismiss(process, process.id == null ? "add" : "edit");
-    setProcess({} as Process);
   }
 
   return (
@@ -91,8 +93,8 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
       </IonHeader>
       <IonContent class="ion-padding">
         {segment == "bindings" && <ProcessBindingsForms />}
-        {segment == "initial-data" && <ProcessInitialDataForm />}
-        {segment == "additional-data" && <ProcessAdditionalDataForm />}
+        {segment == "initial-data" && <ProcessInitialDataForm configuration={processBinding.selectedProcessConfiguration} />}
+        {segment == "additional-data" && <ProcessAdditionalDataForm configuration={processBinding.selectedProcessConfiguration}/>}
       </IonContent>
       <IonFooter>
         <IonToolbar>

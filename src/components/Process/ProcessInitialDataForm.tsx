@@ -9,15 +9,47 @@ import {
   IonButton,
   IonIcon,
 } from "@ionic/react";
-import { Process, ProcessTask } from "../../types/app.types";
+import {
+  Process,
+  ProcessTask,
+  ProcessConfiguration,
+} from "../../types/app.types";
 import { useAtom } from "jotai";
 import { changeProcessAtom } from "./ChangeProcessModal";
 import { addSharp, closeSharp } from "ionicons/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export const ProcessInitialDataForm = () => {
+export const ProcessInitialDataForm = ({
+  configuration,
+}: {
+  configuration: ProcessConfiguration;
+}) => {
   const [process, setProcess] = useAtom(changeProcessAtom);
   const [edittingTask, setEdittingTask] = useState<string>("");
+
+  useEffect(() => {
+    if (configuration) {
+      setProcess((prev) => {
+        return {
+          ...prev,
+          title: configuration.title,
+          description: configuration.description,
+          sla: configuration.sla,
+          executor: configuration.executor,
+          additionalData: configuration.additionalData,
+          tasks: configuration.tasks?.map((task) => {
+            return {
+              id: null,
+              title: task.title,
+              completedAt: null,
+              createdAt: new Date(),
+              isCompleted: false,
+            };
+          }),
+        };
+      });
+    }
+  }, [configuration]);
 
   function handleAddTask() {
     if (!edittingTask) return;
@@ -75,11 +107,11 @@ export const ProcessInitialDataForm = () => {
         min={1}
         label="Prazo em dias"
         labelPlacement="floating"
-        value={process?.SLA}
+        value={process?.sla}
         onIonChange={(e) =>
           setProcess({
             ...(process ?? ({} as Process)),
-            SLA: e.detail.value ? parseInt(e.detail.value) : 0,
+            sla: e.detail.value ? parseInt(e.detail.value) : 0,
           })
         }
         style={{ marginBottom: "1rem" }}

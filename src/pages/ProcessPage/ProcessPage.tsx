@@ -3,8 +3,8 @@ import {
   processAtom,
   useProcessPageController,
 } from "./ProcessPage.Controller";
-import { useAtom } from "jotai";
-import { IonLoading, useIonModal } from "@ionic/react";
+import { createStore, useAtom } from "jotai";
+import { IonList, IonLoading, useIonModal } from "@ionic/react";
 import { ProcessToolbar } from "../../components/Process/ProcessToolbar";
 import {
   ChangeProcessModal,
@@ -16,6 +16,8 @@ import {
   ProcessFilterProps,
 } from "../../components/Process/ProcessFilter";
 import "./processPage.css";
+import { useEffectOnce } from "../../common/useEffectOnce";
+import { ProcessItem } from "../../components/Process/ProcessItem";
 
 export const ProcessPage = () => {
   const [state] = useAtom(processAtom);
@@ -56,9 +58,9 @@ export const ProcessPage = () => {
     } as ProcessFilterProps
   );
 
-  useEffect(() => {
+  useEffectOnce(() => {
     controller.load();
-  }, [state.processes]);
+  });
 
   return (
     <>
@@ -69,6 +71,17 @@ export const ProcessPage = () => {
         handleFilter={filterProcessModal}
         currentFilterCount={filters.length}
       />
+      <IonList>
+        {state.processes.map((process) => (
+          <ProcessItem 
+            onSelectProcess={(process) => setSelectedProcess(process)}
+            onViewEvents={(process) => console.log("view events")}
+            onViewTasks={(process) => console.log("view tasks")}
+            key={process.id}
+            process={process}
+          />
+        ))}
+      </IonList>
     </>
   );
 };

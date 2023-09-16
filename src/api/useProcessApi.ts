@@ -1,4 +1,8 @@
-import { Process, ProcessConfiguration, ProcessFilter } from "../types/app.types";
+import {
+  Process,
+  ProcessConfiguration,
+  ProcessFilter,
+} from "../types/app.types";
 import { useApi } from "./useApi";
 
 export const useProcessApi = () => {
@@ -7,13 +11,8 @@ export const useProcessApi = () => {
     create: async (
       process: Pick<
         Process,
-        | "title"
-        | "description"
-        | "client"
-        | "SLA"
-        | "executor"
-        | "additionalData"
-      >
+        "title" | "description" | "sla" | "executor" | "additionalData"
+      > & { client: string }
     ): Promise<Process> => {
       return await post("/Process/CreateProcess", {
         ...process,
@@ -21,17 +20,19 @@ export const useProcessApi = () => {
       });
     },
 
-    getProcesses: async (filter: ProcessFilter): Promise<Process[]> => {
-        var params = encodeURIComponent(JSON.stringify(filter));
-        return await get(`/Process/GetProcesses?${params}`);
+    filter: async (filter: Partial<ProcessFilter>): Promise<Process[]> => {
+      var params = encodeURIComponent(JSON.stringify(filter));
+      return await get(`/Process/FilterProcesses?${params}`);
     },
 
-    getProcess: async (id: string): Promise<Process> => {
-        return await get(`/Process/GetProcess/${id}`);
+    getOne: async (id: string): Promise<Process> => {
+      return await get(`/Process/GetProcess/${id}`);
     },
 
-    getAllProcesses: async (page: number, pageSize: number): Promise<Process[]> => {
-        return await get(`/Process/FilterProcesses?page=${page}&pageSize=${pageSize}`);
+    getMany: async (page: number, pageSize: number): Promise<Process[]> => {
+      return await get(
+        `/Process/FilterProcesses?page=${page}&pageSize=${pageSize}`
+      );
     },
   };
 };

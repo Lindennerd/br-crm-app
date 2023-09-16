@@ -32,11 +32,10 @@ interface IProcessBindingsFormState {
   clientSearchResult: Client[];
 }
 
-const processBindingFormsState = atom<IProcessBindingsFormState>(initialState);
+export const processBindingFormsState = atom<IProcessBindingsFormState>(initialState);
 
 export const useProcessBindingFormController = () => {
   const [state, setState] = useAtom(processBindingFormsState);
-  const [, setChangeProcess] = useAtom(changeProcessAtom);
 
   return {
     state,
@@ -44,7 +43,6 @@ export const useProcessBindingFormController = () => {
       processConfigurations: ProcessConfiguration[],
       clientConfigurations: ClientConfiguration[]
     ) => {
-
       setState((prev) => {
         return {
           ...prev,
@@ -75,15 +73,15 @@ export const useProcessBindingFormController = () => {
     },
 
     setSearchField: (field: string) => {
-        setState((prev) => {
-            return {
-            ...prev,
-            search: {
-                ...prev.search,
-                field: field,
-            },
-            };
-        });
+      setState((prev) => {
+        return {
+          ...prev,
+          search: {
+            ...prev.search,
+            field: field,
+          },
+        };
+      });
     },
 
     setSelectedProcessConfiguration: (id: string | undefined | null) => {
@@ -122,13 +120,6 @@ export const useProcessBindingFormController = () => {
         return {
           ...prev,
           selectedClient: client,
-        };
-      });
-
-      setChangeProcess((prev) => {
-        return {
-          ...prev,
-          client: client.id,
         };
       });
     },
