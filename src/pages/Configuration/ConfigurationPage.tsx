@@ -1,6 +1,4 @@
 import {
-  IonAccordion,
-  IonAccordionGroup,
   IonButton,
   IonButtons,
   IonContent,
@@ -16,15 +14,10 @@ import {
   useIonModal,
   useIonToast,
 } from "@ionic/react";
-import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 import {
   addSharp,
-  closeSharp,
   pencilSharp,
-  settingsOutline,
-  settingsSharp,
 } from "ionicons/icons";
-import { useEffect } from "react";
 import { useConfigurationApi } from "../../api/useConfigurationApi";
 import { useFieldType } from "../../common/getFieldType";
 import { ClientTypeModal } from "../../components/Configuration/ClientTypeModal";
@@ -32,14 +25,15 @@ import { ClientConfiguration } from "../../types/app.types";
 import { atom, useAtom } from "jotai";
 import "./ConfigurationPage.css";
 import { useEffectOnce } from "../../common/useEffectOnce";
+import { useLoadingContext } from "../../context/LoadingContext";
 
 const configurationPageState = atom({
   clientTypes: [] as ClientConfiguration[],
   selectedClientType: null as ClientConfiguration | null,
-  loading: false,
 });
 
 export const ConfigurationPage = () => {
+  const  { setLoading } = useLoadingContext();
   const [state, setState] = useAtom(configurationPageState);
   const { getClientConfiguration, saveConfiguration } = useConfigurationApi();
   const [presentToast] = useIonToast();
@@ -83,10 +77,11 @@ export const ConfigurationPage = () => {
   );
 
   useEffectOnce(() => {
-    setState({ ...state, loading: true });
+    setLoading(true);
     const fetchClientTypes = async () => {
       const configuration = await getClientConfiguration();
-      setState({ ...state, clientTypes: configuration, loading: false });
+      setState({ ...state, clientTypes: configuration });
+      setLoading(false);
     };
 
     fetchClientTypes();
@@ -94,7 +89,6 @@ export const ConfigurationPage = () => {
 
   return (
     <>
-      <IonLoading isOpen={state.loading} message="Carregando configurações" />
       <IonToolbar
         color="primary"
         style={{ paddingLeft: "1rem", paddingRight: "1rem" }}

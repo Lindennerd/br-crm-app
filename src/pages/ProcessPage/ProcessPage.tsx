@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   processAtom,
   useProcessPageController,
 } from "./ProcessPage.Controller";
-import { createStore, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { IonList, IonLoading, useIonModal } from "@ionic/react";
 import { ProcessToolbar } from "../../components/Process/ProcessToolbar";
 import {
@@ -18,9 +18,13 @@ import {
 import "./processPage.css";
 import { useEffectOnce } from "../../common/useEffectOnce";
 import { ProcessItem } from "../../components/Process/ProcessItem";
+import { useRouter } from "../../common/useRouter";
+import { useLoadingContext } from "../../context/LoadingContext";
 
 export const ProcessPage = () => {
+  const {setLoading} = useLoadingContext();
   const [state] = useAtom(processAtom);
+  const { gotoProcess } = useRouter();
   const controller = useProcessPageController();
 
   const [selectedProcess, setSelectedProcess] = useState<Process | null>(null);
@@ -32,12 +36,9 @@ export const ProcessPage = () => {
       process: selectedProcess,
       onDismiss: (data, action) => {
         if (action === "add" && data) {
-          console.log("add");
           controller.add(data);
         }
         if (action === "edit" && data) {
-          console.log("edit");
-
           controller.add(data);
         }
         setSelectedProcess(null);
@@ -59,12 +60,16 @@ export const ProcessPage = () => {
   );
 
   useEffectOnce(() => {
-    controller.load();
+    setLoading(true);
+    controller.load()
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   });
+
+  if(!state) return <></>
 
   return (
     <>
-      <IonLoading isOpen={state.loading} message="Carregando processos..." />
       <ProcessToolbar
         handleSearch={(e) => controller.search(e.detail.value)}
         handleAddProcess={addProcessModal}
@@ -72,12 +77,15 @@ export const ProcessPage = () => {
         currentFilterCount={filters.length}
       />
       <IonList>
-        {state.processes.map((process) => (
-          <ProcessItem 
-            onSelectProcess={(process) => setSelectedProcess(process)}
+        {state.map((process) => (
+          <ProcessItem
+            key={process.id}
+            onSelectProcess={(process) => {
+              setSelectedProcess(process);
+              gotoProcess(process.id);
+            }}
             onViewEvents={(process) => console.log("view events")}
             onViewTasks={(process) => console.log("view tasks")}
-            key={process.id}
             process={process}
           />
         ))}

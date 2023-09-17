@@ -7,12 +7,13 @@ import {
   IonLabel,
   IonMenuButton,
   IonPage,
+  IonProgressBar,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { logOutOutline } from "ionicons/icons";
+import { logOutOutline, rocketSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useLocation } from "react-router";
 import { useRouter } from "../common/useRouter";
 import ExploreContainer from "../components/ExploreContainer/ExploreContainer";
 import { useAuthContext } from "../context/AuthContext";
@@ -23,20 +24,36 @@ import {
   modulePages,
 } from "../types/pages";
 import "./Page.css";
+import { ProcessDetailsPage } from "./ProcessPage/ProcessDetailsPage";
+import { useLoadingContext } from "../context/LoadingContext";
 
 const Page = () => {
   const { gotoHome, gotoLogin } = useRouter();
   const { user, logout } = useAuthContext();
+  const location = useLocation();
   const { name } = useParams<{ name: string }>();
   const [page, setPage] = useState<AppPage>();
 
+  const {loading} = useLoadingContext();
+
   useEffect(() => {
+
     const page = additionalPages.find((page) => page.id === name);
     if (page) return setPage(page);
     const authPage = authenticationPages.find((page) => page.id === name);
     if (authPage) return setPage(authPage);
     const appPage = modulePages.find((page) => page.id === name);
     if (appPage) return setPage(appPage);
+    if (location.pathname.includes('processo')) {
+      setPage({
+        title: "Detalhes do Processo",
+        id: "ProcessManagement",
+        iosIcon: rocketSharp,
+        mdIcon: rocketSharp,
+        url: location.pathname,
+        page: <ProcessDetailsPage processId={name}/>
+      })
+    }
   }, [name]);
 
   const handleLogout = () => {
@@ -56,6 +73,7 @@ const Page = () => {
             <IonMenuButton />
           </IonButtons>
           <IonTitle>{page?.title}</IonTitle>
+          {loading && <IonProgressBar type="indeterminate" ></IonProgressBar>}
           <IonButtons slot="end">
             {user ? (
               <IonButton

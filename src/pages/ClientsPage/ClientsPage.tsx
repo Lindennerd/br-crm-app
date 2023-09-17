@@ -43,11 +43,12 @@ import {
 } from "../../types/app.types";
 import "./ClientsPage.css";
 import { useEffectOnce } from "../../common/useEffectOnce";
+import { useLoadingContext } from "../../context/LoadingContext";
 
 export const ClientsPage = () => {
-  const [presentLoading, setPresentLoading] = useState<boolean>();
   const [presentConfirmDelete, setPresentConfirmDelete] =
     useState<boolean>(false);
+    const {loading, setLoading} = useLoadingContext();
   const [configuration, setConfiguration] = useState<ClientConfiguration[]>([]);
   const [selectedClientType, setSelectedClientType] =
     useState<ClientConfiguration | null>(null);
@@ -130,7 +131,7 @@ export const ClientsPage = () => {
         });
       })
       .finally(() => {
-        setPresentLoading(false);
+        setLoading(false);
       });
   });
 
@@ -145,7 +146,7 @@ export const ClientsPage = () => {
         });
       })
       .finally(() => {
-        setPresentLoading(false);
+        setLoading(false);
       });
   }, [selectedClientType]);
 
@@ -160,7 +161,7 @@ export const ClientsPage = () => {
         });
       })
       .finally(() => {
-        setPresentLoading(false);
+        setLoading(false);
       });
   }, [sortField]);
 
@@ -175,7 +176,7 @@ export const ClientsPage = () => {
         });
       })
       .finally(() => {
-        setPresentLoading(false);
+        setLoading(false);
       });
   }, [filters]);
 
@@ -211,7 +212,7 @@ export const ClientsPage = () => {
 
   const fetchClients = async () => {
     if (selectedClientType?.name == "") return;
-    setPresentLoading(true);
+    setLoading(true);
     const fieldsMap = new Map<string, string>();
     filters.forEach((filter) => {
       fieldsMap.set(filter.field.name, filter.value.toString());
@@ -256,7 +257,7 @@ export const ClientsPage = () => {
 
   const handleDeleteClient = () => {
     if (clientEdit == null) return;
-    setPresentLoading(true);
+    setLoading(true);
     removeClient(clientEdit.id)
       .then((res) => {
         setClients((prev) => {
@@ -276,7 +277,7 @@ export const ClientsPage = () => {
       })
       .finally(() => {
         setClientEdit(null);
-        setPresentLoading(false);
+        setLoading(false);
       });
   };
 
@@ -288,7 +289,6 @@ export const ClientsPage = () => {
 
   return (
     <>
-      <IonLoading isOpen={presentLoading} message="Carregando..." />
       <IonToolbar>
         <IonItem color="primary">
           <IonSelect

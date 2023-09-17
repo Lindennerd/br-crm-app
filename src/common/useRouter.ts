@@ -11,8 +11,13 @@ export const useRouter = () => {
     router.push("/page/login", "forward", "push");
   }
 
+  function gotoProcess(processId: string) {
+    router.push(`/page/processo/${processId}`, 'forward', 'push');
+  }
+
   return {
     gotoHome,
     gotoLogin,
+    gotoProcess
   };
 };

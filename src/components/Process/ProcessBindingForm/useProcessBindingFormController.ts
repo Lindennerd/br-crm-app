@@ -36,6 +36,7 @@ export const processBindingFormsState = atom<IProcessBindingsFormState>(initialS
 
 export const useProcessBindingFormController = () => {
   const [state, setState] = useAtom(processBindingFormsState);
+  const [changeProcess, setChangeProcess] = useAtom(changeProcessAtom);
 
   return {
     state,
@@ -120,6 +121,13 @@ export const useProcessBindingFormController = () => {
         return {
           ...prev,
           selectedClient: client,
+        };
+      });
+
+      setChangeProcess((prev) => {
+        return {
+          ...prev,
+          clientId: client.id,
         };
       });
     },

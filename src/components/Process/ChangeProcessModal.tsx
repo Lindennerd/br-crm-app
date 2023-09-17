@@ -13,7 +13,7 @@ import {
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { Process, ProcessTask } from "../../types/app.types";
+import { Process } from "../../types/app.types";
 import {
   addCircleSharp,
   closeSharp,
@@ -57,7 +57,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
       return errorToast("O nome do processo não pode ser vazio");
     if (process.description == null || process.description == "")
       return errorToast("A descrição do processo não pode ser vazia");
-    if (process.client == null)
+    if (process.clientId == null)
       return errorToast("O cliente do processo não pode ser vazio");
 
     props.onDismiss(process, process.id == null ? "add" : "edit");
@@ -94,7 +94,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
       <IonContent class="ion-padding">
         {segment == "bindings" && <ProcessBindingsForms />}
         {segment == "initial-data" && <ProcessInitialDataForm configuration={processBinding.selectedProcessConfiguration} />}
-        {segment == "additional-data" && <ProcessAdditionalDataForm configuration={processBinding.selectedProcessConfiguration}/>}
+        {segment == "additional-data" && <ProcessAdditionalDataForm />}
       </IonContent>
       <IonFooter>
         <IonToolbar>

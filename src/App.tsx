@@ -40,6 +40,9 @@ const App: React.FC = () => {
             <Route path="/" exact={true}>
               <Redirect to="/page/home" />
             </Route>
+            <Route path="/page/processo/:name">
+              <Page></Page>
+            </Route>
             <Route path="/page/:name" exact={true}>
               <Page></Page>
             </Route>

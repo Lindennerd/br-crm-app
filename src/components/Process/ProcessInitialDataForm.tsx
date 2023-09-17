@@ -18,11 +18,12 @@ import { useAtom } from "jotai";
 import { changeProcessAtom } from "./ChangeProcessModal";
 import { addSharp, closeSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
+import { AddTaskForm } from "./Forms/AddTaskForm";
 
 export const ProcessInitialDataForm = ({
   configuration,
 }: {
-  configuration: ProcessConfiguration;
+  configuration: ProcessConfiguration | null | undefined;
 }) => {
   const [process, setProcess] = useAtom(changeProcessAtom);
   const [edittingTask, setEdittingTask] = useState<string>("");
@@ -132,24 +133,13 @@ export const ProcessInitialDataForm = ({
         <IonListHeader>
           <IonLabel>Checklist do Processo</IonLabel>
         </IonListHeader>
-        <IonItem color="light">
-          <IonInput
-            label="Novo item"
-            labelPlacement="floating"
-            value={edittingTask}
-            onIonInput={(e) => setEdittingTask(e.detail.value ?? "")}
-            onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
-          />
-          <IonButtons slot="end">
-            <IonButton
-              fill="solid"
-              color="primary"
-              onClick={(e) => handleAddTask()}
-            >
-              <IonIcon icon={addSharp}></IonIcon>
-            </IonButton>
-          </IonButtons>
-        </IonItem>
+        <AddTaskForm 
+          task={edittingTask}
+          onTaskChange={(task) => {
+            setEdittingTask(task)
+            handleAddTask()
+          }}
+        />
         {process?.tasks?.map((task, index) => (
           <IonItem key={index}>
             <IonLabel>{task.title}</IonLabel>

@@ -1,14 +1,14 @@
 import { atom, useAtom } from "jotai";
-import { Process, ProcessConfiguration, ProcessStatus } from "../../types/app.types";
+import {
+  Process,
+  ProcessConfiguration,
+  ProcessStatus,
+} from "../../types/app.types";
 import { useProcessApi } from "../../api/useProcessApi";
 import { useIonToast } from "@ionic/react";
 import { useConfigurationApi } from "../../api/useConfigurationApi";
-import { changeProcessAtom } from "../../components/Process/ChangeProcessModal";
 
-export const processAtom = atom<{ processes: Process[]; loading: boolean }>({
-  processes: [],
-  loading: true,
-});
+export const processAtom = atom<Process[]>([]);
 
 export const useProcessPageController = () => {
   const [presentToast] = useIonToast();
@@ -48,45 +48,37 @@ export const useProcessPageController = () => {
     load: async () => {
       try {
         var result = await getMany(1, 1000);
-        setProcesses((state) => ({
-          ...state,
-          processes: result,
-          loading: false,
-        }));
+        setProcesses(result);
       } catch (error) {
+        console.error(error);
         errorToast((error as Error).message);
       }
     },
 
     search: async (searchText: string | null | undefined) => {
       try {
-        if (!searchText) return;
-        var result = await filter({
-          title: searchText,
-          page: 1,
-          pageSize: 1000,
-          clientName: searchText,
-        });
-        setProcesses((state) => ({
-          ...state,
-          processes: result.filter((x) =>
-            x.title.toLowerCase().includes(searchText.toLowerCase())
-          ),
-          loading: false,
-        }));
+        var result = searchText
+          ? await filter({
+              title: searchText,
+              page: 1,
+              pageSize: 1000,
+              clientName: searchText,
+            })
+          : await getMany(1, 1000);
+
+        setProcesses(result);
       } catch (error) {
+        console.error(error);
         errorToast((error as Error).message);
       }
     },
 
     add: async (process: Process) => {
       try {
-        await create({...process, client: process.client[0].id });
-        setProcesses((state) => ({
-          ...state,
-          processes: [...state.processes, process],
-        }));
+        const createdProcess = await create({ ...process, clientId: process.clientId });
+        setProcesses((state) => [...state, createdProcess]);
       } catch (error) {
+        console.error(error);
         errorToast((error as Error).message);
       }
     },

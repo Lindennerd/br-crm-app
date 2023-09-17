@@ -17,6 +17,7 @@ export interface UserData {
 }
 
 export type User = {
+  id: string;
   name: string;
   userName: string;
   userRole: UserRole;
@@ -103,6 +104,7 @@ export type Process = {
   id: string;
   title: string;
   description: string;
+  clientId: string;
   client: Client[];
   additionalData: Map<string, string>;
   StartedAt: Date;
@@ -130,25 +132,33 @@ export type ProcessTask = {
 }
 
 export type ProcessEvent = {
-  id: string;
+  id: string | null;
   description: string;
   createdAt: Date;
   eventType: ProcessStatus;
 }
 
 export type ProcessComment = {
+  id: string | null;
   comment: string;
   createdAt: Date;
-  author: string;
+  authorId: string;
+  authorName: string;
 }
 
 export enum ProcessStatus {
-  Started = 0,
   InProgress = 2,
   Waiting = 3,
   Blocked = 4,
   Done = 5
 }
+
+export const ProcessStatusText = new Map<ProcessStatus, string>([
+  [ProcessStatus.InProgress, "Em progresso"],
+  [ProcessStatus.Waiting, "Aguardando"],
+  [ProcessStatus.Blocked, "Bloqueado"],
+  [ProcessStatus.Done, "Concluído"],
+]);
 
 export type ProcessFilter = {
   page: number;
