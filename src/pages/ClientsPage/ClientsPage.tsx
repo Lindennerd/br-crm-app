@@ -191,6 +191,22 @@ export const ClientsPage = () => {
       });
   }, [filters]);
 
+  useEffect(() => {
+    setSelectedClientType(configuration[0] ?? null);
+    fetchClients()
+      .catch(() => {
+        presentToast({
+          message: "Ocorreu um erro ao buscar as informações de clientes",
+          duration: 2000,
+          position: "top",
+          color: "danger",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [configuration]);
+
   const handlSelectType = (event: any) => {
     const target = event.target as HTMLInputElement;
     const selectedType = configuration.find((it) => it.name === target.value);
