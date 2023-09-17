@@ -14,10 +14,11 @@ export const useClientApi = () => {
           fieldsFilter: mapToObject(request.fieldsFilter),
         }
       );
+
       return clients.map((client) => {
         return {
           ...client,
-          fields: objectToMap(client.fieldValues),
+          fieldValues: objectToMap(client.fieldValues) as Map<string, string>,
         };
       });
     },

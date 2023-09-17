@@ -31,7 +31,6 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
   const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {
-    console.log(props.tasks);
     const completedTasks = props.tasks.filter((task) => task.isCompleted);
     const totalTasks = props.tasks.length;
     setProgress(completedTasks.length / totalTasks);

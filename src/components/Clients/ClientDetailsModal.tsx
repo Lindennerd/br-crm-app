@@ -9,10 +9,9 @@ import {
   IonPage,
   IonToolbar,
 } from "@ionic/react";
-import { caretBackOutline } from "ionicons/icons";
+import { caretBackOutline, contractOutline } from "ionicons/icons";
 import { Client } from "../../types/app.types";
 import { useEffect, useState } from "react";
-import { useMapUtils } from "../../api/useMapUtils";
 
 export interface ClientDetailsModalProps {
   onDismiss: () => void;
@@ -21,12 +20,12 @@ export interface ClientDetailsModalProps {
 
 export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
   const [client, setClient] = useState(props.client);
-  const {objectToMap} = useMapUtils()
 
   useEffect(() => {
+    if(props.client)
     setClient({
       ...props.client,
-      fieldValues: objectToMap(props.client?.fieldValues),
+      fieldValues: props.client?.fieldValues,
     });
   }, [props.client]);
 

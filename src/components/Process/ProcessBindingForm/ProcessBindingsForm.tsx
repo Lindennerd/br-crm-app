@@ -28,7 +28,7 @@ export const ProcessBindingsForms = () => {
   const { getClientsByType } = useClientApi();
   const { getProcessConfiguration, getClientConfiguration } =
     useConfigurationApi();
-  const { objectToMap } = useMapUtils();
+  const { getFirstValue } = useMapUtils();
 
   useEffectOnce(() => {
     Promise.all([getProcessConfiguration(), getClientConfiguration()]).then(
@@ -55,12 +55,6 @@ export const ProcessBindingsForms = () => {
     })
       .then((data) => controller.setSearchResult(data))
       .finally(() => controller.loadingSearch(false));
-  }
-
-  function getFirstValue(client: Client): string {
-    if (!client.fieldValues) return "";
-    const value = objectToMap(client.fieldValues).entries().next().value;
-    return `${value[0]}: ${value[1]}`;
   }
 
   return (

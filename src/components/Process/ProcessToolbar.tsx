@@ -26,7 +26,7 @@ export const ProcessToolbar = (props: ProcessToolbarProps) => {
       <IonButton color="secondary" fill="solid" onClick={_ => props.handleAddProcess()}>
         <IonIcon icon={addSharp}></IonIcon>
       </IonButton>
-      <IonButton color="secondary" fill="solid" onClick={_ => props.handleFilter()}>
+      <IonButton style={{display: "none"}} color="secondary" fill="solid" onClick={_ => props.handleFilter()}>
         <IonIcon icon={filterSharp}></IonIcon>
         ({props.currentFilterCount ?? 0})
       </IonButton>

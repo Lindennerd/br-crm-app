@@ -44,11 +44,12 @@ import {
 import "./ClientsPage.css";
 import { useEffectOnce } from "../../common/useEffectOnce";
 import { useLoadingContext } from "../../context/LoadingContext";
+import { useMapUtils } from "../../api/useMapUtils";
 
 export const ClientsPage = () => {
   const [presentConfirmDelete, setPresentConfirmDelete] =
     useState<boolean>(false);
-    const {loading, setLoading} = useLoadingContext();
+  const { loading, setLoading } = useLoadingContext();
   const [configuration, setConfiguration] = useState<ClientConfiguration[]>([]);
   const [selectedClientType, setSelectedClientType] =
     useState<ClientConfiguration | null>(null);
@@ -57,6 +58,7 @@ export const ClientsPage = () => {
   const [clientEdit, setClientEdit] = useState<Client | null>(null);
   const [sortField, setSortField] = useState<string | null>(null);
   const [filters, setFilters] = useState<ClientField[]>([]);
+  const { getFirstValue, objectToMap, mapToObject } = useMapUtils();
 
   const [presentToast] = useIonToast();
   const { getClientsByType, saveClient, removeClient } = useClientApi();
@@ -77,7 +79,10 @@ export const ClientsPage = () => {
   const [presentClientChange, dismissClientChange] = useIonModal(
     ClientChangeModal,
     {
-      client: clientEdit,
+      client: {
+        ...clientEdit,
+        fieldValues: clientEdit?.fieldValues,
+      },
       configuration: selectedClientType,
       onDismiss: (data: Client | null, action: ClientChangeAction) => {
         dismissClientChange();
@@ -191,6 +196,8 @@ export const ClientsPage = () => {
 
     saveClient({ ...client, clientType: selectedClientType.name })
       .then((res) => {
+        console.log(client);
+        console.log(clients);
         setClients((prev) => {
           const index = prev.findIndex(
             (it) => it.id === client.id && it.id != null && it.id != ""
@@ -234,7 +241,7 @@ export const ClientsPage = () => {
       return clients.map((client) => {
         return {
           ...client,
-          fieldValues: new Map(Object.entries(client.fieldValues as Object)),
+          fieldValues: client.fieldValues,
         };
       });
     });
@@ -280,12 +287,6 @@ export const ClientsPage = () => {
         setLoading(false);
       });
   };
-
-  function getFirstValue(client: Client): import("react").ReactNode {
-    if (!client.fieldValues) return null;
-    const value = client.fieldValues.entries().next().value;
-    return value && `${value[0]}: ${value[1]}`;
-  }
 
   return (
     <>

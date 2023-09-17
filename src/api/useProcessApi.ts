@@ -7,9 +7,11 @@ import {
   ProcessTask,
 } from "../types/app.types";
 import { useApi } from "./useApi";
+import { useMapUtils } from "./useMapUtils";
 
 export const useProcessApi = () => {
   const { post, get } = useApi();
+  const { objectToMap, mapToObject } = useMapUtils();
   return {
     create: async (
       process: Pick<
@@ -21,63 +23,159 @@ export const useProcessApi = () => {
         ...process,
         additionalData:
           process.additionalData.size > 0
-            ? Object.fromEntries(process.additionalData)
+            ? mapToObject(process.additionalData)
             : {},
       });
     },
 
     filter: async (filter: Partial<ProcessFilter>): Promise<Process[]> => {
       var params = new URLSearchParams(filter as any);
-      return await get(`/Process/FilterProcesses?${params.toString()}`);
+      var result = await get<Process[]>(
+        `/Process/FilterProcesses?${params.toString()}`
+      );
+      return [
+        ...result.map((process) => {
+          return {
+            ...process,
+            client: {
+              ...process.client.map((c) => {
+                c.fieldValues = objectToMap(c.fieldValues);
+                return c;
+              }),
+            },
+          };
+        }),
+      ];
     },
 
     getOne: async (id: string): Promise<Process> => {
-      return await get(`/Process/GetProcess/${id}`);
+      const result = await get<Process>(`/Process/GetProcess/${id}`);
+      return {
+        ...result,
+        client: [
+          ...result.client.map((c) => {
+            c.fieldValues = objectToMap(c.fieldValues);
+            return c;
+          }),
+        ],
+      };
     },
 
     getMany: async (page: number, pageSize: number): Promise<Process[]> => {
-      return await get(
+      const result = await get<Process[]>(
         `/Process/FilterProcesses?page=${page}&pageSize=${pageSize}`
       );
+      return [
+        ...result.map((process) => {
+          return {
+            ...process,
+            client: {
+              ...process.client.map((c) => {
+                c.fieldValues = objectToMap(c.fieldValues);
+                return c;
+              }),
+            },
+          };
+        }),
+      ];
     },
 
     update: async (process: Process): Promise<Process> => {
-      return await post("/Process/UpdateProcess", {
+      const result = (await post("/Process/UpdateProcess", {
         ...process,
         additionalData:
           process.additionalData.size > 0
             ? Object.fromEntries(process.additionalData)
             : {},
-      });
+      })) as Process;
+
+      return {
+        ...result,
+        client: [
+          ...result.client.map((c) => {
+            c.fieldValues = objectToMap(c.fieldValues);
+            return c;
+          }),
+        ],
+      };
     },
 
-    addEvent(processId: string, event: ProcessEvent): Promise<Process> {
-      return post(`Process/AddEvent/${processId}`, event);
+    async addEvent(processId: string, event: ProcessEvent): Promise<Process> {
+      var result = (await post(
+        `Process/AddEvent/${processId}`,
+        event
+      )) as Process;
+      return {
+        ...result,
+        client: [
+          ...result.client.map((c) => {
+            c.fieldValues = objectToMap(c.fieldValues);
+            return c;
+          }),
+        ],
+      };
     },
 
-    upsertComment(
+    async upsertComment(
       processId: string,
       comment: ProcessComment
     ): Promise<Process> {
+      let result: Process = {} as Process;
       if (comment.id)
-        return post(`Process/UpdateComment/${processId}`, comment);
-      return post(`Process/AddComment/${processId}`, {
+        result = (await post(
+          `Process/UpdateComment/${processId}`,
+          comment
+        )) as Process;
+      result = await post(`Process/AddComment/${processId}`, {
         comment: comment.comment,
       });
+
+      return {
+        ...result,
+        client: [
+          ...result.client.map((c) => {
+            c.fieldValues = objectToMap(c.fieldValues);
+            return c;
+          }),
+        ],
+      };
     },
 
-    deleteComment(processId: string, commentId: string): Promise<Process> {
-      return post(`Process/RemoveComment/${processId}`, {
+    async deleteComment(
+      processId: string,
+      commentId: string
+    ): Promise<Process> {
+      const result: Process = await post(`Process/RemoveComment/${processId}`, {
         commentId: commentId,
       });
+
+      return {
+        ...result,
+        client: [
+          ...result.client.map((c) => {
+            c.fieldValues = objectToMap(c.fieldValues);
+            return c;
+          }),
+        ],
+      };
     },
 
-    completeTask(processId: string, task: ProcessTask): Promise<ProcessTask> {
+    async addTask(processId: string, task: ProcessTask): Promise<ProcessTask> {
+      return post(`Process/AddTask/${processId}`, task);
+    },
+
+    async completeTask(
+      processId: string,
+      task: ProcessTask
+    ): Promise<ProcessTask> {
       return post(`Process/CompleteTask/${processId}`, task);
     },
 
-    uncompleteTask(processId: string, task: ProcessTask): Promise<ProcessTask> {
+    async uncompleteTask(
+      processId: string,
+      task: ProcessTask
+    ): Promise<ProcessTask> {
       return post(`Process/UncompleteTask/${processId}`, task);
-    }
+    },
   };
 };

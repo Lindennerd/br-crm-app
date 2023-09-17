@@ -13,9 +13,11 @@ import {
 import { changeProcessAtom } from "./ChangeProcessModal";
 import { useAtom } from "jotai";
 import { AdditionalInformationForm } from "./Forms/AdditionalInformationForm";
+import { useMapUtils } from "../../api/useMapUtils";
 
 export const ProcessAdditionalDataForm = () => {
   const [process, setProcess] = useAtom(changeProcessAtom);
+  const {ensureItsMap} = useMapUtils();
 
   return (
     <>
@@ -29,6 +31,7 @@ export const ProcessAdditionalDataForm = () => {
           if (process.additionalData == null)
             process.additionalData = new Map<string, string>();
 
+          process.additionalData = ensureItsMap(process.additionalData);
           if (field && value) {
             process.additionalData.set(field, value);
 

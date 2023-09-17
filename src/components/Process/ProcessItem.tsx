@@ -50,7 +50,7 @@ export const ProcessItem = (props: IProcessItemProps) => {
           <ProcessStatusBadge status={props.process.status} />
         </div>
       </div>
-      <IonButtons
+      {/* <IonButtons
         slot="end"
         style={{ display: "flex", flexDirection: "column", gap: ".2rem" }}
       >
@@ -60,7 +60,7 @@ export const ProcessItem = (props: IProcessItemProps) => {
         <IonButton fill="solid" color="tertiary">
           Tarefas a fazer ({props.process.tasks?.length})
         </IonButton>
-      </IonButtons>
+      </IonButtons> */}
     </IonItem>
   );
 };

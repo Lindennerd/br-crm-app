@@ -48,6 +48,7 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
     deleteComment,
     completeTask,
     uncompleteTask,
+    addTask
   } = useProcessApi();
 
   const [presentClientDetailsModal, dismissClientDetailsModal] = useIonModal(
@@ -107,14 +108,14 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
   function handleAddTask(task: ProcessTask) {
     if (!process) return;
     if (!task) return;
-    process.tasks.push(task);
-    update(process)
+    addTask(process.id, task)
       .then((res) => {
+        console.log(res);
         setProcess((prev) => {
           if (!prev) return prev;
           return {
             ...prev,
-            tasks: res.tasks,
+            tasks: [...prev.tasks, res],
           };
         });
       })

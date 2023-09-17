@@ -14,6 +14,7 @@ import {
   FieldConfiguration,
 } from "../../types/app.types";
 import { ClientForm } from "./ClientForm";
+import { useMapUtils } from "../../api/useMapUtils";
 
 export type ClientChangeAction = "add" | "edit" | "cancel";
 export type ClientChangeModalParams = {
