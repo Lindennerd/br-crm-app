@@ -15,9 +15,14 @@ export const useRouter = () => {
     router.push(`/page/processo/${processId}`, 'forward', 'push');
   }
 
+  function gotoProcesses() {
+    router.push("/page/ProcessManagement", "forward", "push");
+  }
+
   return {
     gotoHome,
     gotoLogin,
-    gotoProcess
+    gotoProcess,
+    gotoProcesses,
   };
 };

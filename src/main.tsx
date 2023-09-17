@@ -5,6 +5,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import { ResponseCacheContextProvider } from "./context/CacheContext";
 import { MenuContextProvider } from "./context/MenuContext";
 import { LoadingContextProvider } from "./context/LoadingContext";
+import { CurrentClientContextProvider } from "./context/CurrentClientContext";
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
@@ -14,7 +15,9 @@ root.render(
       <ResponseCacheContextProvider>
         <MenuContextProvider>
           <AuthContextProvider>
-            <App />
+            <CurrentClientContextProvider>
+              <App />
+            </CurrentClientContextProvider>
           </AuthContextProvider>
         </MenuContextProvider>
       </ResponseCacheContextProvider>

@@ -20,9 +20,12 @@ import { useEffectOnce } from "../../common/useEffectOnce";
 import { ProcessItem } from "../../components/Process/ProcessItem";
 import { useRouter } from "../../common/useRouter";
 import { useLoadingContext } from "../../context/LoadingContext";
+import { useCurrentClientContext } from "../../context/CurrentClientContext";
 
 export const ProcessPage = () => {
   const {setLoading} = useLoadingContext();
+  const {client, setClient} = useCurrentClientContext();
+
   const [state] = useAtom(processAtom);
   const { gotoProcess } = useRouter();
   const controller = useProcessPageController();
@@ -61,9 +64,12 @@ export const ProcessPage = () => {
 
   useEffectOnce(() => {
     setLoading(true);
-    controller.load()
+    controller.load(client)
       .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setClient(null);
+        setLoading(false);
+      });
   });
 
   if(!state) return <></>

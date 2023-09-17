@@ -1,5 +1,6 @@
 import { atom, useAtom } from "jotai";
 import {
+  Client,
   Process,
   ProcessConfiguration,
   ProcessStatus,
@@ -45,9 +46,11 @@ export const useProcessPageController = () => {
       return await getProcessConfiguration();
     },
 
-    load: async () => {
+    load: async (client: Client | null) => {
       try {
-        var result = await getMany(1, 1000);
+        var result = (client 
+            ? await filter({ clientId: client?.id, page: 1, pageSize: 1000 })
+            : await getMany(1, 1000));
         setProcesses(result);
       } catch (error) {
         console.error(error);

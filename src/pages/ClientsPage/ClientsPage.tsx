@@ -9,7 +9,6 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonLoading,
   IonModal,
   IonSelect,
   IonSelectOption,
@@ -45,11 +44,13 @@ import "./ClientsPage.css";
 import { useEffectOnce } from "../../common/useEffectOnce";
 import { useLoadingContext } from "../../context/LoadingContext";
 import { useMapUtils } from "../../api/useMapUtils";
+import { useCurrentClientContext } from "../../context/CurrentClientContext";
+import { useRouter } from "../../common/useRouter";
 
 export const ClientsPage = () => {
   const [presentConfirmDelete, setPresentConfirmDelete] =
     useState<boolean>(false);
-  const { loading, setLoading } = useLoadingContext();
+  const { setLoading } = useLoadingContext();
   const [configuration, setConfiguration] = useState<ClientConfiguration[]>([]);
   const [selectedClientType, setSelectedClientType] =
     useState<ClientConfiguration | null>(null);
@@ -58,7 +59,12 @@ export const ClientsPage = () => {
   const [clientEdit, setClientEdit] = useState<Client | null>(null);
   const [sortField, setSortField] = useState<string | null>(null);
   const [filters, setFilters] = useState<ClientField[]>([]);
-  const { getFirstValue, objectToMap, mapToObject } = useMapUtils();
+  const { getFirstValue } = useMapUtils();
+
+  const { setClient: setCurrentClient } =
+    useCurrentClientContext();
+
+  const { gotoProcesses } = useRouter();
 
   const [presentToast] = useIonToast();
   const { getClientsByType, saveClient, removeClient } = useClientApi();
@@ -119,7 +125,7 @@ export const ClientsPage = () => {
 
   const openUpSertClientModal = () => {
     presentClientChange({
-      onWillDismiss: (e: any) => {
+      onWillDismiss: () => {
         setClientEdit(null);
       },
     });
@@ -127,7 +133,7 @@ export const ClientsPage = () => {
 
   useEffectOnce(() => {
     fetchConfiguration()
-      .catch((err) => {
+      .catch(() => {
         presentToast({
           message: "Ocorreu um erro ao buscar a configuração",
           duration: 2000,
@@ -142,7 +148,7 @@ export const ClientsPage = () => {
 
   useEffect(() => {
     fetchClients()
-      .catch((err) => {
+      .catch(() => {
         presentToast({
           message: "Ocorreu um erro ao buscar as informações de clientes",
           duration: 2000,
@@ -157,7 +163,7 @@ export const ClientsPage = () => {
 
   useEffect(() => {
     fetchClients()
-      .catch((err) => {
+      .catch(() => {
         presentToast({
           message: "Ocorreu um erro ao buscar as informações de clientes",
           duration: 2000,
@@ -172,7 +178,7 @@ export const ClientsPage = () => {
 
   useEffect(() => {
     fetchClients()
-      .catch((err) => {
+      .catch(() => {
         presentToast({
           message: "Ocorreu um erro ao buscar as informações de clientes",
           duration: 2000,
@@ -207,7 +213,7 @@ export const ClientsPage = () => {
           return [...prev];
         });
       })
-      .catch((err) => {
+      .catch(() => {
         presentToast({
           message: "Ocorreu um erro ao salvar as informações de clientes",
           duration: 2000,
@@ -237,7 +243,7 @@ export const ClientsPage = () => {
           }
         : null,
     })) as Client[];
-    setClients((prev) => {
+    setClients(() => {
       return clients.map((client) => {
         return {
           ...client,
@@ -266,7 +272,7 @@ export const ClientsPage = () => {
     if (clientEdit == null) return;
     setLoading(true);
     removeClient(clientEdit.id)
-      .then((res) => {
+      .then(() => {
         setClients((prev) => {
           const index = prev.findIndex((it) => it.id === clientEdit.id);
           if (index === -1) return [...prev];
@@ -274,7 +280,7 @@ export const ClientsPage = () => {
           return [...prev];
         });
       })
-      .catch((err) => {
+      .catch(() => {
         presentToast({
           message: "Ocorreu um erro ao remover as informações de clientes",
           duration: 2000,
@@ -287,6 +293,11 @@ export const ClientsPage = () => {
         setLoading(false);
       });
   };
+
+  function handleGotoProcesses(client: Client) {
+    setCurrentClient(client);
+    gotoProcesses();
+  }
 
   return (
     <>
@@ -316,7 +327,7 @@ export const ClientsPage = () => {
               disabled={!selectedClientType}
               fill="solid"
               color="secondary"
-              onClick={(e) => presetFiltersModal()}
+              onClick={() => presetFiltersModal()}
             >
               <IonIcon icon={filterSharp} />({filters.length})
             </IonButton>
@@ -348,7 +359,7 @@ export const ClientsPage = () => {
               key={client.id}
               detail={true}
               button
-              onClick={(e) => handleViewClientDetails(client)}
+              onClick={() => handleViewClientDetails(client)}
             >
               <IonLabel>
                 <h3>{getFirstValue(client)}</h3>
@@ -359,7 +370,12 @@ export const ClientsPage = () => {
                 </p>
               </IonLabel>
               <IonButtons slot="end">
-                <IonButton>
+                <IonButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleGotoProcesses(client);
+                  }}
+                >
                   <IonIcon icon={rocketSharp} />
                 </IonButton>
                 <IonButton
@@ -386,7 +402,7 @@ export const ClientsPage = () => {
       </IonContent>
       <IonModal
         isOpen={presentConfirmDelete}
-        onWillDismiss={(e) => setPresentConfirmDelete(false)}
+        onWillDismiss={() => setPresentConfirmDelete(false)}
       >
         <IonCard>
           <IonCardHeader>
@@ -405,7 +421,7 @@ export const ClientsPage = () => {
               <IonButton
                 fill="solid"
                 color="success"
-                onClick={(e) => {
+                onClick={() => {
                   handleDeleteClient();
                   setPresentConfirmDelete(false);
                 }}
@@ -415,7 +431,7 @@ export const ClientsPage = () => {
               <IonButton
                 fill="solid"
                 color="danger"
-                onClick={(e) => {
+                onClick={() => {
                   setClientEdit(null);
                   setPresentConfirmDelete(false);
                 }}
