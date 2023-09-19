@@ -90,10 +90,11 @@ export const ConfigurationPage = () => {
   return (
     <>
       <IonToolbar
+        color="secondary"
         style={{ paddingLeft: "1rem", paddingRight: "1rem" }}
       >
         <IonSelect
-          color="secondary"
+          color="tertiary"
           placeholder="Selecione um tipo de cliente"
           label="Configurações de Clientes"
           labelPlacement="stacked"
@@ -111,14 +112,14 @@ export const ConfigurationPage = () => {
         </IonSelect>
         <IonButtons slot="end">
           <IonButton
-            color="secondary"
+            color="tertiary"
             fill="solid"
             onClick={(e) => presentClientTypeModal()}
           >
             <IonIcon md={addSharp} icon={addSharp}></IonIcon>
           </IonButton>
           <IonButton
-            color="secondary"
+            color="tertiary"
             fill="solid"
             onClick={(e) => presentClientTypeModal()}
           >

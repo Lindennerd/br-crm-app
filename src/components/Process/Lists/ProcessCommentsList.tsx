@@ -57,7 +57,7 @@ export const ProcessCommentsList = (props: ProcessCommentsListProps) => {
 
   return (
     <IonList lines="full">
-      <IonListHeader color="tertiary">
+      <IonListHeader color="secondary">
         <IonIcon icon={chatbox} />
         <IonTitle>Comentários</IonTitle>
         <IonButton

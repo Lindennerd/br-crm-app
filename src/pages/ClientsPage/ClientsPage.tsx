@@ -319,8 +319,8 @@ export const ClientsPage = () => {
 
   return (
     <>
-      <IonToolbar>
-        <IonItem>
+      <IonToolbar color="primary">
+        <IonItem color="secondary">
           <IonSelect
             interface="popover"
             onIonChange={handlSelectType}
@@ -335,7 +335,7 @@ export const ClientsPage = () => {
           <IonButtons slot="end">
             <IonButton
               fill="solid"
-              color="secondary"
+              color="tertiary"
               onClick={() => openUpSertClientModal()}
               disabled={selectedClientType == null}
             >
@@ -344,7 +344,7 @@ export const ClientsPage = () => {
             <IonButton
               disabled={!selectedClientType}
               fill="solid"
-              color="secondary"
+              color="tertiary"
               onClick={() => presetFiltersModal()}
             >
               <IonIcon icon={filterSharp} />({filters.length})

@@ -245,7 +245,7 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
   if (!process) return <></>;
   return (
     <>
-      <IonToolbar color="primary">
+      <IonToolbar color="secondary">
         <IonTitle slot="start">
           Processo {process.title} de{" "}
           {process && getFirstValue(process.client[0])}
@@ -256,11 +256,11 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
           style={{ marginRight: "1rem" }}
         />
         <IonButtons slot="end" style={{ marginRight: "1em" }}>
-          <IonButton color="secondary" fill="solid">
+          <IonButton color="tertiary" fill="solid">
             <IonIcon icon={pencilSharp} />
           </IonButton>
           <IonButton
-            color="secondary"
+            color="tertiary"
             fill="solid"
             onClick={(e) => presentClientDetailsModal()}
           >

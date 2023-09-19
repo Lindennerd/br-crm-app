@@ -59,7 +59,7 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
 
   return (
     <IonList lines="full">
-      <IonListHeader color="tertiary">
+      <IonListHeader color="secondary">
         <IonIcon icon={caretForwardSharp} />
         <IonTitle>Tarefas</IonTitle>
         <IonButton
@@ -71,7 +71,7 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
           <IonIcon icon={showAddTaskForm ? close : addSharp} />
         </IonButton>
       </IonListHeader>
-      <IonProgressBar color="primary" value={progress} />
+      <IonProgressBar color="tertiary" value={progress} />
       {showAddTaskForm && (
         <IonItem color="light">
           <IonIcon slot="start" icon={addCircleSharp} />
@@ -87,7 +87,7 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
         <IonItem
         key={index}
         button
-        color={task.isCompleted ? "medium" : ""}
+        color={task.isCompleted ? "primary" : ""}
         onClick={(e) => setCompletedTask(task)}
         >
           <IonIcon icon={caretForwardSharp} slot="start" />

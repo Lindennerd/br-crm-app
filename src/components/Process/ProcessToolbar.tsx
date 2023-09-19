@@ -17,7 +17,7 @@ export type ProcessToolbarProps = {
 
 export const ProcessToolbar = (props: ProcessToolbarProps) => {
   return (
-    <IonToolbar color="primary">
+    <IonToolbar color="secondary">
       <IonSearchbar
         class="custom"
         showClearButton="always"
@@ -26,11 +26,11 @@ export const ProcessToolbar = (props: ProcessToolbarProps) => {
         animated={true}
       />
       <IonButtons slot="end">
-        <IonButton color="secondary" fill="solid">
+        <IonButton color="tertiary" fill="solid">
           <IonIcon icon={searchSharp} />
         </IonButton>
         <IonButton
-          color="secondary"
+          color="tertiary"
           fill="solid"
           onClick={(_) => props.handleAddProcess()}
         >
@@ -38,7 +38,7 @@ export const ProcessToolbar = (props: ProcessToolbarProps) => {
         </IonButton>
         <IonButton
           style={{ display: "none" }}
-          color="secondary"
+          color="tertiary"
           fill="solid"
           onClick={(_) => props.handleFilter()}
         >

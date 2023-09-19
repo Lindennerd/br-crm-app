@@ -49,7 +49,7 @@ export const ProcessEventsList = (props: ProcessEventsListProps) => {
 
   return (
     <IonList lines="full">
-      <IonListHeader color="tertiary">
+      <IonListHeader color="secondary">
         <IonIcon icon={flagSharp} />
         <IonTitle>Eventos</IonTitle>
         <IonButton

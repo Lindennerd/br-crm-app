@@ -49,6 +49,7 @@ const Menu: React.FC = () => {
 
       setActiveModules(activeModules);
     }
+
   }, [user]);
 
   return (
@@ -57,8 +58,8 @@ const Menu: React.FC = () => {
         <IonList id="inbox-list">
           <IonListHeader>{user?.organization.name ? (
             <IonImg style={{height: "15rem"}} src={user.organization.logo} />
-          ) : "Bruna Reis CRM"}</IonListHeader>
-          <IonNote style={{textAlign: "center"}}>Powered By Bruna Reis CRM</IonNote>
+          ) : "Cólera CRM"}</IonListHeader>
+          <IonNote style={{textAlign: "center", marginTop: "2rem"}}>Powered By Cólera CRM</IonNote>
           {activeModules.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
@@ -69,7 +70,7 @@ const Menu: React.FC = () => {
                   routerLink={appPage.url}
                   routerDirection="none"
                   lines="none"
-                  detail={false}
+                  detail={true}
                 >
                   <IonIcon
                     aria-hidden="true"
@@ -83,7 +84,7 @@ const Menu: React.FC = () => {
             );
           })}
         </IonList>
-        <IonList id="additional-list">
+        {/* <IonList id="additional-list">
           {pages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
@@ -107,7 +108,7 @@ const Menu: React.FC = () => {
               </IonMenuToggle>
             );
           })}
-        </IonList>
+        </IonList> */}
       </IonContent>
     </IonMenu>
   );

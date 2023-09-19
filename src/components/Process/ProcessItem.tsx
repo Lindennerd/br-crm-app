@@ -8,6 +8,7 @@ import {
 import { Process } from "../../types/app.types";
 import { useMapUtils } from "../../api/useMapUtils";
 import {
+  documentAttachOutline,
   flashSharp,
 } from "ionicons/icons";
 import { ProcessStatusBadge } from "./ProcessStatusBadge";
@@ -25,7 +26,7 @@ export const ProcessItem = (props: IProcessItemProps) => {
   return (
 
     <IonItem lines="full" detail button onClick={e => props.onSelectProcess(props.process)}>
-      <IonIcon icon={flashSharp} slot="start" size="large" color="warning" />
+      <IonIcon icon={documentAttachOutline} slot="start" size="large" />
 
       <IonLabel>
         <div
