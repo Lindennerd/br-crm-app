@@ -27,6 +27,7 @@ import {
 import "./Page.css";
 import { ProcessDetailsPage } from "./ProcessPage/ProcessDetailsPage";
 import { useLoadingContext } from "../context/LoadingContext";
+import { UserButton } from "../components/User/UserButton";
 
 const Page = () => {
   const { gotoHome, gotoLogin } = useRouter();
@@ -76,18 +77,7 @@ const Page = () => {
           {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="end">
             {user ? (
-              <IonButton
-                onClick={() => handleLogout()}
-                size="default"
-                fill="clear"
-              >
-                <IonIcon
-                  slot="end"
-                  ios={logOutOutline}
-                  md={logOutOutline}
-                ></IonIcon>
-                <IonLabel>Logout</IonLabel>
-              </IonButton>
+              <UserButton />
             ) : (
               <IonButton
                 onClick={() => handleLogin()}

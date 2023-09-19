@@ -8,6 +8,7 @@ import {
   IonMenu,
   IonMenuToggle,
   IonNote,
+  IonImg
 } from "@ionic/react";
 
 import { useEffect, useState } from "react";
@@ -54,8 +55,10 @@ const Menu: React.FC = () => {
     <IonMenu contentId="main" type="push">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>{user?.organization.name ?? "BrCRM Solutions"}</IonListHeader>
-          <IonNote>Powered By BrCRM</IonNote>
+          <IonListHeader>{user?.organization.name ? (
+            <IonImg style={{height: "15rem"}} src={user.organization.logo} />
+          ) : "Bruna Reis CRM"}</IonListHeader>
+          <IonNote style={{textAlign: "center"}}>Powered By Bruna Reis CRM</IonNote>
           {activeModules.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>

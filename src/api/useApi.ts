@@ -7,7 +7,7 @@ import { UserData } from "../types/app.types";
 export const useApi = () => {
   const { push } = useIonRouter();
 
-  const baseUrl: string = "http://localhost:5114";
+  const baseUrl: string = "https://brcrm-api.fly.dev";
   const { headers, getCache, setCache, hasKey, clearCache } =
     useResponseCacheContext();
 

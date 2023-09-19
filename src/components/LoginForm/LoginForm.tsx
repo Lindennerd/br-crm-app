@@ -1,6 +1,14 @@
-import { IonButton, IonInput, useIonAlert, useIonLoading } from "@ionic/react";
+import {
+  IonButton,
+  IonIcon,
+  IonInput,
+  IonItem,
+  useIonAlert,
+  useIonLoading,
+} from "@ionic/react";
 import { useRouter } from "../../common/useRouter";
 import { useAuthContext } from "../../context/AuthContext";
+import { ellipseSharp, ellipsisHorizontalSharp, personSharp } from "ionicons/icons";
 
 type LoginFormTargetType = EventTarget & {
   user: { value: string };
@@ -39,19 +47,27 @@ export const LoginForm = () => {
       method="POST"
       style={{ width: 300 }}
     >
-      <IonInput
-        name="user"
-        label="USUÁRIO"
-        type="text"
-        labelPlacement="floating"
-      ></IonInput>
-      <IonInput
-        name="password"
-        label="SENHA"
-        type="password"
-        labelPlacement="floating"
-      ></IonInput>
-      <IonButton type="submit">LOGIN</IonButton>
+      <IonItem>
+        <IonIcon icon={personSharp} slot="end" />
+        <IonInput
+          name="user"
+          label="USUÁRIO"
+          type="text"
+          labelPlacement="floating"
+        ></IonInput>
+      </IonItem>
+      <IonItem>
+        <IonIcon  icon={ellipsisHorizontalSharp} slot="end"/>
+        <IonInput
+          name="password"
+          label="SENHA"
+          type="password"
+          labelPlacement="floating"
+        ></IonInput>
+      </IonItem>
+      <IonItem lines="none">
+        <IonButton size="default" type="submit">LOGIN</IonButton>
+      </IonItem>
     </form>
   );
 };
