@@ -18,6 +18,8 @@ import {
 } from "@ionic/react";
 import {
   addSharp,
+  documentAttachOutline,
+  documentAttachSharp,
   filterSharp,
   pencilSharp,
   rocketSharp,
@@ -392,7 +394,7 @@ export const ClientsPage = () => {
                     handleGotoProcesses(client);
                   }}
                 >
-                  <IonIcon icon={rocketSharp} />
+                  <IonIcon icon={documentAttachOutline} />
                 </IonButton>
                 <IonButton
                   onClick={(e) => {

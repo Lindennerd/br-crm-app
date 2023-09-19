@@ -1,4 +1,4 @@
-import { filter, rocketSharp } from "ionicons/icons";
+import { documentAttachOutline, documentAttachSharp, filter, rocketSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { IonButton, IonIcon, IonLabel, IonList, IonListHeader, useIonToast } from "@ionic/react";
@@ -51,7 +51,7 @@ export const ProcessListSlider = ({
   return <>
           <IonList>
           <IonListHeader>
-            <IonIcon icon={rocketSharp} size="large" style={{marginRight: "1em"}} />
+            <IonIcon icon={documentAttachOutline} size="large" style={{marginRight: "1em"}} />
             <IonLabel>
               <h1>Processos</h1>
             </IonLabel>
