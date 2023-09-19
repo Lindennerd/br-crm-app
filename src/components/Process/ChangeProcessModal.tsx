@@ -66,7 +66,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="secondary">
           <IonButtons slot="start">
             <IonButton
               color="medium"

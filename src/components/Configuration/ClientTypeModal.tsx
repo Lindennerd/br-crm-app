@@ -83,7 +83,7 @@ export const ClientTypeModal = ({
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="secondary">
           <IonButtons slot="start">
             <IonButton color="medium" onClick={(e) => handleDismissCancel()}>
               <IonIcon icon={closeSharp}></IonIcon>

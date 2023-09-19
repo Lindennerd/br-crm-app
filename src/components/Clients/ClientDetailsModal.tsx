@@ -32,7 +32,7 @@ export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="secondary">
           <IonButton
             fill="clear"
             color="medium"

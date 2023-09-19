@@ -50,7 +50,7 @@ export const ClientChangeModal = ({
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="secondary">
           <IonButtons slot="start">
             <IonButton
               color="medium"

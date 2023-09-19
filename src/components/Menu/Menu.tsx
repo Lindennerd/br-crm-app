@@ -57,7 +57,7 @@ const Menu: React.FC = () => {
       <IonContent>
         <IonList id="inbox-list">
           <IonListHeader>{user?.organization.name ? (
-            <IonImg style={{height: "15rem"}} src={user.organization.logo} />
+            <IonImg style={{height: "15rem", color: "#fff"}} src={user.organization.logo} />
           ) : "Cólera CRM"}</IonListHeader>
           <IonNote style={{textAlign: "center", marginTop: "2rem"}}>Powered By Cólera CRM</IonNote>
           {activeModules.map((appPage, index) => {
