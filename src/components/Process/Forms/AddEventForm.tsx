@@ -24,18 +24,19 @@ export const AddEventForm = (props: AddTaskFormProps) => {
   return (
     <>
       <IonTextarea
-        style={{ padding: "0.5em"}}
+        style={{ padding: "0.5em" }}
         fill="solid"
         label="Descrição"
         labelPlacement="floating"
         placeholder="Descreva o evento"
         value={edittingEvent.description}
-        onIonChange={(e) =>
+        onIonChange={(e) => {
+          debugger;
           setEdittingEvent({
             ...edittingEvent,
             description: e.detail.value ?? "",
-          })
-        }
+          });
+        }}
       />
       <IonSelect
         interface="popover"

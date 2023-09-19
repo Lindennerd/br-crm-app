@@ -10,7 +10,7 @@ export type ProcessToolbarProps = {
 
 export const ProcessToolbar = (props: ProcessToolbarProps) => {
 
-  return <IonToolbar color="primary">
+  return <IonToolbar>
     <IonSearchbar
       class="custom"
       showClearButton="always"

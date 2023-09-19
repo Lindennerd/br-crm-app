@@ -108,7 +108,7 @@ export const useProcessApi = () => {
       return {
         ...result,
         client: [
-          ...result.client.map((c) => {
+          ...result.client?.map((c) => {
             c.fieldValues = objectToMap(c.fieldValues);
             return c;
           }),

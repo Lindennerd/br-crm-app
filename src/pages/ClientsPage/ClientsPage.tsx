@@ -318,7 +318,7 @@ export const ClientsPage = () => {
   return (
     <>
       <IonToolbar>
-        <IonItem color="primary">
+        <IonItem>
           <IonSelect
             interface="popover"
             onIonChange={handlSelectType}

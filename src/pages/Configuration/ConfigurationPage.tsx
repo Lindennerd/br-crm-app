@@ -90,7 +90,6 @@ export const ConfigurationPage = () => {
   return (
     <>
       <IonToolbar
-        color="primary"
         style={{ paddingLeft: "1rem", paddingRight: "1rem" }}
       >
         <IonSelect

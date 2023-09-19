@@ -9,7 +9,7 @@ export const UserButton = () => {
 
   const handleLogout = () => {
     logout();
-    gotoHome();
+    gotoLogin();
   };
 
   return (
