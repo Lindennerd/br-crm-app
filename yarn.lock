@@ -4829,10 +4829,10 @@
     "mkdirp" "^1.0.3"
     "yallist" "^4.0.0"
 
-"terser@^5.4.0":
-  "integrity" "sha512-pQzJ9UJzM0IgmT4FAtYI6+VqFf0lj/to58AV0Xfgg0Up37RyPG7Al+1cepC6/BVuAxR9oNb41/DL4DEoHJvTdg=="
-  "resolved" "https://registry.npmjs.org/terser/-/terser-5.19.3.tgz"
-  "version" "5.19.3"
+"terser@^5.19.4", "terser@^5.4.0":
+  "integrity" "sha512-6p1DjHeuluwxDXcuT9VR8p64klWJKo1ILiy19s6C9+0Bh2+NWTX6nD9EPppiER4ICkHDVB1RkVpin/YW2nQn/g=="
+  "resolved" "https://registry.npmjs.org/terser/-/terser-5.19.4.tgz"
+  "version" "5.19.4"
   dependencies:
     "@jridgewell/source-map" "^0.3.3"
     "acorn" "^8.8.2"
