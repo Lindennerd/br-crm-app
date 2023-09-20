@@ -352,7 +352,7 @@ export const ClientsPage = () => {
           </IonButtons>
         </IonItem>
       </IonToolbar>
-      <IonItem color="light" className="ion-paddin-bottom">
+      <IonItem color="secondary" className="ion-paddin-bottom">
         <IonSelect
           disabled={!selectedClientType}
           style={{ marginRight: "1em" }}

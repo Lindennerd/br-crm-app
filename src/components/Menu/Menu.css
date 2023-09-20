@@ -8,6 +8,11 @@ ion-menu ion-content {
   --ion-background-color: var(--ion-color-primary);
 }
 
+ion-menu ion-item:hover {
+  --background: rgba(var(--ion-color-secondary-rgb), 0.8);
+  --color: #fff;
+}
+
 ion-menu.md ion-content {
   --padding-start: 8px;
   --padding-end: 8px;

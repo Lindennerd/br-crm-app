@@ -35,7 +35,7 @@ export const ClientTypeFieldForm = (props: ClientTypeFieldFormProps) => {
     if (field.name == null || field.name == "") return;
     if (field.type == null) return;
     props.onSave(field);
-    // resetForm();
+    resetForm();
   }
 
   return (
@@ -49,7 +49,9 @@ export const ClientTypeFieldForm = (props: ClientTypeFieldFormProps) => {
         label="Nome"
         labelPlacement="stacked"
         value={field.name}
-        onIonChange={(e) => setField({ ...field, name: e.detail.value! })}
+        onIonInput={(e) => {
+          setField({ ...field, name: e.detail.value! })
+        }}
       />
       <IonSelect
         color={field.name == null || field.name == "" ? "danger" : ""}
@@ -109,7 +111,7 @@ export const ClientTypeFieldForm = (props: ClientTypeFieldFormProps) => {
       />
       <IonButtons>
         <IonButton color="success" fill="solid" onClick={(e) => handleSave()}>
-          Salvar
+          Adicionar Campo
         </IonButton>
       </IonButtons>
     </div>
