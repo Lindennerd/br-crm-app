@@ -86,7 +86,7 @@ const Menu: React.FC = () => {
           })}
         </IonList>
         <div className="footer">
-        &trade; Powered By Cólera CRM &copy; 2021
+        &trade; Powered By Cólera CRM &copy; 2023
         </div>
       </IonContent>
     </IonMenu>
