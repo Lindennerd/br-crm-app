@@ -12,7 +12,7 @@ export const useMapUtils = () => {
   }
 
   function getFirstValue(client: Client): string {
-    if (!client.fieldValues) return "";
+    if (!client || !client.fieldValues) return "";
     const fieldValues = ensureItsMap(client.fieldValues);
     if(fieldValues.size <= 0) return "";
     const [field, value] = fieldValues
