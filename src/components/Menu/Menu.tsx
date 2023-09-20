@@ -19,6 +19,8 @@ import { AppPage, UserRole } from "../../types/app.types";
 import { additionalPages } from "../../types/pages";
 import "./Menu.css";
 
+import BrunaReisLogo from "../../../public/BrunaReisLogo.svg";
+
 const Menu: React.FC = () => {
   const [pages, setPages] = useState<AppPage[]>(additionalPages);
   const [activeModules, setActiveModules] = useState<AppPage[]>([]);
@@ -58,8 +60,7 @@ const Menu: React.FC = () => {
         <IonList id="inbox-list">
           <IonListHeader>{user?.organization.name ? (
             <IonImg style={{height: "15rem", color: "#fff"}} src={user.organization.logo} />
-          ) : "Cólera CRM"}</IonListHeader>
-          <IonNote style={{textAlign: "center", marginTop: "2rem"}}>Powered By Cólera CRM</IonNote>
+          ) : <IonImg style={{height: "15rem", color: "#fff"}} src={BrunaReisLogo} />}</IonListHeader>
           {activeModules.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
@@ -84,31 +85,9 @@ const Menu: React.FC = () => {
             );
           })}
         </IonList>
-        {/* <IonList id="additional-list">
-          {pages.map((appPage, index) => {
-            return (
-              <IonMenuToggle key={index} autoHide={false}>
-                <IonItem
-                  className={
-                    location.pathname === appPage.url ? "selected" : ""
-                  }
-                  routerLink={appPage.url}
-                  routerDirection="none"
-                  lines="none"
-                  detail={false}
-                >
-                  <IonIcon
-                    aria-hidden="true"
-                    slot="start"
-                    ios={appPage.iosIcon}
-                    md={appPage.mdIcon}
-                  />
-                  <IonLabel>{appPage.title}</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-            );
-          })}
-        </IonList> */}
+        <div className="footer">
+        &trade; Powered By Cólera CRM &copy; 2021
+        </div>
       </IonContent>
     </IonMenu>
   );

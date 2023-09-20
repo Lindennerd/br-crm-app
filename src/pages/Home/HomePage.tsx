@@ -13,7 +13,7 @@ export const HomePage = () => {
   if (user)
     return (
       <>
-        <ProcessListSlider slidesPerView={5} />
+        <ProcessListSlider slidesPerView={1} />
       </>
     );
 

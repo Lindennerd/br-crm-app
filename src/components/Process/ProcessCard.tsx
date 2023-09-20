@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -16,17 +17,19 @@ export const ProcessCard = ({ process }: { process: Process }) => {
   const { getFirstValue } = useMapUtils();
 
   return (
-    <IonCard style={{ width: "100%" }}>
+    <IonCard style={{ width: "100%" }} href={`page/processo/${process.id}`}>
       <IonCardHeader>
         <IonTitle>{process.title}</IonTitle>
         <IonCardSubtitle>{getFirstValue(process.client[0])}</IonCardSubtitle>
       </IonCardHeader>
       <IonCardContent>
-        <ProcessStatusBadge status={process.status} />
 
         <IonNote>Criado em: {new Date(process.createdAt).toLocaleString()}</IonNote>
         <IonNote>Prazo: {process.sla} dias</IonNote>
       </IonCardContent>
+      <div style={{padding: "1em"}}>
+        <ProcessStatusBadge status={process.status} />
+      </div>
     </IonCard>
   );
 };
