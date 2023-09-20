@@ -4,8 +4,9 @@ http://ionicframework.com/docs/theming/ */
 /** Ionic CSS Variables **/
 :root {
   --ion-background-color: #f6ebfd;
+  --ion-background-image: linear-gradient(to left, #45398b, #18072b);
 
-  --ion-color-primary: #45398b;
+	--ion-color-primary: #45398B;
 	--ion-color-primary-rgb: 69,57,139;
 	--ion-color-primary-contrast: #ffffff;
 	--ion-color-primary-contrast-rgb: 255,255,255;
