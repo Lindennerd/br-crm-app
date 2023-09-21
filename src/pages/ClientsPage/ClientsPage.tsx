@@ -63,8 +63,7 @@ export const ClientsPage = () => {
   const [filters, setFilters] = useState<ClientField[]>([]);
   const { getFirstValue } = useMapUtils();
 
-  const { setClient: setCurrentClient } =
-    useCurrentClientContext();
+  const { setClient: setCurrentClient } = useCurrentClientContext();
 
   const { gotoProcesses } = useRouter();
 
@@ -298,8 +297,8 @@ export const ClientsPage = () => {
           return [...prev];
         });
       })
-      .catch(err => {
-        console.log(err as any)
+      .catch((err) => {
+        console.log(err as any);
         presentToast({
           message: err.toString(),
           duration: 2000,

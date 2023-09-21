@@ -15,11 +15,8 @@ import {
 } from "@ionic/react";
 import { Process } from "../../types/app.types";
 import {
-  addCircleSharp,
-  attachSharp,
   closeSharp,
   documentAttachSharp,
-  linkSharp,
   listSharp,
   personAddSharp,
 } from "ionicons/icons";

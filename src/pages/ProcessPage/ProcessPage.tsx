@@ -4,7 +4,7 @@ import {
   useProcessPageController,
 } from "./ProcessPage.Controller";
 import { useAtom } from "jotai";
-import { IonList, IonLoading, useIonModal } from "@ionic/react";
+import { IonList, useIonModal } from "@ionic/react";
 import { ProcessToolbar } from "../../components/Process/ProcessToolbar";
 import {
   ChangeProcessModal,
