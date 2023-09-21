@@ -298,9 +298,10 @@ export const ClientsPage = () => {
           return [...prev];
         });
       })
-      .catch(() => {
+      .catch(err => {
+        console.log(err as any)
         presentToast({
-          message: "Ocorreu um erro ao remover as informações de clientes",
+          message: err.toString(),
           duration: 2000,
           position: "top",
           color: "danger",
