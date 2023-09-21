@@ -21,9 +21,6 @@ export const ProcessAdditionalDataForm = () => {
 
   return (
     <>
-      <IonToolbar>
-        <IonLabel>Dados Adicionais do processo</IonLabel>
-      </IonToolbar>
       <AdditionalInformationForm
         field={""}
         value={""}
@@ -32,7 +29,7 @@ export const ProcessAdditionalDataForm = () => {
             process.additionalData = new Map<string, string>();
 
           process.additionalData = ensureItsMap(process.additionalData);
-          if (field && value) {
+          if (field) {
             process.additionalData.set(field, value);
 
             setProcess((prev) => ({

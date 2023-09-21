@@ -8,6 +8,8 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
+  IonItemDivider,
+  IonNote,
 } from "@ionic/react";
 import {
   Process,
@@ -19,6 +21,8 @@ import { changeProcessAtom } from "./ChangeProcessModal";
 import { addSharp, closeSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { AddTaskForm } from "./Forms/AddTaskForm";
+import { SelectProcessType } from "./SelectProcessType";
+import { useProcessBindingFormController } from "./ProcessBindingForm/useProcessBindingFormController";
 
 export const ProcessInitialDataForm = ({
   configuration,
@@ -27,6 +31,7 @@ export const ProcessInitialDataForm = ({
 }) => {
   const [process, setProcess] = useAtom(changeProcessAtom);
   const [edittingTask, setEdittingTask] = useState<string>("");
+  const controller = useProcessBindingFormController();
 
   useEffect(() => {
     if (configuration) {
@@ -79,6 +84,25 @@ export const ProcessInitialDataForm = ({
 
   return (
     <>
+      <IonNote>
+        Se você já criou um processo desse tipo antes, selecione abaixo
+      </IonNote>
+      <SelectProcessType
+        processTypes={controller.state.processConfigurations}
+        defaultValue={controller.state.selectedProcessConfiguration}
+        onSelected={(processType) =>
+          controller.setSelectedProcessConfiguration(processType.id)
+        }
+      />
+      <IonItemDivider />
+
+      <IonNote>
+        <p>
+          Se ainda não criou um processo desse tipo, digite abaixo as
+          informações necessárias
+        </p>
+      </IonNote>
+
       <IonInput
         label="Nome do processo"
         labelPlacement="floating"
@@ -129,17 +153,16 @@ export const ProcessInitialDataForm = ({
         }
         style={{ marginBottom: "1rem" }}
       />
+      <IonItemDivider />
+      <h2>Checklist do Processo</h2>
+      <AddTaskForm
+        task={edittingTask}
+        onTaskChange={(task) => {
+          setEdittingTask(task);
+          handleAddTask();
+        }}
+      />
       <IonList>
-        <IonListHeader>
-          <IonLabel>Checklist do Processo</IonLabel>
-        </IonListHeader>
-        <AddTaskForm 
-          task={edittingTask}
-          onTaskChange={(task) => {
-            setEdittingTask(task)
-            handleAddTask()
-          }}
-        />
         {process?.tasks?.map((task, index) => (
           <IonItem key={index}>
             <IonLabel>{task.title}</IonLabel>

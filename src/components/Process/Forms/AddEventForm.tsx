@@ -26,6 +26,7 @@ export const AddEventForm = (props: AddTaskFormProps) => {
       <IonTextarea
         style={{ padding: "0.5em" }}
         fill="solid"
+        color="primary"
         label="Descrição"
         labelPlacement="floating"
         placeholder="Descreva o evento"

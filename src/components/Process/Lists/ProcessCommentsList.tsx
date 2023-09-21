@@ -70,7 +70,7 @@ export const ProcessCommentsList = (props: ProcessCommentsListProps) => {
         </IonButton>
       </IonListHeader>
       {showAddForm && (
-        <IonItem color="light">
+        <IonItem >
           <IonIcon slot="start" icon={chatbubble} />
           <div
             style={{ display: "flex", flexDirection: "column", width: "100%" }}

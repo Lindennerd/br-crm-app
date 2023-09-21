@@ -22,7 +22,7 @@ export const useProcessApi = () => {
       return await post("/Process/CreateProcess", {
         ...process,
         additionalData:
-          process.additionalData.size > 0
+          process.additionalData && process.additionalData.size > 0
             ? mapToObject(process.additionalData)
             : {},
       });

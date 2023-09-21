@@ -17,7 +17,7 @@ export const AddTaskForm = (props: AddTaskFormProps) => {
     const [edittingTask, setEdittingTask] = useState<string>(props.task);
 
   return (
-    <IonItem color="light">
+    <IonItem>
       <IonInput
         label="Novo item"
         labelPlacement="floating"
@@ -29,7 +29,10 @@ export const AddTaskForm = (props: AddTaskFormProps) => {
         <IonButton
           fill="solid"
           color="primary"
-          onClick={(e) => props.onTaskChange(edittingTask)}
+          onClick={(e) => {
+            e.stopPropagation();
+            props.onTaskChange(edittingTask)
+          }}
         >
           <IonIcon icon={addSharp}></IonIcon>
         </IonButton>

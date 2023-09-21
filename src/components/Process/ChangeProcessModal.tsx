@@ -16,9 +16,12 @@ import {
 import { Process } from "../../types/app.types";
 import {
   addCircleSharp,
+  attachSharp,
   closeSharp,
+  documentAttachSharp,
   linkSharp,
   listSharp,
+  personAddSharp,
 } from "ionicons/icons";
 import { useState } from "react";
 import { ProcessInitialDataForm } from "./ProcessInitialDataForm";
@@ -78,7 +81,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
           <IonTitle>
             {process.title
               ? `Editar processo ${process.title}`
-              : "Novo processo"}
+              : "Novo Processo"}
           </IonTitle>
           <IonButtons slot="end">
             <IonButton
@@ -103,13 +106,16 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
             onIonChange={(e) => setSegment(e.detail.value as any)}
           >
             <IonSegmentButton value="bindings">
-              <IonIcon icon={linkSharp}></IonIcon>
+              <IonLabel>CLIENTE</IonLabel>
+              <IonIcon icon={personAddSharp}></IonIcon>
             </IonSegmentButton>
             <IonSegmentButton value="initial-data">
-              <IonIcon icon={listSharp}></IonIcon>
+              <IonLabel>PROCESSO</IonLabel>
+              <IonIcon icon={documentAttachSharp}></IonIcon>
             </IonSegmentButton>
             <IonSegmentButton value="additional-data">
-              <IonIcon icon={addCircleSharp}></IonIcon>
+              <IonLabel>INFORMAÇÕES</IonLabel>
+              <IonIcon icon={listSharp}></IonIcon>
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>

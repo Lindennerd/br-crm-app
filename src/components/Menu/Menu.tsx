@@ -19,7 +19,7 @@ import { AppPage, UserRole } from "../../types/app.types";
 import { additionalPages } from "../../types/pages";
 import "./Menu.css";
 
-import BrunaReisLogo from "../../../public/BrunaReisLogo.svg";
+import BrunaReisLogo from "/BrunaReisLogo.svg";
 
 const Menu: React.FC = () => {
   const [pages, setPages] = useState<AppPage[]>(additionalPages);

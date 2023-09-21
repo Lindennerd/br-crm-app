@@ -38,8 +38,8 @@ export const ProcessInformationList = (props: ProcessInformationListProps) => {
         </IonButton>
       </IonListHeader>
       {showAddForm && (
-        <IonItem color="light">
-          <IonIcon slot="start" icon={addCircleSharp} />
+        <IonItem>
+          <IonIcon slot="start" icon={addCircleSharp}/>
           {addForm()}
         </IonItem>
       )}

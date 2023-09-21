@@ -5,8 +5,9 @@ import {
   IonInput,
   IonButton,
   IonIcon,
+  IonNote,
 } from "@ionic/react";
-import { checkmarkSharp } from "ionicons/icons";
+import { addSharp, checkmarkSharp } from "ionicons/icons";
 import { useState } from "react";
 
 export interface AdditionalInformationFormProps {
@@ -27,8 +28,15 @@ export const AdditionalInformationForm = (
     <IonGrid>
       <IonRow>
         <IonCol>
+          <IonNote>
+            <p>Adicione aqui informações relativas ao processo, como protocolos e outras.</p>
+          </IonNote>
+        </IonCol>
+      </IonRow>
+      <IonRow>
+        <IonCol>
           <IonInput
-            label="Campo"
+            label="Tipo de informação"
             labelPlacement="floating"
             value={values.field}
             onIonChange={(e) =>
@@ -53,7 +61,7 @@ export const AdditionalInformationForm = (
                 props.onAdd(values.field, values.value)
             }}
           >
-            <IonIcon icon={checkmarkSharp}></IonIcon>
+            <IonIcon icon={addSharp}></IonIcon>
           </IonButton>
         </IonCol>
       </IonRow>

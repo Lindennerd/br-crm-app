@@ -73,7 +73,7 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
       </IonListHeader>
       <IonProgressBar color="tertiary" value={progress} />
       {showAddTaskForm && (
-        <IonItem color="light">
+        <IonItem >
           <IonIcon slot="start" icon={addCircleSharp} />
           <div style={{ width: "100%" }}>{addForm()}</div>
         </IonItem>

@@ -61,7 +61,7 @@ export const ProcessEventsList = (props: ProcessEventsListProps) => {
           <IonIcon icon={showAddForm ? close : addSharp} />
         </IonButton>
       </IonListHeader>
-      {showAddForm && <IonItem color="light">{addForm()}</IonItem>}
+      {showAddForm && <IonItem>{addForm()}</IonItem>}
       {props.events.map((event, index) => (
         <IonItem key={index}>
           {event.eventType == ProcessStatus.Blocked && (

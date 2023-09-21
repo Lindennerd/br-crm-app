@@ -34,7 +34,7 @@ export const ProcessBindingsForms = () => {
     Promise.all([getProcessConfiguration(), getClientConfiguration()]).then(
       ([processConfigurations, clientConfiguration]) =>
         controller.loadConfigurations(
-        processConfigurations,
+          processConfigurations,
           clientConfiguration
         )
     );
@@ -59,19 +59,16 @@ export const ProcessBindingsForms = () => {
 
   return (
     <>
-      <IonNote>
-        Aqui você pode reaproveitar informações utilizadas em outros processos
-      </IonNote>
-      <SelectProcessType
-        processTypes={controller.state.processConfigurations}
-        defaultValue={controller.state.selectedProcessConfiguration}
-        onSelected={(processType) =>
-          controller.setSelectedProcessConfiguration(processType.id)
-        }
-      />
-
-      <div style={{ marginTop: "1rem" }}>
+      <div>
         <IonGrid>
+          <IonRow>
+            <IonCol>
+              <IonNote style={{ marginTop: "1em" }}>
+                Selecione o tipo de cliente, o campo pelo qual deseja pesquisar
+                e vincule o cliente ao processo que você está criando
+              </IonNote>
+            </IonCol>
+          </IonRow>
           <IonRow>
             <IonCol>
               <SelectClientType

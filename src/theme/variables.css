@@ -27,12 +27,12 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-tertiary-shade: #251f43;
 	--ion-color-tertiary-tint: #3f395e;
 
-	--ion-color-success: #b206cb;
+	--ion-color-success: #15a14b;
 	--ion-color-success-rgb: 67,152,101;
 	--ion-color-success-contrast: #ffffff;
 	--ion-color-success-contrast-rgb: 255,255,255;
-	--ion-color-success-shade: #b206cb;
-	--ion-color-success-tint: #b206cb;
+	--ion-color-success-shade: #035a31;
+	--ion-color-success-tint: #035a31;
 
 	--ion-color-warning: #dfaf11;
 	--ion-color-warning-rgb: 223,175,17;
