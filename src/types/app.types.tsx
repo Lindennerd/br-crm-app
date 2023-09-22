@@ -182,3 +182,10 @@ export type ProcessConfiguration = {
   tasks: ProcessTask[];
   additionalData: Map<string, string>;
 }
+
+export type BussinessError = {
+  type: string,
+  title: string,
+  status: number,
+  traceId: string
+}

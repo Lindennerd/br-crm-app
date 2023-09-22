@@ -1,23 +1,23 @@
-import { CapacitorHttp as http } from "@capacitor/core";
 import { useApi } from "./useApi";
+import { useMutation } from "react-query";
+import { UserData } from "../types/app.types";
+import { useAuthContext } from "../context/AuthContext";
 
-export const useSecurity = () => {
-  const { baseUrl, headers } = useApi();
+export type loginData = {
+  user: string;
+  password: string;
+};
 
-  async function login(user: string, password: string) {
-    const data = { user, password };
-    const response = await http.post({
-      url: new URL('security/login', baseUrl).toString(),
-      data,
-      headers: Object.fromEntries(headers),
-    });
+export const useLogin = () => {
+  const { post } = useApi();
+  const { login } = useAuthContext();
 
-    if (!response.data || response.status > 299) return null;
-    else return response.data;
-  }
 
-  return {
-    login,
-    logout: () => {},
-  };
+  return useMutation(
+    ["login"],
+    async (loginData: loginData): Promise<UserData> => {
+      return await post<loginData, UserData>("security/login", loginData, true);
+    },
+    { onSuccess: (data) => login(data) }
+  );
 };

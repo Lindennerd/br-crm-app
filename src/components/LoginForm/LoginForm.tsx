@@ -8,7 +8,9 @@ import {
 } from "@ionic/react";
 import { useRouter } from "../../common/useRouter";
 import { useAuthContext } from "../../context/AuthContext";
-import { ellipseSharp, ellipsisHorizontalSharp, personSharp } from "ionicons/icons";
+import { ellipsisHorizontalSharp, personSharp } from "ionicons/icons";
+import { useLogin } from "../../api/security";
+import { useLoadingContext } from "../../context/LoadingContext";
 
 type LoginFormTargetType = EventTarget & {
   user: { value: string };
@@ -17,28 +19,16 @@ type LoginFormTargetType = EventTarget & {
 
 export const LoginForm = () => {
   const { gotoHome } = useRouter();
-  const authContext = useAuthContext();
-  const [present, dismiss] = useIonLoading();
-  const [presentAlert] = useIonAlert();
+  const {mutateAsync: login, error} = useLogin();
 
   async function handleLoginSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
-    try {
-      const target = e.target as LoginFormTargetType;
-      await present("Por favor, aguarde");
-      const result = await authContext.login(
-        target.user.value,
-        target.password.value
-      );
-      await dismiss();
-      gotoHome();
-
-      if (!result.success)
-        presentAlert("O usuário ou a senha estão incorretos");
-    } catch (error) {
-      dismiss();
-      presentAlert((error as Error).message);
-    }
+    await login({
+      user: (e.target as LoginFormTargetType).user.value,
+      password: (e.target as LoginFormTargetType).password.value
+    }, {
+      onSuccess: () => gotoHome()
+    })
   }
 
   return (

@@ -1,19 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { useSecurity } from "../api/security";
 import { createStore, get, remove, set } from "../common/storage";
 import { UserData } from "../types/app.types";
 import { childrenProp } from "../types/react.types";
 
 interface IAuthContext {
-  login: (user: string, password: string) => Promise<{ success: boolean }>;
+  login: (user: UserData) => void;
   logout: () => void;
   user: UserData | undefined;
 }
 
 const contextValue: IAuthContext = {
-  login: async (user: string, password: string) => {
-    return new Promise((res, rej) => {});
-  },
+  login: async (user: UserData) => {},
   logout: () => {},
   user: {} as UserData,
 };
@@ -24,7 +21,6 @@ export const useAuthContext = () => useContext(context);
 
 export const AuthContextProvider = ({ children }: childrenProp) => {
   createStore("authStore");
-  const { login, logout } = useSecurity();
 
   const [auth, setAuth] = useState<UserData>();
 
@@ -41,19 +37,14 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
     fetchCachedData().catch((err) => console.error(err));
   }, []);
 
-  const handleLogin = async (user: string, password: string) => {
-    const response: UserData = await login(user, password);
-    if (!response) return { success: false };
-
-    set("authInfo", response);
-    setAuth(response);
-    return { success: true };
+  const handleLogin = async (user: UserData) => {   
+    set("authInfo", user);
+    setAuth(user);
   };
 
   const handleLogout = async () => {
     await remove("authInfo");
     setAuth(undefined);
-    logout();
   };
 
   return (

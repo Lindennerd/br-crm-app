@@ -3,6 +3,7 @@ import {
   IonRouterOutlet,
   IonSplitPane,
   setupIonicReact,
+  useIonToast,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Redirect, Route } from "react-router-dom";
@@ -27,29 +28,99 @@ import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider, useQueryClient } from "react-query";
+import { LoadingContextProvider, useLoadingContext } from "./context/LoadingContext";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { AuthContextProvider } from "./context/AuthContext";
+import { ResponseCacheContextProvider } from "./context/CacheContext";
+import { CurrentClientContextProvider } from "./context/CurrentClientContext";
+import { MenuContextProvider } from "./context/MenuContext";
+import { useState } from "react";
+import { BussinessError } from "./types/app.types";
 
 setupIonicReact();
 
 const App: React.FC = () => {
+  const [presentToast] = useIonToast();
+  const { loading, setLoading } = useLoadingContext();
+
+  const mutationCache = new MutationCache({
+    onError: (error) => {
+      setLoading(false);
+      presentError((error as BussinessError).title);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: () => {
+      setLoading(false);
+    }
+  });
+
+  const queryCache = new QueryCache({
+    onError: (error) => {
+      setLoading(false);
+      presentError((error as BussinessError).title);
+    },
+    onSuccess: () => {
+      setLoading(false);
+    },
+  });
+  
+  const presentError = (message: string) => {
+    presentToast({
+      message,
+      duration: 3000,
+      color: "danger",
+      position: "top",
+    });
+  };
+  
+  const [queryClient] = useState(() => new QueryClient({
+    mutationCache, queryCache, defaultOptions: {
+      queries: {
+        refetchInterval: 1000 * 60 * 5,
+        behavior: {
+          onFetch: (context) => {
+            setLoading(true);
+          }
+        }
+      }
+    }
+  }))
+  
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
-          <IonRouterOutlet id="main">
-            <Route path="/" exact={true}>
-              <Redirect to="/page/home" />
-            </Route>
-            <Route path="/page/processo/:name">
-              <Page></Page>
-            </Route>
-            <Route path="/page/:name" exact={true}>
-              <Page></Page>
-            </Route>
-          </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
-    </IonApp>
+    <QueryClientProvider client={queryClient}>
+      <LoadingContextProvider>
+        <ResponseCacheContextProvider>
+          <MenuContextProvider>
+            <AuthContextProvider>
+              <CurrentClientContextProvider>
+                <IonApp>
+                  <IonReactRouter>
+                    <IonSplitPane contentId="main">
+                      <Menu />
+                      <IonRouterOutlet id="main">
+                        <Route path="/" exact={true}>
+                          <Redirect to="/page/home" />
+                        </Route>
+                        <Route path="/page/processo/:name">
+                          <Page></Page>
+                        </Route>
+                        <Route path="/page/:name" exact={true}>
+                          <Page></Page>
+                        </Route>
+                      </IonRouterOutlet>
+                    </IonSplitPane>
+                  </IonReactRouter>
+                </IonApp>
+              </CurrentClientContextProvider>
+            </AuthContextProvider>
+          </MenuContextProvider>
+        </ResponseCacheContextProvider>
+      </LoadingContextProvider>
+      <ReactQueryDevtools initialIsOpen />
+    </QueryClientProvider>
   );
 };
 

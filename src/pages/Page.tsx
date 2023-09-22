@@ -57,11 +57,6 @@ const Page = () => {
     }
   }, [name]);
 
-  const handleLogout = () => {
-    logout();
-    gotoHome();
-  };
-
   const handleLogin = () => {
     gotoLogin();
   };
