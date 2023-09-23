@@ -1,3 +1,4 @@
+import { useQuery } from "react-query";
 import { ClientConfiguration, ProcessConfiguration } from "../types/app.types";
 import { useApi } from "./useApi";
 
@@ -16,3 +17,11 @@ export const useConfigurationApi = () => {
     },
   };
 };
+
+
+export const useGetClientConfiguration = () => {
+  const { get } = useApi();
+  return useQuery("getClientConfiguration", async () => {
+    return await get<ClientConfiguration[]>("/organization/getclientconfiguration");
+  });
+}

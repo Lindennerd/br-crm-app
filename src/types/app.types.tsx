@@ -80,8 +80,8 @@ export enum FieldType {
 export type GetClientsRequest = {
   page: number;
   pageSize: number;
-  clientType: string;
-  fieldsFilter: Map<string, string> | null;
+  clientTypeId: string;
+  fieldsFilter: { [key: string]: string };
   orderBy: OrderBy | null;
   exact: boolean;
 };
@@ -90,8 +90,7 @@ export type OrderBy = {
   fieldName: string;
 };
 export type ClientField = {
-  value: string | number;
-  field: FieldConfiguration;
+  fieldValues: { [key: string]: string }
 };
 
 export type Client = {
@@ -99,6 +98,15 @@ export type Client = {
   clientType: string;
   fieldValues: Map<string, string>;
 };
+
+export type ClientNew = {
+  id: string | null;
+  clientTypeId: string;
+  fieldValues: { [key: string]: string };
+  clientConfiguration: ClientConfiguration;
+};
+
+
 
 export type Process = {
   id: string;

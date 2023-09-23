@@ -5,91 +5,110 @@ import {
   IonSelect,
   IonSelectOption,
 } from "@ionic/react";
-import { FieldConfiguration } from "../../types/app.types";
+import {
+  ClientConfiguration,
+  ClientNew,
+  FieldConfiguration,
+} from "../../types/app.types";
 
 export type ClientFormProps = {
-  selectedField: FieldConfiguration;
-  getFieldValue: (field: string) => string | number| undefined;
-  setFieldValue: (value: string | number, field: FieldConfiguration) => void;
+  setClient: (client: ClientNew) => void;
+  client?: ClientNew | null;
+  clientConfiguration?: ClientConfiguration | null;
 };
-export const ClientForm = ({
-  selectedField,
-  getFieldValue,
-  setFieldValue,
-}: ClientFormProps) => {
-  const getFieldJsx = () => {
-    switch (selectedField.type) {
-      case 0:
-        return (
-          <IonItem key={selectedField.name} className="ion-margin-bottom">
-            <IonLabel position="stacked">{selectedField.name}</IonLabel>
-            {!selectedField.possibleValues || selectedField.possibleValues?.every((it) => it === "") ? (
+export const ClientForm = (props: ClientFormProps) => {
+  function getConfigurations(): FieldConfiguration[] {
+    if (props.client)
+      return props.client.clientConfiguration.fieldConfigurations;
+    if (props.clientConfiguration)
+      return props.clientConfiguration.fieldConfigurations;
+    return [];
+  }
+
+  function buildClientFromConfiguration() {
+    if(props.client) return props.client;
+    if (!props.clientConfiguration) return;
+    const client: ClientNew = {
+      id: null,
+      clientTypeId: props.clientConfiguration.id!,
+      fieldValues: {},
+      clientConfiguration: props.clientConfiguration,
+    };
+
+    return client;
+  }
+
+  function getFieldValue(field: FieldConfiguration) {
+    return props.client?.fieldValues[field.name] ?? "";
+  }
+
+  function setFieldValue(field: FieldConfiguration, value: string) {
+    const client = buildClientFromConfiguration();
+    if (!client) return;
+    props.setClient({
+      ...(props.client ?? client),
+      fieldValues: { ...props.client?.fieldValues, [field.name]: value },
+    });
+  }
+
+  return (
+    <>
+      {getConfigurations().map((field) => {
+        if (field.type === 0) {
+          return (
+            <IonItem key={field.name}>
               <IonInput
-                type="text"
-                value={getFieldValue(selectedField.name)}
-                onIonChange={(e) =>
-                  setFieldValue(e.target.value ?? "", selectedField)
-                }
-              ></IonInput>
-            ) : (
+                label={field.name}
+                labelPlacement="floating"
+                value={getFieldValue(field)}
+                onIonInput={(e) => setFieldValue(field, e.detail.value!)}
+              />
+            </IonItem>
+          );
+        } else if (field.type === 1) {
+          return (
+            <IonItem key={field.name}>
+              <IonInput
+                label={field.name}
+                labelPlacement="floating"
+                type="number"
+                value={getFieldValue(field)}
+                onIonInput={(e) => setFieldValue(field, e.detail.value!)}
+              />
+            </IonItem>
+          );
+        } else if (field.type === 2) {
+          return (
+            <IonItem key={field.name}>
+              <IonInput
+                label={field.name}
+                labelPlacement="stacked"
+                type="date"
+                value={getFieldValue(field)}
+                onIonInput={(e) => setFieldValue(field, e.detail.value!)}
+              />
+            </IonItem>
+          );
+        } else if (field.type === 3) {
+          return (
+            <IonItem key={field.name}>
               <IonSelect
+                label={field.name}
+                labelPlacement="floating"
                 interface="popover"
-                value={getFieldValue(selectedField.name)}
-                onIonChange={(e) =>
-                  setFieldValue(e.target.value ?? "", selectedField)
-                }
+                value={getFieldValue(field)}
+                onIonChange={(e) => setFieldValue(field, e.detail.value)}
               >
-                {selectedField.possibleValues?.map((f) => (
-                  <IonSelectOption key={f} value={f}>
-                    {f}
+                {field.possibleValues?.map((value) => (
+                  <IonSelectOption key={value} value={value}>
+                    {value}
                   </IonSelectOption>
                 ))}
               </IonSelect>
-            )}
-          </IonItem>
-        );
-      case 1:
-        return (
-          <IonItem key={selectedField.name} className="ion-margin-bottom">
-            <IonLabel position="stacked">{selectedField.name}</IonLabel>
-            <IonInput
-              type="number"
-              value={getFieldValue(selectedField.name)}
-              onIonChange={(e) =>
-                setFieldValue(e.target.value ?? "", selectedField)
-              }
-            ></IonInput>
-          </IonItem>
-        );
-      case 2:
-        return (
-          <IonItem key={selectedField.name} className="ion-margin-bottom">
-            <IonLabel position="stacked">{selectedField.name}</IonLabel>
-            <IonInput
-              type="date"
-              value={getFieldValue(selectedField.name)}
-              onIonChange={(e) =>
-                setFieldValue(e.target.value?.toString() ?? "", selectedField)
-              }
-            ></IonInput>
-          </IonItem>
-        );
-      // eslint-disable-next-line
-      default:
-        return (
-          <IonItem key={selectedField.name} className="ion-margin-bottom">
-            <IonLabel position="stacked">{selectedField.name}</IonLabel>
-            <IonInput
-              type="text"
-              value={getFieldValue(selectedField.name)}
-              onIonChange={(e) =>
-                setFieldValue(e.target.value ?? "", selectedField)
-              }
-            ></IonInput>
-          </IonItem>
-        );
-    }
-  };
-
-  return <>{selectedField && getFieldJsx()}</>;
+            </IonItem>
+          );
+        }
+      })}
+    </>
+  );
 };
