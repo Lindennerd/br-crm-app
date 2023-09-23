@@ -24,6 +24,8 @@ import {
   useGetClientsByTypeInfinite,
   useRemoveClient,
 } from "../../../api/useClientApi";
+import { ClientDetailsModal } from "../ClientDetailsModal";
+import { useClient } from "../../../common/useClient";
 
 interface ClientsListProps {
   clientTypeId: string;
@@ -31,12 +33,28 @@ interface ClientsListProps {
 }
 
 export const ClientsList = (props: ClientsListProps) => {
+  const { displayFields } = useClient();
+  const [clientDetails, setClientDetails] = useState<ClientNew | null>(null);
   const [clientChange, setClientChange] = useState<ClientNew | null>(null);
+  const queryClient = useQueryClient();
+  const removeClientMutation = useRemoveClient();
+
   const [presentClientChangeModal, dismiss] = useIonModal(ClientChangeModal, {
     client: clientChange,
     clientConfiguration: null,
     onDismiss: () => dismiss(),
   });
+
+  const [presentDetailsModal, dismissPresentDetailsModal] = useIonModal(
+    ClientDetailsModal,
+    {
+      client: clientDetails,
+      onDismiss: () => {
+        dismissPresentDetailsModal(null);
+        setClientDetails(null);
+      },
+    }
+  );
 
   const {
     data: clients,
@@ -48,29 +66,6 @@ export const ClientsList = (props: ClientsListProps) => {
     page: 1,
   });
 
-  const queryClient = useQueryClient();
-  const removeClientMutation = useRemoveClient();
-
-  function getFirstField(client: ClientNew) {
-    return `${client.clientConfiguration.fieldConfigurations[0].name}: ${
-      client.fieldValues[client.clientConfiguration.fieldConfigurations[0].name]
-    }`;
-  }
-
-  function getFiveFields(client: ClientNew) {
-    return (
-      <>
-        {client.clientConfiguration.fieldConfigurations
-          .slice(1, 5)
-          .map((field) => (
-            <p key={field.name}>
-              {field.name}: {client.fieldValues[field.name]}
-            </p>
-          ))}
-      </>
-    );
-  }
-
   function onRemoveClient(client: ClientNew) {
     removeClientMutation.mutate(client.id!, {
       onSuccess: () => {
@@ -81,18 +76,41 @@ export const ClientsList = (props: ClientsListProps) => {
 
   return (
     <>
-      {!clients && (<></>)}
+      {!clients && <></>}
       {clients &&
         clients.pages.map((page) => {
           {
             return page.map((client) => {
               return (
-                <IonItem key={client.id} detail button>
+                <IonItem
+                  key={client.id}
+                  detail
+                  button
+                  onClick={(e) => {
+                    setClientDetails(client);
+                    presentDetailsModal();
+                  }}
+                >
                   <IonLabel>
                     <h3 style={{ marginBottom: "1rem", fontWeight: "bold" }}>
-                      {getFirstField(client)}
+                      {
+                        displayFields(
+                          client,
+                          client.clientConfiguration.fieldConfigurations
+                        )[0]
+                      }
                     </h3>
-                    <span>{getFiveFields(client)}</span>
+                    <span>
+                      {displayFields(
+                        client,
+                        client.clientConfiguration.fieldConfigurations
+                      )
+                        .slice(1, 10)
+                        .map((field, index) => {
+                          if (index === 0) return;
+                          return <p key={index}>{field}</p>;
+                        })}
+                    </span>
                   </IonLabel>
                   <IonButtons slot="end" className="client-buttons">
                     <IonButton
@@ -157,7 +175,12 @@ export const ClientsList = (props: ClientsListProps) => {
           }
         })}
       <IonFooter class="clients-footer">
-        <IonButton style={{width: "100%"}} fill="clear" disabled={!hasNextPage} onClick={(e) => fetchNextPage()}>
+        <IonButton
+          style={{ width: "100%" }}
+          fill="clear"
+          disabled={!hasNextPage}
+          onClick={(e) => fetchNextPage()}
+        >
           Carregar mais
         </IonButton>
       </IonFooter>
