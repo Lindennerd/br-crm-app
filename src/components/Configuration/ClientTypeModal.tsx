@@ -9,50 +9,49 @@ import {
   IonInput,
   IonItem,
   IonItemDivider,
-  IonLabel,
   IonList,
-  IonListHeader,
   IonPage,
   IonTitle,
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { atom, useAtom } from "jotai";
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import { ClientConfiguration, FieldConfiguration } from "../../types/app.types";
 import { closeSharp } from "ionicons/icons";
 import { ClientTypeFieldForm } from "./ClientTypeFieldForm";
+import { useSaveConfguration } from "../../api/useConfigurationApi";
 
-const clientTypeModalState = atom<ClientConfiguration>({
+interface ClientTypeModalProps {
+  clientConfiguration: ClientConfiguration | null;
+  onDismiss: (data?: ClientConfiguration | null, role?: string) => void;
+}
+
+const emptyState: ClientConfiguration = {
   name: "",
   fieldConfigurations: [],
   id: null,
-});
+};
 
-export const ClientTypeModal = ({
-  onDismiss,
-  clientConfiguration,
-}: {
-  clientConfiguration: ClientConfiguration | null;
-  onDismiss: (data?: ClientConfiguration | null, role?: string) => void;
-}) => {
-  const [state, setState] = useAtom(clientTypeModalState);
+export const ClientTypeModal = (props: ClientTypeModalProps) => {
+  const saveConfigMutation = useSaveConfguration();
   const [presentToast] = useIonToast();
 
-  useEffect(() => {
-    if (clientConfiguration) {
-      setState(clientConfiguration);
-    }
-  }, []);
+  const [state, setState] = useState<ClientConfiguration>(
+    props.clientConfiguration || emptyState
+  );
 
   function handleDismissCancel() {
-    setState({ name: "", fieldConfigurations: [], id: null });
-    onDismiss(null, "cancel");
+    setState(emptyState);
+    props.onDismiss(null, "cancel");
   }
 
   function handleDismissSave() {
-    onDismiss(state, "save");
-    setState({ name: "", fieldConfigurations: [], id: null });
+    saveConfigMutation.mutate(state, {
+      onSuccess: (data) => {
+        props.onDismiss({ ...state, id: data.clientConfigurationId }, "save");
+        setState(emptyState);
+      },
+    });
   }
 
   function handleSaveField(field: FieldConfiguration) {
@@ -113,9 +112,10 @@ export const ClientTypeModal = ({
               <IonTitle>Novo Campo</IonTitle>
             </IonItem>
             <IonItem slot="content">
-              <ClientTypeFieldForm 
+              <ClientTypeFieldForm
                 order={state.fieldConfigurations.length + 1}
-                onSave={(field) => handleSaveField(field)} />
+                onSave={(field) => handleSaveField(field)}
+              />
             </IonItem>
           </IonAccordion>
         </IonAccordionGroup>
