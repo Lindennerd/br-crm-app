@@ -20,8 +20,24 @@ export const useClient = () => {
     );
   }
 
+  function inferConfigurationFromClient(client: Client): FieldConfiguration[] {
+    const fieldsConfiguration: FieldConfiguration[] = [];
+    for (const key in client.fieldValues) {
+      fieldsConfiguration.push({
+        name: key,
+        type: 0,
+        defaultValue: "",
+        order: 0,
+        possibleValues: [],
+        required: false,
+      });
+    }
+    return fieldsConfiguration;
+  }
+
   return {
     displayFirstField,
     displayFields,
+    inferConfigurationFromClient
   }
 };

@@ -12,7 +12,7 @@ import { useState } from "react";
 import { AdditionalInformationForm } from "../Forms/AdditionalInformationForm";
 
 export interface ProcessInformationListProps {
-  additionalData: Map<string, string>;
+  additionalData: { [key: string]: string};
   onAdd: (field: string, value: string) => void;
 }
 
@@ -20,12 +20,12 @@ export const ProcessInformationList = (props: ProcessInformationListProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
 
   const addForm = () => {
-    return <AdditionalInformationForm field="" value="" onAdd={props.onAdd} />;
+    return <AdditionalInformationForm onAdd={props.onAdd} />;
   };
 
   return (
     <IonList lines="full">
-      <IonListHeader color="tertiary">
+      <IonListHeader color="secondary">
         <IonIcon icon={newspaper} />
         <IonTitle>Informações</IonTitle>
         <IonButton
@@ -43,10 +43,10 @@ export const ProcessInformationList = (props: ProcessInformationListProps) => {
           {addForm()}
         </IonItem>
       )}
-      {Array.from(props.additionalData).map((data, index) => (
+      {Object.keys(props.additionalData).map((data, index) => (
         <IonItem key={index}>
           <IonLabel>
-            {data[0]}: {data[1]}
+            {data}: {props.additionalData[data]}
           </IonLabel>
         </IonItem>
       ))}

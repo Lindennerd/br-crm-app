@@ -14,7 +14,6 @@ import {
   IonListHeader,
   useIonToast,
 } from "@ionic/react";
-import { useProcessApi } from "../../api/useProcessApi";
 import { useLoadingContext } from "../../context/LoadingContext";
 import { Process, ProcessFilter } from "../../types/app.types";
 import { ProcessCard } from "./ProcessCard";
@@ -24,15 +23,14 @@ import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "@ionic/react/css/ionic-swiper.css";
 import { useRouter } from "../../common/useRouter";
+import { useGetProcesses } from "../../api/useProcessApi";
 
 export const ProcessListSlider = ({
   slidesPerView,
 }: {
   slidesPerView: number;
 }) => {
-  const [processes, setProcesses] = useState<Process[]>([]);
   const { user } = useAuthContext();
-  const { filter } = useProcessApi();
   const { setLoading } = useLoadingContext();
   const [presetToast] = useIonToast();
   const { gotoProcesses } = useRouter();
@@ -42,26 +40,10 @@ export const ProcessListSlider = ({
     pageSize: 20,
   };
 
-  useEffect(() => {
-    if (user) {
-      setLoading(true);
-      filter(initialFilter)
-        .then((result) => {
-          setProcesses(result);
-        })
-        .catch((error) => {
-          presetToast({
-            message: error.message,
-            duration: 3000,
-            color: "danger",
-            position: "top",
-          });
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [user]);
+  const [processFilter, setFilter] = useState<Partial<ProcessFilter>>(initialFilter);
+
+  const { data: processes } = useGetProcesses(processFilter);
+
 
   return (
     <>
@@ -102,11 +84,11 @@ export const ProcessListSlider = ({
           },
         }}
       >
-        {processes.map((process) => (
+        {/* {processes?.map((process) => (
           <SwiperSlide key={process.id}>
             <ProcessCard process={process} />
           </SwiperSlide>
-        ))}
+        ))} */}
       </Swiper>
     </>
   );

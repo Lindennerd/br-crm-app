@@ -19,11 +19,12 @@ export interface ClientDetailsModalProps {
 }
 
 export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
-  const {displayFields} = useClient();
+  const {displayFields, inferConfigurationFromClient} = useClient();
 
 
   function getClientFields() {
-    return displayFields(props.client, props.client?.clientConfiguration.fieldConfigurations)
+    const configuration = props.client?.clientConfiguration?.fieldConfigurations ?? inferConfigurationFromClient(props.client);
+    return displayFields(props.client, configuration)
   }
 
   return (

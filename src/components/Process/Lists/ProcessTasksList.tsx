@@ -5,18 +5,17 @@ import {
   IonTitle,
   IonItem,
   IonLabel,
-  IonButtons,
   IonButton,
   IonProgressBar,
+  IonCheckbox,
 } from "@ionic/react";
 import {
-  add,
   addCircleSharp,
   addSharp,
   caretForwardSharp,
   close,
 } from "ionicons/icons";
-import { Process, ProcessTask } from "../../../types/app.types";
+import { ProcessTask } from "../../../types/app.types";
 import { useEffect, useState } from "react";
 import { AddTaskForm } from "../Forms/AddTaskForm";
 
@@ -57,6 +56,10 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
     props.setCompletedTask(task);
   }
 
+  const styleCompletedTask = {
+    textDecoration: "line-through",
+  };
+
   return (
     <IonList lines="full">
       <IonListHeader color="secondary">
@@ -73,7 +76,7 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
       </IonListHeader>
       <IonProgressBar color="tertiary" value={progress} />
       {showAddTaskForm && (
-        <IonItem >
+        <IonItem>
           <IonIcon slot="start" icon={addCircleSharp} />
           <div style={{ width: "100%" }}>{addForm()}</div>
         </IonItem>
@@ -84,14 +87,14 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
         </IonItem>
       )}
       {props.tasks.map((task, index) => (
-        <IonItem
-        key={index}
-        button
-        color={task.isCompleted ? "primary" : ""}
-        onClick={(e) => setCompletedTask(task)}
-        >
-          <IonIcon icon={caretForwardSharp} slot="start" />
-          <IonLabel>{task.title}</IonLabel>
+        <IonItem>
+          <IonCheckbox
+            style={task.isCompleted ? styleCompletedTask : {}}
+            checked={task.isCompleted}
+            onIonChange={(e) => setCompletedTask(task)}
+          >
+            {task.title}
+          </IonCheckbox>
         </IonItem>
       ))}
     </IonList>

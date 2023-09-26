@@ -1,55 +1,54 @@
-import { useEffect, useState } from "react";
 import {
-  Process,
+  IonButton,
+  IonButtons,
+  IonIcon,
+  IonNote,
+  IonTitle,
+  IonToolbar,
+  useIonModal,
+} from "@ionic/react";
+import { person } from "ionicons/icons";
+import {
+  useAddCommentMutation,
+  useAddEventMutation,
+  useAddTaskMutation,
+  useCompleteTaskMutation,
+  useDeleteCommentMutation,
+  useEditProcess,
+  useGetProcess,
+  useUnCompleteTaskMutation,
+  useUpdateCommentMutation,
+} from "../../api/useProcessApi";
+import { ClientDetailsModal } from "../../components/Clients/ClientDetailsModal";
+import { ProcessCommentsList } from "../../components/Process/Lists/ProcessCommentsList";
+import { ProcessEventsList } from "../../components/Process/Lists/ProcessEventsList";
+import { ProcessInformationList } from "../../components/Process/Lists/ProcessInformationList";
+import { ProcessTasksList } from "../../components/Process/Lists/ProcessTasksList";
+import { ProcessStatusBadge } from "../../components/Process/ProcessStatusBadge";
+import {
+  Client,
   ProcessComment,
   ProcessEvent,
   ProcessTask,
 } from "../../types/app.types";
-import { useProcessApi } from "../../api/useProcessApi";
-import {
-  IonTitle,
-  IonToolbar,
-  IonLoading,
-  useIonToast,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonNote,
-  IonItemDivider,
-  useIonModal,
-  IonBadge,
-} from "@ionic/react";
-import { useMapUtils } from "../../api/useMapUtils";
-import { pencilSharp, person } from "ionicons/icons";
-import { ClientDetailsModal } from "../../components/Clients/ClientDetailsModal";
-import { ProcessInformationList } from "../../components/Process/Lists/ProcessInformationList";
-import { ProcessTasksList } from "../../components/Process/Lists/ProcessTasksList";
-import { ProcessEventsList } from "../../components/Process/Lists/ProcessEventsList";
-import { ProcessCommentsList } from "../../components/Process/Lists/ProcessCommentsList";
-import { useProcessPageController } from "./ProcessPage.Controller";
-import { ProcessStatusBadge } from "../../components/Process/ProcessStatusBadge";
-import { useLoadingContext } from "../../context/LoadingContext";
+import { useClient } from "../../common/useClient";
 
 export interface ProcessDetailsPageProps {
   processId: string;
 }
 
 export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
-  const { setLoading } = useLoadingContext();
-  const [process, setProcess] = useState<Process | null>(null);
-  const [presetToast] = useIonToast();
-  const { getFirstValue } = useMapUtils();
-  const {
-    getOne,
-    update,
-    addEvent,
-    upsertComment,
-    deleteComment,
-    completeTask,
-    uncompleteTask,
-    addTask
-  } = useProcessApi();
+  const { displayFirstField, inferConfigurationFromClient } = useClient();
+
+  const { data: process } = useGetProcess(props.processId);
+  const editProcessMutation = useEditProcess();
+  const addTaskMutation = useAddTaskMutation();
+  const completeTaskMutation = useCompleteTaskMutation();
+  const unCompleteTaskMutation = useUnCompleteTaskMutation();
+  const addEventMutation = useAddEventMutation();
+  const addCommentMutation = useAddCommentMutation();
+  const editCommentMutation = useUpdateCommentMutation();
+  const deleteCommentMutation = useDeleteCommentMutation();
 
   const [presentClientDetailsModal, dismissClientDetailsModal] = useIonModal(
     ClientDetailsModal,
@@ -61,185 +60,52 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
     }
   );
 
-  useEffect(() => {
-    setLoading(true);
-    getOne(props.processId)
-      .then((process) => {
-        setProcess({
-          ...process,
-          additionalData: new Map(Object.entries(process.additionalData)),
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        presetToast({
-          message: "Erro ao buscar as informações do process",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      })
-      .finally(() => setLoading(false));
-  }, [props.processId]);
-
   function handleAddAdditionalData(field: string, value: string) {
     if (!process) return;
-    if (process?.additionalData == null)
-      process.additionalData = new Map<string, string>();
+    if (!field || !value) return;
 
-    if (field && value) {
-      process.additionalData.set(field, value);
-      setProcess({
-        ...process,
-        additionalData: new Map(process.additionalData),
-      });
-      update(process).catch((err) => {
-        console.error(err);
-        presetToast({
-          message: "Erro ao atualizar as informações do processo",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      });
-    }
+    editProcessMutation.mutate({
+      ...process,
+      additionalData: { ...process.additionalData, [field]: value },
+    });
   }
 
   function handleAddTask(task: ProcessTask) {
     if (!process) return;
     if (!task) return;
-    addTask(process.id, task)
-      .then((res) => {
-        console.log(res);
-        setProcess((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            tasks: [...prev.tasks, res],
-          };
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        presetToast({
-          message: "Erro ao atualizar as informações do processo",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      });
+    addTaskMutation.mutate({ processId: process.id, task });
   }
 
   function handleCompleteTask(task: ProcessTask): void {
     if (!process) return;
     if (!task) return;
-    setLoading(true);
-    (task.isCompleted
-      ? uncompleteTask(process.id, task)
-      : completeTask(process.id, task)
-    )
-      .then((res) => {
-        setProcess((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            tasks: prev.tasks.map((t) => {
-              if (t.id === task.id) {
-                return res;
-              }
-              return t;
-            }),
-          };
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        presetToast({
-          message: "Erro ao atualizar as informações do processo",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      })
-      .finally(() => setLoading(false));
+    if(task.isCompleted) unCompleteTaskMutation.mutate({ processId: process.id, task: task });
+    else completeTaskMutation.mutate({ processId: process.id, task: task });
   }
 
   function handleEventChange(event: ProcessEvent): void {
     if (!process) return;
     if (!event) return;
-    setProcess({ ...process });
-    addEvent(process.id, event)
-      .then((res) => {
-        setProcess((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            events: res.events,
-          };
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        presetToast({
-          message: "Erro ao atualizar as informações do processo",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      });
+    addEventMutation.mutate({ processId: process.id, event });
   }
 
   function handleCommentChange(comment: ProcessComment): void {
     if (!process) return;
     if (!comment) return;
-    setProcess({ ...process });
-    setLoading(true);
-    upsertComment(process.id, comment)
-      .then((res) => {
-        setProcess((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            comments: res.comments,
-          };
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        presetToast({
-          message: "Erro ao atualizar as informações do processo",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      })
-      .finally(() => setLoading(false));
+    if (comment.id) {
+      editCommentMutation.mutate({ processId: process.id, comment });
+    } else {
+      addCommentMutation.mutate({ processId: process.id, comment });
+    }
   }
 
   function handleDeleteComment(comment: ProcessComment): void {
     if (!process) return;
     if (!comment || !comment.id) return;
-    setLoading(true);
-    deleteComment(process.id, comment.id)
-      .then((res) => {
-        setProcess((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            comments: res.comments,
-          };
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        presetToast({
-          message: "Erro ao atualizar as informações do processo",
-          duration: 2000,
-          color: "danger",
-          position: "top",
-        });
-      })
-      .finally(() => setLoading(false));
+    deleteCommentMutation.mutate({
+      processId: process.id,
+      commentId: comment.id,
+    });
   }
 
   if (!process) return <></>;
@@ -248,7 +114,11 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
       <IonToolbar color="secondary">
         <IonTitle slot="start">
           Processo {process.title} de{" "}
-          {process && getFirstValue(process.client[0])}
+          {process &&
+            displayFirstField(
+              process.client[0],
+              inferConfigurationFromClient(process.client[0])
+            )}
         </IonTitle>
         <ProcessStatusBadge
           status={process.status}
@@ -256,9 +126,6 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
           style={{ marginRight: "1rem" }}
         />
         <IonButtons slot="end" style={{ marginRight: "1em" }}>
-          <IonButton color="tertiary" fill="solid">
-            <IonIcon icon={pencilSharp} />
-          </IonButton>
           <IonButton
             color="tertiary"
             fill="solid"
@@ -272,12 +139,10 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
       <div>
         <IonNote class="ion-padding">{process.description}</IonNote>
 
-        {process.additionalData.size > 0 && (
-          <ProcessInformationList
-            additionalData={process.additionalData}
-            onAdd={handleAddAdditionalData}
-          />
-        )}
+        <ProcessInformationList
+          additionalData={process.additionalData}
+          onAdd={handleAddAdditionalData}
+        />
         <ProcessTasksList
           tasks={process.tasks}
           onTaskChange={handleAddTask}

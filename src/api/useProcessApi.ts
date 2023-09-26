@@ -7,13 +7,12 @@ import {
 import {
   Process,
   ProcessComment,
-  ProcessConfiguration,
   ProcessEvent,
   ProcessFilter,
   ProcessTask,
 } from "../types/app.types";
 import { useApi } from "./useApi";
-import { useMapUtils } from "./useMapUtils";
+import { useClient } from "../common/useClient";
 
 export const useGetProcesses = (filter: Partial<ProcessFilter>) => {
   const { get } = useApi();
@@ -31,6 +30,15 @@ export const useGetProcesses = (filter: Partial<ProcessFilter>) => {
     }
   );
 };
+
+export const useGetProcess = (id: string) => {
+  const { get } = useApi();
+
+  return useQuery(["getProcess", id], async () => {
+    return await get<Process>(`/Process/GetProcess/${id}`);
+  });
+};
+
 
 export const useSaveProcess = () => {
   const { post } = useApi();
@@ -58,16 +66,27 @@ export const useSaveProcess = () => {
 
 export const useEditProcess = () => {
   const { post } = useApi();
+  const { inferConfigurationFromClient } = useClient();
   const queryClient = useQueryClient();
 
   return useMutation(
-    ["saveProcess"],
+    ["editProcess"],
     async (process: Process) => {
+      process.client = process.client.map((client) => {
+        if (!client.clientConfiguration)
+          client.clientConfiguration = {
+            fieldConfigurations: inferConfigurationFromClient(client),
+            id: "",
+            name: "",
+          };
+        return client;
+      });
       return await post<Process, Process>("/Process/UpdateProcess", process);
     },
     {
       onSuccess: (result, variables) => {
         queryClient.invalidateQueries("getProcesses");
+        queryClient.invalidateQueries(["getProcess", variables.id]);
         queryClient.setQueryData<Process[]>("getProcesses", (old) => {
           if (!old) return [{ ...variables, id: result.id }];
           return [
@@ -80,138 +99,210 @@ export const useEditProcess = () => {
   );
 };
 
-export const useProcessApi = () => {
-  const { post, get } = useApi();
-  const { objectToMap, mapToObject } = useMapUtils();
-  return {
-    filter: async (filter: Partial<ProcessFilter>): Promise<Process[]> => {
-      var params = new URLSearchParams(filter as any);
-      var result = await get<Process[]>(
-        `/Process/FilterProcesses?${params.toString()}`
-      );
-      return [
-        ...result.map((process) => {
-          return {
-            ...process,
-            client: {
-              ...process.client.map((c) => {
-                c.fieldValues = objectToMap(c.fieldValues);
-                return c;
-              }),
-            },
-          };
-        }),
-      ];
-    },
+interface AddEventMutationVariables {
+  processId: string;
+  event: ProcessEvent;
+}
 
-    getOne: async (id: string): Promise<Process> => {
-      const result = await get<Process>(`/Process/GetProcess/${id}`);
-      return {
-        ...result,
-        client: [
-          ...result.client.map((c) => {
-            c.fieldValues = objectToMap(c.fieldValues);
-            return c;
-          }),
-        ],
-      };
-    },
+export const useAddEventMutation = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
 
-    getMany: async (page: number, pageSize: number): Promise<Process[]> => {
-      const result = await get<Process[]>(
-        `/Process/FilterProcesses?page=${page}&pageSize=${pageSize}`
-      );
-      return [
-        ...result.map((process) => {
-          return {
-            ...process,
-            client: {
-              ...process.client.map((c) => {
-                c.fieldValues = objectToMap(c.fieldValues);
-                return c;
-              }),
-            },
-          };
-        }),
-      ];
-    },
-
-    async addEvent(processId: string, event: ProcessEvent): Promise<Process> {
-      var result = (await post(
-        `Process/AddEvent/${processId}`,
+  return useMutation(
+    ["addEvent"],
+    async ({ processId, event }: AddEventMutationVariables) => {
+      return await post<ProcessEvent, Process>(
+        `/Process/AddEvent/${processId}`,
         event
-      )) as Process;
-      return {
-        ...result,
-        client: [
-          ...result.client?.map((c) => {
-            c.fieldValues = objectToMap(c.fieldValues);
-            return c;
-          }),
-        ],
-      };
+      );
     },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
+          if (!old) return {} as Process;
+          return {
+            ...old,
+            events: [...old.events, variables.event],
+          };
+        });
+      },
+    }
+  );
+};
 
-    async upsertComment(
-      processId: string,
-      comment: ProcessComment
-    ): Promise<Process> {
-      let result: Process = {} as Process;
-      if (comment.id)
-        result = (await post(
-          `Process/UpdateComment/${processId}`,
-          comment
-        )) as Process;
-      result = await post(`Process/AddComment/${processId}`, {
-        comment: comment.comment,
-      });
+interface AddCommentMutationVariables {
+  processId: string;
+  comment: ProcessComment;
+}
 
-      return {
-        ...result,
-        client: [
-          ...result.client.map((c) => {
-            c.fieldValues = objectToMap(c.fieldValues);
-            return c;
-          }),
-        ],
-      };
+export const useAddCommentMutation = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    ["addComment"],
+    async ({ processId, comment }: AddCommentMutationVariables) => {
+      return await post<ProcessComment, Process>(
+        `/Process/AddComment/${processId}`,
+        comment
+      );
     },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
+          if (!old) return {} as Process;
+          return {
+            ...old,
+            comments: [...old.comments, variables.comment],
+          };
+        });
+      },
+    }
+  );
+};
 
-    async deleteComment(
-      processId: string,
-      commentId: string
-    ): Promise<Process> {
-      const result: Process = await post(`Process/RemoveComment/${processId}`, {
-        commentId: commentId,
-      });
+export const useUpdateCommentMutation = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
 
-      return {
-        ...result,
-        client: [
-          ...result.client.map((c) => {
-            c.fieldValues = objectToMap(c.fieldValues);
-            return c;
-          }),
-        ],
-      };
+  return useMutation(
+    ["updateComment"],
+    async ({ processId, comment }: AddCommentMutationVariables) => {
+      return await post<ProcessComment, Process>(
+        `/Process/UpdateComment/${processId}`,
+        comment
+      );
     },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
+          if (!old) return {} as Process;
+          return {
+            ...old,
+            comments: [
+              ...old.comments.filter((c) => c.id !== variables.comment.id),
+              variables.comment,
+            ],
+          };
+        });
+      },
+    }
+  );
+};
 
-    async addTask(processId: string, task: ProcessTask): Promise<ProcessTask> {
-      return post(`Process/AddTask/${processId}`, task);
-    },
+export const useAddTaskMutation = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
 
-    async completeTask(
-      processId: string,
-      task: ProcessTask
-    ): Promise<ProcessTask> {
-      return post(`Process/CompleteTask/${processId}`, task);
+  return useMutation(
+    ["addTask"],
+    async ({ processId, task }: { processId: string; task: ProcessTask }) => {
+      return await post<ProcessTask, Process>(
+        `/Process/AddTask/${processId}`,
+        task
+      );
     },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
+          if (!old) return {} as Process;
+          return {
+            ...old,
+            tasks: [...old.tasks, variables.task],
+          };
+        });
+      },
+    }
+  );
+};
 
-    async uncompleteTask(
-      processId: string,
-      task: ProcessTask
-    ): Promise<ProcessTask> {
-      return post(`Process/UncompleteTask/${processId}`, task);
+export const useDeleteCommentMutation = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    ["deleteComment"],
+    async ({
+      processId,
+      commentId,
+    }: {
+      processId: string;
+      commentId: string;
+    }) =>
+      await post<{ commentId: string }, Process>(
+        `/Process/RemoveComment/${processId}`,
+        { commentId: commentId }
+      ),
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
+          if (!old) return {} as Process;
+          return {
+            ...old,
+            comments: [
+              ...old.comments.filter((c) => c.id !== variables.commentId),
+            ],
+          };
+        });
+      },
+    }
+  );
+};
+
+export const useCompleteTaskMutation = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    ["completeTask"],
+    async ({ processId, task }: { processId: string; task: ProcessTask }) => {
+      return await post<ProcessTask, Process>(
+        `/Process/CompleteTask/${processId}`,
+        task
+      );
     },
-  };
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
+          if (!old) return {} as Process;
+          return {
+            ...old,
+            tasks: [
+              ...old.tasks.filter((c) => c.id !== variables.task.id),
+              {...variables.task, isCompleted: true},
+            ],
+          };
+        });
+      },
+    }
+  );
+};
+
+export const useUnCompleteTaskMutation = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    ["completeTask"],
+    async ({ processId, task }: { processId: string; task: ProcessTask }) => {
+      return await post<ProcessTask, Process>(
+        `/Process/UncompleteTask/${processId}`,
+        task
+      );
+    },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
+          if (!old) return {} as Process;
+          return {
+            ...old,
+            tasks: [
+              ...old.tasks.filter((c) => c.id !== variables.task.id),
+              {...variables.task, isCompleted: false},
+            ],
+          };
+        });
+      },
+    }
+  );
 };
