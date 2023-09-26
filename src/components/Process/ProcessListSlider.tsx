@@ -84,11 +84,13 @@ export const ProcessListSlider = ({
           },
         }}
       >
-        {/* {processes?.map((process) => (
-          <SwiperSlide key={process.id}>
-            <ProcessCard process={process} />
-          </SwiperSlide>
-        ))} */}
+        {processes?.pages.map((page) => (
+          page.map((process) => (
+            <SwiperSlide key={process.id}>
+              <ProcessCard process={process} />
+            </SwiperSlide>
+          ))
+        ))}
       </Swiper>
     </>
   );
