@@ -79,6 +79,7 @@ const App: React.FC = () => {
   const [queryClient] = useState(() => new QueryClient({
     mutationCache, queryCache, defaultOptions: {
       queries: {
+        staleTime: 30000,
         refetchInterval: 1000 * 60 * 5,
         behavior: {
           onFetch: (context) => {

@@ -2,15 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ClientConfiguration, ProcessConfiguration } from "../types/app.types";
 import { useApi } from "./useApi";
 
-export const useConfigurationApi = () => {
-  const { get, post } = useApi();
-
-  return {
-    getProcessConfiguration: async (): Promise<ProcessConfiguration[]> => {
-      return await get(`/Organization/GetProcessConfiguration`);
-    },
-  };
-};
+export const useGetProcessConfigurations = () => {
+  const { get } = useApi();
+  return useQuery("getProcessConfigurations", async () => {
+    return await get<ProcessConfiguration[]>(`/Organization/GetProcessConfiguration`);
+  });
+}
 
 export const useGetClientConfiguration = () => {
   const { get } = useApi();

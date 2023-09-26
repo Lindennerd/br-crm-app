@@ -94,12 +94,6 @@ export type ClientField = {
 };
 
 export type Client = {
-  id: string;
-  clientType: string;
-  fieldValues: Map<string, string>;
-};
-
-export type ClientNew = {
   id: string | null;
   clientTypeId: string;
   fieldValues: { [key: string]: string };
@@ -114,7 +108,7 @@ export type Process = {
   description: string;
   clientId: string;
   client: Client[];
-  additionalData: Map<string, string>;
+  additionalData: { [key: string]: string };
   StartedAt: Date;
   FinishedAt: Date;
   sla: number;
@@ -188,7 +182,7 @@ export type ProcessConfiguration = {
   sla: number;
   executor: string;
   tasks: ProcessTask[];
-  additionalData: Map<string, string>;
+  additionalData: { [key: string]: string };
 }
 
 export type BussinessError = {

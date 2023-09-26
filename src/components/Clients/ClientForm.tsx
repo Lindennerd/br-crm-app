@@ -7,13 +7,13 @@ import {
 } from "@ionic/react";
 import {
   ClientConfiguration,
-  ClientNew,
+  Client,
   FieldConfiguration,
 } from "../../types/app.types";
 
 export type ClientFormProps = {
-  setClient: (client: ClientNew) => void;
-  client?: ClientNew | null;
+  setClient: (client: Client) => void;
+  client?: Client | null;
   clientConfiguration?: ClientConfiguration | null;
 };
 export const ClientForm = (props: ClientFormProps) => {
@@ -28,7 +28,7 @@ export const ClientForm = (props: ClientFormProps) => {
   function buildClientFromConfiguration() {
     if(props.client) return props.client;
     if (!props.clientConfiguration) return;
-    const client: ClientNew = {
+    const client: Client = {
       id: null,
       clientTypeId: props.clientConfiguration.id!,
       fieldValues: {},

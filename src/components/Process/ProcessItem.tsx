@@ -16,8 +16,6 @@ import { ProcessStatusBadge } from "./ProcessStatusBadge";
 export interface IProcessItemProps {
   process: Process;
   onSelectProcess: (process: Process) => void;
-  onViewEvents: (process: Process) => void;
-  onViewTasks: (process: Process) => void;
 }
 
 export const ProcessItem = (props: IProcessItemProps) => {
@@ -51,17 +49,6 @@ export const ProcessItem = (props: IProcessItemProps) => {
           <ProcessStatusBadge status={props.process.status} />
         </div>
       </div>
-      {/* <IonButtons
-        slot="end"
-        style={{ display: "flex", flexDirection: "column", gap: ".2rem" }}
-      >
-        <IonButton fill="solid" color="tertiary">
-          Eventos ({props.process.events?.length})
-        </IonButton>
-        <IonButton fill="solid" color="tertiary">
-          Tarefas a fazer ({props.process.tasks?.length})
-        </IonButton>
-      </IonButtons> */}
     </IonItem>
   );
 };

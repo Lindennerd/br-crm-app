@@ -3,12 +3,15 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
   IonList,
   IonPage,
   IonToolbar,
 } from "@ionic/react";
 import { caretBackOutline } from "ionicons/icons";
 import { Client } from "../../types/app.types";
+import { useClient } from "../../common/useClient";
 
 export interface ClientDetailsModalProps {
   onDismiss: () => void;
@@ -16,6 +19,13 @@ export interface ClientDetailsModalProps {
 }
 
 export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
+  const {displayFields} = useClient();
+
+
+  function getClientFields() {
+    return displayFields(props.client, props.client?.clientConfiguration.fieldConfigurations)
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -30,7 +40,14 @@ export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <IonList>
+        <IonList lines="full">
+          {getClientFields().map((field, index) => (
+            <IonItem key={index}>
+              <IonLabel>
+                {field}
+              </IonLabel>
+              </IonItem>
+          ))}
         </IonList>
       </IonContent>
     </IonPage>

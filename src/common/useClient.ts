@@ -1,8 +1,8 @@
-import { ClientNew, FieldConfiguration } from "../types/app.types";
+import { Client, FieldConfiguration } from "../types/app.types";
 
 export const useClient = () => {
   function displayFirstField(
-    client: ClientNew,
+    client: Client,
     fieldsConfiguration: FieldConfiguration[]
   ): string {
     return `${fieldsConfiguration[0].name}: ${
@@ -11,9 +11,10 @@ export const useClient = () => {
   }
 
   function displayFields(
-    client: ClientNew,
+    client: Client,
     fieldsConfiguration: FieldConfiguration[]
   ): string[] {
+    if(!fieldsConfiguration || !client) return [];
     return fieldsConfiguration.map(
       (field) => `${field.name}: ${client.fieldValues[field.name] ?? ""}`
     );

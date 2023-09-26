@@ -2,7 +2,6 @@ import {
   IonInput,
   IonTextarea,
   IonList,
-  IonListHeader,
   IonLabel,
   IonItem,
   IonButtons,
@@ -16,69 +15,45 @@ import {
   ProcessTask,
   ProcessConfiguration,
 } from "../../types/app.types";
-import { useAtom } from "jotai";
-import { changeProcessAtom } from "./ChangeProcessModal";
-import { addSharp, closeSharp } from "ionicons/icons";
-import { useEffect, useState } from "react";
+import { closeSharp } from "ionicons/icons";
+import { Dispatch, SetStateAction, useState } from "react";
 import { AddTaskForm } from "./Forms/AddTaskForm";
 import { SelectProcessType } from "./SelectProcessType";
-import { useProcessBindingFormController } from "./ProcessBindingForm/useProcessBindingFormController";
 
-export const ProcessInitialDataForm = ({
-  configuration,
-}: {
-  configuration: ProcessConfiguration | null | undefined;
-}) => {
-  const [process, setProcess] = useAtom(changeProcessAtom);
+export type ProcessInitialDataFormProps = {
+  configurations: ProcessConfiguration[];
+  process: Process | null;
+  setProcess: Dispatch<SetStateAction<Process | null>>;
+  onSetSelectedConfiguration: (configuration: ProcessConfiguration) => void;
+};
+
+export const ProcessInitialDataForm = (props: ProcessInitialDataFormProps) => {
+  const [selectedConfiguration, setSelectedConfiguration] =
+    useState<ProcessConfiguration>();
   const [edittingTask, setEdittingTask] = useState<string>("");
-  const controller = useProcessBindingFormController();
 
-  useEffect(() => {
-    if (configuration) {
-      setProcess((prev) => {
-        return {
-          ...prev,
-          title: configuration.title,
-          description: configuration.description,
-          sla: configuration.sla,
-          executor: configuration.executor,
-          additionalData: configuration.additionalData,
-          tasks: configuration.tasks?.map((task) => {
-            return {
-              id: null,
-              title: task.title,
-              completedAt: null,
-              createdAt: new Date(),
-              isCompleted: false,
-            };
-          }),
-        };
-      });
-    }
-  }, [configuration]);
+  function handleSelectedConfiguration(configuration: ProcessConfiguration) {
+    setSelectedConfiguration(configuration);
+    props.onSetSelectedConfiguration(configuration);
+  }
 
   function handleAddTask() {
     if (!edittingTask) return;
-
-    setProcess((process) => ({
-      ...process,
+    props.setProcess((process) => ({
+      ...(props.process ?? ({} as Process)),
       tasks: [
-        ...(process.tasks ?? []),
-        {
-          title: edittingTask,
-        } as ProcessTask,
+        ...(process?.tasks ?? []),
+        { title: edittingTask } as ProcessTask,
       ],
     }));
-
     setEdittingTask("");
   }
 
   function handleRemoveTask(title: string) {
-    setProcess((process) => ({
-      ...process,
-      tasks: process.tasks?.filter((task) => task.title !== title),
+    props.setProcess((process) => ({
+      ...(props.process ?? ({} as Process)),
+      tasks: [...(process?.tasks ?? [])].filter((task) => task.title !== title),
     }));
-
     setEdittingTask("");
   }
 
@@ -88,11 +63,8 @@ export const ProcessInitialDataForm = ({
         Se você já criou um processo desse tipo antes, selecione abaixo
       </IonNote>
       <SelectProcessType
-        processTypes={controller.state.processConfigurations}
-        defaultValue={controller.state.selectedProcessConfiguration}
-        onSelected={(processType) =>
-          controller.setSelectedProcessConfiguration(processType.id)
-        }
+        processTypes={props.configurations}
+        onSelected={(processType) => handleSelectedConfiguration(processType)}
       />
       <IonItemDivider />
 
@@ -106,10 +78,10 @@ export const ProcessInitialDataForm = ({
       <IonInput
         label="Nome do processo"
         labelPlacement="floating"
-        value={process?.title}
+        value={props.process?.title}
         onIonChange={(e) =>
-          setProcess({
-            ...(process ?? ({} as Process)),
+          props.setProcess({
+            ...(props.process ?? ({} as Process)),
             title: e.detail.value ?? "",
           })
         }
@@ -118,10 +90,10 @@ export const ProcessInitialDataForm = ({
       <IonTextarea
         label="Descrição do processo"
         labelPlacement="floating"
-        value={process?.description}
+        value={props.process?.description}
         onIonChange={(e) =>
-          setProcess({
-            ...(process ?? ({} as Process)),
+          props.setProcess({
+            ...(props.process ?? ({} as Process)),
             description: e.detail.value ?? "",
           })
         }
@@ -132,10 +104,10 @@ export const ProcessInitialDataForm = ({
         min={1}
         label="Prazo em dias"
         labelPlacement="floating"
-        value={process?.sla}
+        value={props.process?.sla}
         onIonChange={(e) =>
-          setProcess({
-            ...(process ?? ({} as Process)),
+          props.setProcess({
+            ...(props.process ?? ({} as Process)),
             sla: e.detail.value ? parseInt(e.detail.value) : 0,
           })
         }
@@ -144,10 +116,10 @@ export const ProcessInitialDataForm = ({
       <IonInput
         label="Responsável"
         labelPlacement="floating"
-        value={process?.executor}
+        value={props.process?.executor}
         onIonChange={(e) =>
-          setProcess({
-            ...(process ?? ({} as Process)),
+          props.setProcess({
+            ...(props.process ?? ({} as Process)),
             executor: e.detail.value ?? "",
           })
         }
@@ -163,7 +135,7 @@ export const ProcessInitialDataForm = ({
         }}
       />
       <IonList>
-        {process?.tasks?.map((task, index) => (
+        {props.process?.tasks?.map((task, index) => (
           <IonItem key={index}>
             <IonLabel>{task.title}</IonLabel>
             <IonButtons slot="end">

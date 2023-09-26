@@ -9,7 +9,7 @@ import {
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { ClientConfiguration, ClientNew } from "../../../types/app.types";
+import { ClientConfiguration, Client } from "../../../types/app.types";
 import { ClientForm } from "../ClientForm";
 import { useQueryClient } from "react-query";
 import { useEffect, useState } from "react";
@@ -18,13 +18,13 @@ import { useSaveClient } from "../../../api/useClientApi";
 export type ClientChangeAction = "add" | "edit" | "cancel";
 export type ClientChangeModalParams = {
   onDismiss: () => void;
-  client: ClientNew | null;
+  client: Client | null;
   clientConfiguration: ClientConfiguration | null;
 };
 
 export const ClientChangeModal = (props: ClientChangeModalParams) => {
   const [presentToast] = useIonToast();
-  const [client, setClient] = useState<ClientNew | null>(props.client);
+  const [client, setClient] = useState<Client | null>(props.client);
   const clientMutation = useSaveClient();
 
   function getTitleText() {
@@ -79,7 +79,7 @@ export const ClientChangeModal = (props: ClientChangeModalParams) => {
     }
   }
 
-  function validateFields(client: ClientNew) {
+  function validateFields(client: Client) {
     return client.clientConfiguration.fieldConfigurations
       .map((field) => {
         if (field.required && (!client.fieldValues[field.name] || client.fieldValues[field.name] === ""))

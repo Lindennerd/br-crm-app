@@ -4,15 +4,15 @@ import {
   useProcessPageController,
 } from "./ProcessPage.Controller";
 import { useAtom } from "jotai";
-import { IonList, useIonModal } from "@ionic/react";
+import { IonButton, IonFooter, IonList, useIonModal } from "@ionic/react";
 import { ProcessToolbar } from "../../components/Process/ProcessToolbar";
 import {
   ChangeProcessModal,
   ChangeProcessModalProps,
 } from "../../components/Process/ChangeProcessModal";
-import { Process } from "../../types/app.types";
+import { Process, ProcessFilter } from "../../types/app.types";
 import {
-  ProcessFilter,
+  ProcessFilter as ProcessFilterModal,
   ProcessFilterProps,
 } from "../../components/Process/ProcessFilter";
 import "./processPage.css";
@@ -21,81 +21,82 @@ import { ProcessItem } from "../../components/Process/ProcessItem";
 import { useRouter } from "../../common/useRouter";
 import { useLoadingContext } from "../../context/LoadingContext";
 import { useCurrentClientContext } from "../../context/CurrentClientContext";
+import { useGetProcesses } from "../../api/useProcessApi";
 
 export const ProcessPage = () => {
-  const {setLoading} = useLoadingContext();
-  const {client, setClient} = useCurrentClientContext();
+  const [processFilters, setProcessFilters] = useState<Partial<ProcessFilter>>({
+    page: 1,
+  });
+  const {
+    data: processes,
+    hasNextPage,
+    fetchNextPage,
+  } = useGetProcesses(processFilters);
 
-  const [state] = useAtom(processAtom);
   const { gotoProcess } = useRouter();
-  const controller = useProcessPageController();
-
-  const [selectedProcess, setSelectedProcess] = useState<Process | null>(null);
   const [filters, setFilters] = useState<[]>([]);
 
   const [addProcessModal, dismissAddProcessModal] = useIonModal(
     ChangeProcessModal,
     {
-      process: selectedProcess,
       onDismiss: (data, action) => {
-        if (action === "add" && data) {
-          controller.add(data);
-        }
-        if (action === "edit" && data) {
-          controller.add(data);
-        }
-        setSelectedProcess(null);
         dismissAddProcessModal();
       },
     } as ChangeProcessModalProps
   );
 
-  const [filterProcessModal, dismissFilterProcessModal] = useIonModal(
-    ProcessFilter,
-    {
-      filters: filters,
-      onDismiss: (data, action) => {
-        if (action === "add" && data) setFilters(data);
-        if (action === "remove" && data) setFilters([]);
-        dismissFilterProcessModal();
-      },
-    } as ProcessFilterProps
-  );
+  // const [filterProcessModal, dismissFilterProcessModal] = useIonModal(
+  //   ProcessFilterModal,
+  //   {
+  //     filters: filters,
+  //     onDismiss: (data, action) => {
+  //       if (action === "add" && data) setFilters(data);
+  //       if (action === "remove" && data) setFilters([]);
+  //       dismissFilterProcessModal();
+  //     },
+  //   } as ProcessFilterProps
+  // );
 
-  useEffectOnce(() => {
-    setLoading(true);
-    controller.load(client)
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setClient(null);
-        setLoading(false);
-      });
-  });
+  function handleSearch(value: string) {
+    setProcessFilters((prev) => ({ ...prev, clientName: value, title: value }));
+  }
 
-  if(!state) return <></>
+  if (!processes) return <></>;
 
   return (
     <>
       <ProcessToolbar
-        handleSearch={(e) => controller.search(e.detail.value)}
-        handleAddProcess={addProcessModal}
-        handleFilter={filterProcessModal}
+        handleSearch={(e) => handleSearch(e.detail.value!)}
+        handleAddProcess={() =>
+          addProcessModal({
+            keyboardClose: false,
+            backdropDismiss: false,
+          })
+        }
+        handleFilter={() => console.log("filter")}
         currentFilterCount={filters.length}
       />
       <IonList>
-        {state.map((process) => (
-          <ProcessItem
-            key={process.id}
-            onSelectProcess={(process) => {
-              setSelectedProcess(process);
-              gotoProcess(process.id);
-            }}
-            onViewEvents={(process) => console.log("view events")}
-            onViewTasks={(process) => console.log("view tasks")}
-            process={process}
-          />
-        ))}
+        {processes?.pages.map((page) =>
+          page.map((process) => (
+            <ProcessItem
+              key={process.id}
+              onSelectProcess={(process) => gotoProcess(process.id)}
+              process={process}
+            />
+          ))
+        )}
       </IonList>
+      <IonFooter class="clients-footer">
+        <IonButton
+          style={{ width: "100%" }}
+          fill="clear"
+          disabled={!hasNextPage}
+          onClick={(e) => fetchNextPage()}
+        >
+          Carregar mais
+        </IonButton>
+      </IonFooter>
     </>
   );
 };

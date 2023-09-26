@@ -1,5 +1,4 @@
 import { IonBadge } from "@ionic/react";
-import { useProcessPageController } from "../../pages/ProcessPage/ProcessPage.Controller";
 import { ProcessStatus } from "../../types/app.types";
 
 export const ProcessStatusBadge = ({
@@ -11,7 +10,20 @@ export const ProcessStatusBadge = ({
   slot?: string | null;
   style?: { [key: string]: string } | null;
 }) => {
-  const { getStatusDescription } = useProcessPageController();
+  function getStatusDescription(status: ProcessStatus) {
+    switch (status) {
+      case ProcessStatus.Blocked:
+        return "Bloqueado";
+      case ProcessStatus.Done:
+        return "Finalizado";
+      case ProcessStatus.InProgress:
+        return "Em andamento";
+      case ProcessStatus.Waiting:
+        return "Aguardando";
+      default:
+        return "";
+    }
+  }
 
   return (
     <IonBadge

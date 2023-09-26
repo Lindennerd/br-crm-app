@@ -13,7 +13,7 @@ import {
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { Process } from "../../types/app.types";
+import { Client, Process, ProcessConfiguration } from "../../types/app.types";
 import {
   closeSharp,
   documentAttachSharp,
@@ -24,19 +24,20 @@ import { useState } from "react";
 import { ProcessInitialDataForm } from "./ProcessInitialDataForm";
 import { ProcessAdditionalDataForm } from "./ProcessAdditionalDataForm";
 import { ProcessBindingsForms } from "./ProcessBindingForm/ProcessBindingsForm";
-import { atom, useAtom } from "jotai";
-import { processBindingFormsState } from "./ProcessBindingForm/useProcessBindingFormController";
-
-export const changeProcessAtom = atom<Process>({} as Process);
+import { useGetProcessConfigurations } from "../../api/useConfigurationApi";
+import { useEditProcess, useSaveProcess } from "../../api/useProcessApi";
 
 export type ChangeProcessModalProps = {
   onDismiss: (data: Process | null, action: "add" | "edit" | "cancel") => void;
+  process: Process | null;
 };
 
 export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
+  const { data: configurations } = useGetProcessConfigurations();
+  const saveProcessMutation = useSaveProcess();
+  const editProcessMutation = useEditProcess();
 
-  const [process] = useAtom(changeProcessAtom);
-  const [processBinding] = useAtom(processBindingFormsState)
+  const [process, setProcess] = useState<Process | null>(props.process);
   const [presentToast] = useIonToast();
 
   const [segment, setSegment] = useState<
@@ -53,6 +54,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
   }
 
   function handleSave() {
+    if (!process) return;
     if (process.title == null || process.title == "")
       return errorToast("O nome do processo não pode ser vazio");
     if (process.description == null || process.description == "")
@@ -60,7 +62,50 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
     if (process.clientId == null)
       return errorToast("O cliente do processo não pode ser vazio");
 
+    if(process.id) editProcessMutation.mutate(process);
+    else saveProcessMutation.mutate(process);
+
     props.onDismiss(process, process.id == null ? "add" : "edit");
+  }
+
+  function handleSelectedClient(client: Client | undefined) {
+    client &&
+      client.id &&
+      setProcess({
+        ...(process ?? ({} as Process)),
+        clientId: client.id,
+        client: [client],
+      });
+  }
+
+  function handleSelectedConfiguration(configuration: ProcessConfiguration) {
+    setProcess({
+      ...(process ?? ({} as Process)),
+      title: configuration.title,
+      description: configuration.description,
+      tasks: [...configuration.tasks],
+      additionalData: configuration.additionalData,
+      sla: configuration.sla,
+      executor: configuration.executor,
+    });
+  }
+
+  function handleAddAdditionalData(field: string, value: string) {
+    setProcess({
+      ...(process ?? ({} as Process)),
+      additionalData: {
+        ...(process?.additionalData ?? {}),
+        [field]: value,
+      },
+    });
+  }
+
+  function handleRemoveAdditionalData(field: string) {
+    delete process?.additionalData[field];
+    setProcess({
+      ...(process ?? ({} as Process)),
+      additionalData: process?.additionalData ?? {},
+    });
   }
 
   return (
@@ -75,11 +120,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
               <IonIcon icon={closeSharp}></IonIcon>
             </IonButton>
           </IonButtons>
-          <IonTitle>
-            {process.title
-              ? `Editar processo ${process.title}`
-              : "Novo Processo"}
-          </IonTitle>
+          <IonTitle>Novo Processo</IonTitle>
           <IonButtons slot="end">
             <IonButton
               color="success"
@@ -92,9 +133,31 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
         </IonToolbar>
       </IonHeader>
       <IonContent class="ion-padding">
-        {segment == "bindings" && <ProcessBindingsForms />}
-        {segment == "initial-data" && <ProcessInitialDataForm configuration={processBinding.selectedProcessConfiguration} />}
-        {segment == "additional-data" && <ProcessAdditionalDataForm />}
+        {segment == "bindings" && (
+          <ProcessBindingsForms
+            client={process?.client[0] ?? undefined}
+            setClient={(client) => handleSelectedClient(client)}
+          />
+        )}
+        {segment == "initial-data" && (
+          <ProcessInitialDataForm
+            process={process}
+            setProcess={setProcess}
+            configurations={configurations ?? []}
+            onSetSelectedConfiguration={(configuration) =>
+              handleSelectedConfiguration(configuration)
+            }
+          />
+        )}
+        {segment == "additional-data" && (
+          <ProcessAdditionalDataForm
+            process={process}
+            removeAdditionalData={(field) => handleRemoveAdditionalData(field)}
+            addAdditionalData={(field, value) =>
+              handleAddAdditionalData(field, value)
+            }
+          />
+        )}
       </IonContent>
       <IonFooter>
         <IonToolbar>

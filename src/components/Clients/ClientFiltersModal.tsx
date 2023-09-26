@@ -1,29 +1,16 @@
 import {
   IonButton,
   IonButtons,
-  IonCol,
   IonContent,
-  IonGrid,
   IonHeader,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
   IonNote,
   IonPage,
-  IonRow,
-  IonSelect,
-  IonSelectOption,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { trashBinSharp } from "ionicons/icons";
 import { useState } from "react";
 import {
   ClientConfiguration,
-  ClientField,
-  FieldConfiguration,
 } from "../../types/app.types";
 import { ClientForm } from "./ClientForm";
 

@@ -4,7 +4,6 @@ import {
   ClientConfiguration,
   Client,
 } from "../../../types/app.types";
-import { changeProcessAtom } from "../ChangeProcessModal";
 import { useMapUtils } from "../../../api/useMapUtils";
 
 const initialState: IProcessBindingsFormState = {
@@ -37,7 +36,7 @@ export const processBindingFormsState = atom<IProcessBindingsFormState>(initialS
 
 export const useProcessBindingFormController = () => {
   const [state, setState] = useAtom(processBindingFormsState);
-  const [changeProcess, setChangeProcess] = useAtom(changeProcessAtom);
+  // const [changeProcess, setChangeProcess] = useAtom({});
   const {ensureItsMap} = useMapUtils();
 
   return {
@@ -129,12 +128,12 @@ export const useProcessBindingFormController = () => {
         };
       });
 
-      setChangeProcess((prev) => {
-        return {
-          ...prev,
-          clientId: client.id,
-        };
-      });
+      // setChangeProcess((prev) => {
+      //   return {
+      //     ...prev,
+      //     clientId: client.id,
+      //   };
+      // });
     },
   };
 };

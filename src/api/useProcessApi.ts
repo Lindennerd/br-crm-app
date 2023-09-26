@@ -1,4 +1,10 @@
 import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "react-query";
+import {
   Process,
   ProcessComment,
   ProcessConfiguration,
@@ -9,25 +15,75 @@ import {
 import { useApi } from "./useApi";
 import { useMapUtils } from "./useMapUtils";
 
+export const useGetProcesses = (filter: Partial<ProcessFilter>) => {
+  const { get } = useApi();
+
+  return useInfiniteQuery(
+    ["getProcesses", filter],
+    async ({ pageParam = filter.pageSize ?? 10 }) => {
+      var params = new URLSearchParams({
+        ...filter,
+        pageSize: pageParam,
+      } as any);
+      return await get<Process[]>(
+        `/Process/FilterProcesses?${params.toString()}`
+      );
+    }
+  );
+};
+
+export const useSaveProcess = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    ["saveProcess"],
+    async (process: Process) => {
+      return await post<Process, Process>("/Process/CreateProcess", process);
+    },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.invalidateQueries("getProcesses");
+        queryClient.setQueryData<Process[]>("getProcesses", (old) => {
+          if (!old) return [{ ...variables, id: result.id }];
+          return [
+            ...old.filter((c) => c.id !== result.id),
+            { ...variables, id: result.id },
+          ];
+        });
+      },
+    }
+  );
+};
+
+export const useEditProcess = () => {
+  const { post } = useApi();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    ["saveProcess"],
+    async (process: Process) => {
+      return await post<Process, Process>("/Process/UpdateProcess", process);
+    },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.invalidateQueries("getProcesses");
+        queryClient.setQueryData<Process[]>("getProcesses", (old) => {
+          if (!old) return [{ ...variables, id: result.id }];
+          return [
+            ...old.filter((c) => c.id !== result.id),
+            { ...variables, id: result.id },
+          ];
+        });
+      },
+    }
+  );
+};
+
 export const useProcessApi = () => {
   const { post, get } = useApi();
   const { objectToMap, mapToObject } = useMapUtils();
   return {
-    create: async (
-      process: Pick<
-        Process,
-        "title" | "description" | "sla" | "executor" | "additionalData"
-      > & { clientId: string }
-    ): Promise<Process> => {
-      return await post("/Process/CreateProcess", {
-        ...process,
-        additionalData:
-          process.additionalData && process.additionalData.size > 0
-            ? mapToObject(process.additionalData)
-            : {},
-      });
-    },
-
     filter: async (filter: Partial<ProcessFilter>): Promise<Process[]> => {
       var params = new URLSearchParams(filter as any);
       var result = await get<Process[]>(
@@ -78,26 +134,6 @@ export const useProcessApi = () => {
           };
         }),
       ];
-    },
-
-    update: async (process: Process): Promise<Process> => {
-      const result = (await post("/Process/UpdateProcess", {
-        ...process,
-        additionalData:
-          process.additionalData.size > 0
-            ? Object.fromEntries(process.additionalData)
-            : {},
-      })) as Process;
-
-      return {
-        ...result,
-        client: [
-          ...result.client.map((c) => {
-            c.fieldValues = objectToMap(c.fieldValues);
-            return c;
-          }),
-        ],
-      };
     },
 
     async addEvent(processId: string, event: ProcessEvent): Promise<Process> {

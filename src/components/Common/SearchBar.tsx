@@ -20,7 +20,7 @@ export const SearchBar = (props: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = React.useState<string>(props.defaultValue ?? "");
 
   return (
-    <IonItem>
+    <IonItem lines="none">
       <IonInput
         disabled={props.disabled}
         label={props.label}

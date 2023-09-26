@@ -14,29 +14,32 @@ export interface AddTaskFormProps {
 }
 
 export const AddTaskForm = (props: AddTaskFormProps) => {
-    const [edittingTask, setEdittingTask] = useState<string>(props.task);
+  const [edittingTask, setEdittingTask] = useState<string>(props.task);
 
   return (
-    <IonItem>
-      <IonInput
-        label="Novo item"
-        labelPlacement="floating"
-        value={edittingTask}
-        onIonInput={(e) => setEdittingTask(e.detail.value ?? "")}
-        onKeyDown={(e) => e.key === "Enter" && props.onTaskChange(edittingTask)}
-      />
-      <IonButtons slot="end">
+    <>
+      <IonItem>
+        <IonInput
+          label="Novo item"
+          labelPlacement="floating"
+          value={edittingTask}
+          onIonInput={(e) => setEdittingTask(e.detail.value ?? "")}
+          onKeyDown={(e) =>
+            e.key === "Enter" && props.onTaskChange(edittingTask)
+          }
+        />
         <IonButton
+          slot="end"
           fill="solid"
           color="primary"
           onClick={(e) => {
             e.stopPropagation();
-            props.onTaskChange(edittingTask)
+            props.onTaskChange(edittingTask);
           }}
         >
           <IonIcon icon={addSharp}></IonIcon>
         </IonButton>
-      </IonButtons>
-    </IonItem>
+      </IonItem>
+    </>
   );
 };

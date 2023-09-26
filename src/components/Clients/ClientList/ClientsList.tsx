@@ -1,5 +1,5 @@
 import { useQueryClient } from "react-query";
-import { ClientNew } from "../../../types/app.types";
+import { Client } from "../../../types/app.types";
 import {
   IonButton,
   IonButtons,
@@ -34,8 +34,8 @@ interface ClientsListProps {
 
 export const ClientsList = (props: ClientsListProps) => {
   const { displayFields } = useClient();
-  const [clientDetails, setClientDetails] = useState<ClientNew | null>(null);
-  const [clientChange, setClientChange] = useState<ClientNew | null>(null);
+  const [clientDetails, setClientDetails] = useState<Client | null>(null);
+  const [clientChange, setClientChange] = useState<Client | null>(null);
   const queryClient = useQueryClient();
   const removeClientMutation = useRemoveClient();
 
@@ -66,7 +66,7 @@ export const ClientsList = (props: ClientsListProps) => {
     page: 1,
   });
 
-  function onRemoveClient(client: ClientNew) {
+  function onRemoveClient(client: Client) {
     removeClientMutation.mutate(client.id!, {
       onSuccess: () => {
         queryClient.invalidateQueries("getClientsByType");

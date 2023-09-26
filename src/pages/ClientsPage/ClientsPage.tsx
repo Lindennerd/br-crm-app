@@ -67,7 +67,7 @@ export const ClientsPage = () => {
   return (
     <>
       <IonToolbar color="primary">
-        <IonItem color="primary">
+        <IonItem color="secondary">
           <IonSelect
             placeholder="Selecione um tipo de cliente"
             interface="popover"

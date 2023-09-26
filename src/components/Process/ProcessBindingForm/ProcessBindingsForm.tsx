@@ -1,117 +1,127 @@
-import { Client } from "../../../types/app.types";
 import {
-  IonButton,
-  IonButtons,
   IonCol,
   IonGrid,
-  IonIcon,
   IonItem,
   IonLabel,
   IonList,
   IonNote,
   IonRow,
 } from "@ionic/react";
-import { useClientApi } from "../../../api/useClientApi";
-import { useConfigurationApi } from "../../../api/useConfigurationApi";
-import { checkmarkSharp } from "ionicons/icons";
-import { useProcessBindingFormController } from "./useProcessBindingFormController";
 import { SelectClientType } from "../../Clients/SelectClientType";
-import { SelectClientField } from "../../Clients/SelectClientField";
-import { useEffectOnce } from "../../../common/useEffectOnce";
-import { useMapUtils } from "../../../api/useMapUtils";
 import { SearchBar } from "../../Common/SearchBar";
-import { SelectProcessType } from "../SelectProcessType";
+import { useEffect, useState } from "react";
+import { useGetClientsByType } from "../../../api/useClientApi";
+import { Client, GetClientsRequest } from "../../../types/app.types";
+import { useClient } from "../../../common/useClient";
+import { useGetClientConfiguration } from "../../../api/useConfigurationApi";
 
-export const ProcessBindingsForms = () => {
-  const controller = useProcessBindingFormController();
+export const ProcessBindingsForms = (props: {
+  setClient: (client: Client) => void;
+  client: Client | undefined;
+}) => {
 
-  const { getClientsByType } = useClientApi();
-  const { getProcessConfiguration, getClientConfiguration } =
-    useConfigurationApi();
-  const { getFirstValue } = useMapUtils();
+  const { displayFirstField } = useClient();
 
-  useEffectOnce(() => {
-    Promise.all([getProcessConfiguration(), getClientConfiguration()]).then(
-      ([processConfigurations, clientConfiguration]) =>
-        controller.loadConfigurations(
-          processConfigurations,
-          clientConfiguration
-        )
-    );
+  const [filter, setFilter] = useState<Partial<GetClientsRequest>>({
+    page: 1,
+    pageSize: 10,
   });
+  const [searchResult, setSearchResult] = useState<Client[]>(props.client ? [props.client] : []);
+
+  function getIsQueryEnabled(): boolean {
+    return !!filter && !!filter?.clientTypeId && !!filter?.fieldsFilter;
+  }
+
+  const { data: clientConfiguration } = useGetClientConfiguration();
+  const { data: querySearchResult, isLoading } = useGetClientsByType(
+    filter,
+    getIsQueryEnabled()
+  );
+
+
+  useEffect(() => {
+    if (!querySearchResult) return;
+    setSearchResult(querySearchResult);
+  },  [querySearchResult]);
 
   function handleClientSearch(value: string) {
-    controller.loadingSearch(true);
-    getClientsByType({
-      clientType: controller.state.selectedClientType?.name ?? "",
-      exact: false,
-      fieldsFilter: new Map<string, string>().set(
-        controller.state.search.field,
-        value
-      ),
-      orderBy: null,
-      page: 1,
-      pageSize: 10,
-    })
-      .then((data) => controller.setSearchResult(data))
-      .finally(() => controller.loadingSearch(false));
+    const selectedClientType = clientConfiguration?.find(
+      (clientType) => clientType.id === filter?.clientTypeId
+    );
+
+    if (!selectedClientType) return;
+
+    const fieldsFilter = selectedClientType.fieldConfigurations.map((field) => {
+      return { [field.name]: value };
+    });
+
+    setFilter({ ...filter, fieldsFilter: fieldsFilter[0] });
+  }
+
+  function handleSelectClient(client: Client) {
+    props.setClient(client);
   }
 
   return (
     <>
       <div>
         <IonGrid>
+          <IonNote style={{ marginTop: "1em" }}>
+            Selecione o tipo de cliente, o campo pelo qual deseja pesquisar e
+            vincule o cliente ao processo que você está criando
+          </IonNote>
           <IonRow>
-            <IonCol>
-              <IonNote style={{ marginTop: "1em" }}>
-                Selecione o tipo de cliente, o campo pelo qual deseja pesquisar
-                e vincule o cliente ao processo que você está criando
-              </IonNote>
-            </IonCol>
+            <IonCol></IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
               <SelectClientType
-                clientTypes={controller.state.clientConfigurations}
+                clientTypes={clientConfiguration ?? []}
                 onSelected={(clientType) =>
-                  controller.setSelectedClientType(clientType)
+                  setFilter({
+                    ...filter,
+                    clientTypeId: clientType.id ?? undefined,
+                  })
                 }
-              />
-            </IonCol>
-            <IonCol>
-              <SelectClientField
-                fields={
-                  controller.state.selectedClientType?.fieldConfigurations ?? []
-                }
-                onSelected={(field) => controller.setSearchField(field.name)}
               />
             </IonCol>
           </IonRow>
         </IonGrid>
-        <SearchBar
-          onSearch={(value) => {
-            handleClientSearch(value);
-          }}
-          label="Pesquisar"
-          placeholder="Pesquisar cliente para vincular ao processo"
-          disabled={controller.searchBarDisabled()}
-        />
+          <SearchBar
+            onSearch={(value) => {
+              handleClientSearch(value);
+            }}
+            label="Pesquisar"
+            placeholder="Pesquisar cliente para vincular ao processo"
+            disabled={!filter?.clientTypeId || isLoading}
+          />
+        {isLoading && <IonNote>Pesquisando...</IonNote>}
       </div>
 
       <IonList>
-        {controller.state.clientSearchResult.map((client) => (
+        {searchResult?.length === 0 && (
+          <IonItem>
+            <IonLabel>Nenhum cliente encontrado</IonLabel>
+          </IonItem>
+        )}
+        {searchResult?.map((client) => (
           <IonItem
             button
-            onClick={(e) => controller.setSelectedClient(client)}
+            onClick={(e) => handleSelectClient(client)}
             key={client.id}
             color={
-              controller.state.selectedClient &&
-              client.id === controller.state.selectedClient.id
+              client && props.client &&
+              client.id === props.client.id
                 ? "primary"
                 : "light"
             }
           >
-            <IonLabel>{getFirstValue(client)}</IonLabel>
+            <IonLabel>
+              {displayFirstField(
+                client,
+                client.clientConfiguration.fieldConfigurations
+              )}
+            </IonLabel>
           </IonItem>
         ))}
       </IonList>
