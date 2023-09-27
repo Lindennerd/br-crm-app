@@ -1,28 +1,24 @@
 import {
-  IonList,
-  IonListHeader,
-  IonIcon,
-  IonTitle,
   IonButton,
-  IonItemDivider,
+  IonIcon,
   IonItem,
   IonLabel,
-  IonBadge,
+  IonList,
+  IonListHeader,
+  IonTitle,
 } from "@ionic/react";
 import {
-  flagSharp,
   addSharp,
-  sadSharp,
   checkmarkCircleSharp,
-  playCircle,
-  pin,
   close,
+  flagSharp,
+  pin,
+  playCircle,
+  sadSharp,
 } from "ionicons/icons";
-import { ProcessEvent, ProcessStatus } from "../../../types/app.types";
-import { useProcessPageController } from "../../../pages/ProcessPage/ProcessPage.Controller";
 import { useState } from "react";
+import { ProcessEvent, ProcessStatus } from "../../../types/app.types";
 import { AddEventForm } from "../Forms/AddEventForm";
-import { useProcessApi } from "../../../api/useProcessApi";
 import { ProcessStatusBadge } from "../ProcessStatusBadge";
 
 export interface ProcessEventsListProps {
@@ -31,7 +27,6 @@ export interface ProcessEventsListProps {
 }
 
 export const ProcessEventsList = (props: ProcessEventsListProps) => {
-
   const [showAddForm, setShowAddForm] = useState(false);
 
   const defaultEvent: ProcessEvent = {
@@ -79,7 +74,7 @@ export const ProcessEventsList = (props: ProcessEventsListProps) => {
           <IonLabel>
             {new Date(event.createdAt).toLocaleString()} - {event.description}{" "}
           </IonLabel>
-          <ProcessStatusBadge status={event.eventType} slot="end"/>
+          <ProcessStatusBadge status={event.eventType} slot="end" />
         </IonItem>
       ))}
     </IonList>
