@@ -11,8 +11,7 @@ import { addSharp, filterSharp, searchSharp } from "ionicons/icons";
 export type ProcessToolbarProps = {
   handleSearch: (event: SearchbarCustomEvent) => void;
   handleAddProcess: () => void;
-  handleFilter: () => void;
-  currentFilterCount: number;
+
 };
 
 export const ProcessToolbar = (props: ProcessToolbarProps) => {
@@ -35,15 +34,6 @@ export const ProcessToolbar = (props: ProcessToolbarProps) => {
           onClick={(_) => props.handleAddProcess()}
         >
           <IonIcon icon={addSharp}></IonIcon>
-        </IonButton>
-        <IonButton
-          style={{ display: "none" }}
-          color="tertiary"
-          fill="solid"
-          onClick={(_) => props.handleFilter()}
-        >
-          <IonIcon icon={filterSharp}></IonIcon>({props.currentFilterCount ?? 0}
-          )
         </IonButton>
       </IonButtons>
     </IonToolbar>

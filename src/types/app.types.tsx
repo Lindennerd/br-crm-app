@@ -173,6 +173,7 @@ export type ProcessFilter = {
   processStatus: ProcessStatus | null;
   isDelayed: boolean | null;
   isAlmostDelayed: boolean | null;
+  
 }
 
 export type ProcessConfiguration = {
