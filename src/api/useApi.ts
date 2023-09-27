@@ -6,7 +6,7 @@ import { BussinessError, UserData } from "../types/app.types";
 
 export const useApi = () => {
   const baseUrl: string = import.meta.env.DEV
-    ? "http://localhost:5114"
+    ? "https://localhost:7156/"
     : "https://brcrm-api.fly.dev";
 
   const { push } = useIonRouter();
@@ -31,7 +31,8 @@ export const useApi = () => {
       headers: Object.fromEntries(headers),
     });
 
-    if (response.status > 299) throw JSON.parse(response.data) as BussinessError;
+    if (response.status > 299)
+      throw JSON.parse(response.data) as BussinessError;
     return response.data;
   }
 
@@ -40,7 +41,7 @@ export const useApi = () => {
     data: TData,
     isLogin: boolean = false
   ): Promise<TResponse> {
-    if(!isLogin) await authenticate();
+    if (!isLogin) await authenticate();
 
     const response = await http.post({
       url: new URL(url, baseUrl).toString(),
@@ -48,7 +49,8 @@ export const useApi = () => {
       headers: Object.fromEntries(headers),
     });
 
-    if (response.status > 299) throw JSON.parse(response.data) as BussinessError;
+    if (response.status > 299)
+      throw JSON.parse(response.data) as BussinessError;
     return response.data;
   }
 

@@ -33,7 +33,12 @@ export const ProcessPage = () => {
   );
 
   function handleSearch(value: string) {
-    setProcessFilters((prev) => ({ ...prev, clientName: value, title: value }));
+    if (value.length > 2 || value === "")
+      setProcessFilters((prev) => ({
+        ...prev,
+        clientName: value,
+        title: value,
+      }));
   }
 
   if (!processes) return <></>;
@@ -41,6 +46,7 @@ export const ProcessPage = () => {
   return (
     <>
       <ProcessToolbar
+        searchText={processFilters.clientName || ""}
         handleSearch={(e) => handleSearch(e.detail.value!)}
         handleAddProcess={() =>
           addProcessModal({

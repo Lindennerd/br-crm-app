@@ -27,15 +27,23 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
-import "./theme/variables.css";
-import { MutationCache, QueryCache, QueryClient, QueryClientProvider, useQueryClient } from "react-query";
-import { LoadingContextProvider, useLoadingContext } from "./context/LoadingContext";
+import { useState } from "react";
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { AuthContextProvider } from "./context/AuthContext";
 import { ResponseCacheContextProvider } from "./context/CacheContext";
 import { CurrentClientContextProvider } from "./context/CurrentClientContext";
+import {
+  LoadingContextProvider,
+  useLoadingContext,
+} from "./context/LoadingContext";
 import { MenuContextProvider } from "./context/MenuContext";
-import { useState } from "react";
+import "./theme/variables.css";
 import { BussinessError } from "./types/app.types";
 
 setupIonicReact();
@@ -54,7 +62,7 @@ const App: React.FC = () => {
     },
     onSuccess: () => {
       setLoading(false);
-    }
+    },
   });
 
   const queryCache = new QueryCache({
@@ -66,7 +74,7 @@ const App: React.FC = () => {
       setLoading(false);
     },
   });
-  
+
   const presentError = (message: string) => {
     presentToast({
       message,
@@ -75,21 +83,26 @@ const App: React.FC = () => {
       position: "top",
     });
   };
-  
-  const [queryClient] = useState(() => new QueryClient({
-    mutationCache, queryCache, defaultOptions: {
-      queries: {
-        staleTime: 30000,
-        refetchInterval: 1000 * 60 * 5,
-        behavior: {
-          onFetch: (context) => {
-            setLoading(true);
-          }
-        }
-      }
-    }
-  }))
-  
+
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        mutationCache,
+        queryCache,
+        defaultOptions: {
+          queries: {
+            staleTime: 30000,
+            refetchInterval: 1000 * 60 * 5,
+            behavior: {
+              onFetch: (context) => {
+                setLoading(true);
+              },
+            },
+          },
+        },
+      })
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <LoadingContextProvider>
@@ -120,7 +133,7 @@ const App: React.FC = () => {
           </MenuContextProvider>
         </ResponseCacheContextProvider>
       </LoadingContextProvider>
-      <ReactQueryDevtools initialIsOpen />
+      <ReactQueryDevtools initialIsOpen={import.meta.env.DEV} />
     </QueryClientProvider>
   );
 };

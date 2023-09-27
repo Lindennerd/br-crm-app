@@ -6,18 +6,19 @@ import {
   IonToolbar,
   SearchbarCustomEvent,
 } from "@ionic/react";
-import { addSharp, filterSharp, searchSharp } from "ionicons/icons";
+import { addSharp, searchSharp } from "ionicons/icons";
 
 export type ProcessToolbarProps = {
   handleSearch: (event: SearchbarCustomEvent) => void;
   handleAddProcess: () => void;
-
+  searchText: string;
 };
 
 export const ProcessToolbar = (props: ProcessToolbarProps) => {
   return (
     <IonToolbar color="secondary">
       <IonSearchbar
+        value={props.searchText}
         class="custom"
         showClearButton="always"
         placeholder="Pesquisar por nome do cliente ou nome do processo"
