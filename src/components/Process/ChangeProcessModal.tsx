@@ -13,7 +13,6 @@ import {
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { Client, Process, ProcessConfiguration } from "../../types/app.types";
 import {
   closeSharp,
   documentAttachSharp,
@@ -21,11 +20,12 @@ import {
   personAddSharp,
 } from "ionicons/icons";
 import { useState } from "react";
-import { ProcessInitialDataForm } from "./ProcessInitialDataForm";
-import { ProcessAdditionalDataForm } from "./ProcessAdditionalDataForm";
-import { ProcessBindingsForms } from "./ProcessBindingForm/ProcessBindingsForm";
 import { useGetProcessConfigurations } from "../../api/useConfigurationApi";
 import { useEditProcess, useSaveProcess } from "../../api/useProcessApi";
+import { Client, Process, ProcessConfiguration } from "../../types/app.types";
+import { ProcessAdditionalDataForm } from "./ProcessAdditionalDataForm";
+import { ProcessBindingsForms } from "./ProcessBindingForm/ProcessBindingsForm";
+import { ProcessInitialDataForm } from "./ProcessInitialDataForm";
 
 export type ChangeProcessModalProps = {
   onDismiss: (data: Process | null, action: "add" | "edit" | "cancel") => void;
@@ -62,7 +62,7 @@ export const ChangeProcessModal = (props: ChangeProcessModalProps) => {
     if (process.clientId == null)
       return errorToast("O cliente do processo não pode ser vazio");
 
-    if(process.id) editProcessMutation.mutate(process);
+    if (process.id) editProcessMutation.mutate(process);
     else saveProcessMutation.mutate(process);
 
     props.onDismiss(process, process.id == null ? "add" : "edit");
