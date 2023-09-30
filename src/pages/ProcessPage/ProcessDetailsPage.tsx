@@ -19,6 +19,7 @@ import {
   useUnCompleteTaskMutation,
   useUpdateCommentMutation,
 } from "../../api/useProcessApi";
+import { useClient } from "../../common/useClient";
 import { ClientDetailsModal } from "../../components/Clients/ClientDetailsModal";
 import { ProcessCommentsList } from "../../components/Process/Lists/ProcessCommentsList";
 import { ProcessEventsList } from "../../components/Process/Lists/ProcessEventsList";
@@ -26,12 +27,10 @@ import { ProcessInformationList } from "../../components/Process/Lists/ProcessIn
 import { ProcessTasksList } from "../../components/Process/Lists/ProcessTasksList";
 import { ProcessStatusBadge } from "../../components/Process/ProcessStatusBadge";
 import {
-  Client,
   ProcessComment,
   ProcessEvent,
   ProcessTask,
 } from "../../types/app.types";
-import { useClient } from "../../common/useClient";
 
 export interface ProcessDetailsPageProps {
   processId: string;
@@ -79,7 +78,8 @@ export const ProcessDetailsPage = (props: ProcessDetailsPageProps) => {
   function handleCompleteTask(task: ProcessTask): void {
     if (!process) return;
     if (!task) return;
-    if(task.isCompleted) unCompleteTaskMutation.mutate({ processId: process.id, task: task });
+    if (task.isCompleted)
+      unCompleteTaskMutation.mutate({ processId: process.id, task: task });
     else completeTaskMutation.mutate({ processId: process.id, task: task });
   }
 

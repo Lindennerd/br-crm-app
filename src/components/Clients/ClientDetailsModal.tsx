@@ -1,5 +1,6 @@
 import {
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
@@ -10,13 +11,18 @@ import {
   IonToolbar,
   useIonModal,
 } from "@ionic/react";
-import { caretBackOutline, documentAttachSharp } from "ionicons/icons";
+import {
+  barChartSharp,
+  caretBackOutline,
+  documentAttachSharp,
+} from "ionicons/icons";
 import { useClient } from "../../common/useClient";
 import { Client, Process } from "../../types/app.types";
 import {
   ChangeProcessModal,
   ChangeProcessModalProps,
 } from "../Process/ChangeProcessModal";
+import { ClientReportModal } from "./ClientReport/ClientReportModal";
 
 export interface ClientDetailsModalProps {
   onDismiss: () => void;
@@ -41,6 +47,13 @@ export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
     } satisfies ChangeProcessModalProps
   );
 
+  const [presentReport, dismissReport] = useIonModal(ClientReportModal, {
+    client: props.client,
+    onDismiss: () => {
+      dismissReport();
+    },
+  });
+
   function getClientFields() {
     const configuration =
       props.client?.clientConfiguration?.fieldConfigurations ??
@@ -51,6 +64,12 @@ export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
   function handleNewProcess() {
     presentChangeProcessModal({
       keyboardClose: false,
+      backdropDismiss: false,
+    });
+  }
+
+  function handleReport() {
+    presentReport({
       backdropDismiss: false,
     });
   }
@@ -66,14 +85,24 @@ export const ClientDetailsModal = (props: ClientDetailsModalProps) => {
           >
             <IonIcon icon={caretBackOutline}></IonIcon>
           </IonButton>
-          <IonButton
-            slot="end"
-            style={{ marginRight: "1rem" }}
-            onClick={(e) => handleNewProcess()}
-          >
-            <IonIcon icon={documentAttachSharp} />
-            <IonLabel>Novo Processo</IonLabel>
-          </IonButton>
+          <IonButtons slot="end">
+            <IonButton
+              color="tertiary"
+              fill="solid"
+              onClick={(e) => handleReport()}
+            >
+              <IonIcon icon={barChartSharp} />
+            </IonButton>
+            <IonButton
+              color="tertiary"
+              fill="solid"
+              slot="end"
+              style={{ marginRight: "1rem" }}
+              onClick={(e) => handleNewProcess()}
+            >
+              <IonIcon icon={documentAttachSharp} />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
