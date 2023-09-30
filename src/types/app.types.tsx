@@ -90,7 +90,7 @@ export type OrderBy = {
   fieldName: string;
 };
 export type ClientField = {
-  fieldValues: { [key: string]: string }
+  fieldValues: { [key: string]: string };
 };
 
 export type Client = {
@@ -99,8 +99,6 @@ export type Client = {
   fieldValues: { [key: string]: string };
   clientConfiguration: ClientConfiguration;
 };
-
-
 
 export type Process = {
   id: string;
@@ -123,7 +121,7 @@ export type Process = {
   events: ProcessEvent[];
   comments: ProcessComment[];
   tasks: ProcessTask[];
-}
+};
 
 export type ProcessTask = {
   id: string | null;
@@ -131,14 +129,14 @@ export type ProcessTask = {
   createdAt: Date;
   completedAt: Date | null;
   isCompleted: boolean;
-}
+};
 
 export type ProcessEvent = {
   id: string | null;
   description: string;
   createdAt: Date;
   eventType: ProcessStatus;
-}
+};
 
 export type ProcessComment = {
   id: string | null;
@@ -146,13 +144,13 @@ export type ProcessComment = {
   createdAt: Date;
   authorId: string;
   authorName: string;
-}
+};
 
 export enum ProcessStatus {
   InProgress = 2,
   Waiting = 3,
   Blocked = 4,
-  Done = 5
+  Done = 5,
 }
 
 export const ProcessStatusText = new Map<ProcessStatus, string>([
@@ -173,8 +171,7 @@ export type ProcessFilter = {
   processStatus: ProcessStatus | null;
   isDelayed: boolean | null;
   isAlmostDelayed: boolean | null;
-  
-}
+};
 
 export type ProcessConfiguration = {
   id: string;
@@ -184,11 +181,13 @@ export type ProcessConfiguration = {
   executor: string;
   tasks: ProcessTask[];
   additionalData: { [key: string]: string };
-}
+};
 
 export type BussinessError = {
-  type: string,
-  title: string,
-  status: number,
-  traceId: string
-}
+  type: string;
+  title: string;
+  status: number;
+  traceId: string;
+};
+
+export type ProcessesByStatus = { [key: string]: Process[] };

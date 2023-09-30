@@ -4,15 +4,16 @@ import {
   useQuery,
   useQueryClient,
 } from "react-query";
+import { useClient } from "../common/useClient";
 import {
   Process,
   ProcessComment,
   ProcessEvent,
   ProcessFilter,
   ProcessTask,
+  ProcessesByStatus,
 } from "../types/app.types";
 import { useApi } from "./useApi";
-import { useClient } from "../common/useClient";
 
 export const useGetProcesses = (filter: Partial<ProcessFilter>) => {
   const { get } = useApi();
@@ -39,6 +40,13 @@ export const useGetProcess = (id: string) => {
   });
 };
 
+export const useGetProcessByStatus = () => {
+  const { get } = useApi();
+
+  return useQuery(["getProcessByStatus"], async () => {
+    return await get<ProcessesByStatus>(`/Process/GroupedByStatus`);
+  });
+};
 
 export const useSaveProcess = () => {
   const { post } = useApi();
@@ -118,13 +126,16 @@ export const useAddEventMutation = () => {
     },
     {
       onSuccess: (result, variables) => {
-        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
-          if (!old) return {} as Process;
-          return {
-            ...old,
-            events: [...old.events, variables.event],
-          };
-        });
+        queryClient.setQueryData<Process>(
+          ["getProcess", variables.processId],
+          (old) => {
+            if (!old) return {} as Process;
+            return {
+              ...old,
+              events: [...old.events, variables.event],
+            };
+          }
+        );
       },
     }
   );
@@ -149,13 +160,16 @@ export const useAddCommentMutation = () => {
     },
     {
       onSuccess: (result, variables) => {
-        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
-          if (!old) return {} as Process;
-          return {
-            ...old,
-            comments: [...old.comments, variables.comment],
-          };
-        });
+        queryClient.setQueryData<Process>(
+          ["getProcess", variables.processId],
+          (old) => {
+            if (!old) return {} as Process;
+            return {
+              ...old,
+              comments: [...old.comments, variables.comment],
+            };
+          }
+        );
       },
     }
   );
@@ -175,16 +189,19 @@ export const useUpdateCommentMutation = () => {
     },
     {
       onSuccess: (result, variables) => {
-        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
-          if (!old) return {} as Process;
-          return {
-            ...old,
-            comments: [
-              ...old.comments.filter((c) => c.id !== variables.comment.id),
-              variables.comment,
-            ],
-          };
-        });
+        queryClient.setQueryData<Process>(
+          ["getProcess", variables.processId],
+          (old) => {
+            if (!old) return {} as Process;
+            return {
+              ...old,
+              comments: [
+                ...old.comments.filter((c) => c.id !== variables.comment.id),
+                variables.comment,
+              ],
+            };
+          }
+        );
       },
     }
   );
@@ -204,13 +221,16 @@ export const useAddTaskMutation = () => {
     },
     {
       onSuccess: (result, variables) => {
-        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
-          if (!old) return {} as Process;
-          return {
-            ...old,
-            tasks: [...old.tasks, variables.task],
-          };
-        });
+        queryClient.setQueryData<Process>(
+          ["getProcess", variables.processId],
+          (old) => {
+            if (!old) return {} as Process;
+            return {
+              ...old,
+              tasks: [...old.tasks, variables.task],
+            };
+          }
+        );
       },
     }
   );
@@ -235,15 +255,18 @@ export const useDeleteCommentMutation = () => {
       ),
     {
       onSuccess: (result, variables) => {
-        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
-          if (!old) return {} as Process;
-          return {
-            ...old,
-            comments: [
-              ...old.comments.filter((c) => c.id !== variables.commentId),
-            ],
-          };
-        });
+        queryClient.setQueryData<Process>(
+          ["getProcess", variables.processId],
+          (old) => {
+            if (!old) return {} as Process;
+            return {
+              ...old,
+              comments: [
+                ...old.comments.filter((c) => c.id !== variables.commentId),
+              ],
+            };
+          }
+        );
       },
     }
   );
@@ -263,16 +286,19 @@ export const useCompleteTaskMutation = () => {
     },
     {
       onSuccess: (result, variables) => {
-        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
-          if (!old) return {} as Process;
-          return {
-            ...old,
-            tasks: [
-              ...old.tasks.filter((c) => c.id !== variables.task.id),
-              {...variables.task, isCompleted: true},
-            ],
-          };
-        });
+        queryClient.setQueryData<Process>(
+          ["getProcess", variables.processId],
+          (old) => {
+            if (!old) return {} as Process;
+            return {
+              ...old,
+              tasks: [
+                ...old.tasks.filter((c) => c.id !== variables.task.id),
+                { ...variables.task, isCompleted: true },
+              ],
+            };
+          }
+        );
       },
     }
   );
@@ -292,16 +318,19 @@ export const useUnCompleteTaskMutation = () => {
     },
     {
       onSuccess: (result, variables) => {
-        queryClient.setQueryData<Process>(["getProcess", variables.processId], (old) => {
-          if (!old) return {} as Process;
-          return {
-            ...old,
-            tasks: [
-              ...old.tasks.filter((c) => c.id !== variables.task.id),
-              {...variables.task, isCompleted: false},
-            ],
-          };
-        });
+        queryClient.setQueryData<Process>(
+          ["getProcess", variables.processId],
+          (old) => {
+            if (!old) return {} as Process;
+            return {
+              ...old,
+              tasks: [
+                ...old.tasks.filter((c) => c.id !== variables.task.id),
+                { ...variables.task, isCompleted: false },
+              ],
+            };
+          }
+        );
       },
     }
   );
