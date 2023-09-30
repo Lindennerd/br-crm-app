@@ -32,6 +32,24 @@ export const ClientReportModal = (props: ClientReportModalProps) => {
     pageSize: 1000,
   });
 
+  useEffect(() => {
+    function beforePrint() {
+      document.body.style.position = "static";
+    }
+
+    function afterPrint() {
+      document.body.style.position = "";
+    }
+
+    window.addEventListener("beforeprint", beforePrint);
+    window.addEventListener("afterprint", afterPrint);
+
+    return () => {
+      window.removeEventListener("beforeprint", beforePrint);
+      window.removeEventListener("afterprint", afterPrint);
+    };
+  }, []);
+
   const tableRef: MutableRefObject<HTMLTableElement | null> =
     useRef<HTMLTableElement | null>(null);
 

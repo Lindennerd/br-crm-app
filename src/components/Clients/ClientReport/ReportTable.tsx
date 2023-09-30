@@ -42,19 +42,15 @@ export const ReportTable = forwardRef(
           </tr>
           <tr className="client-infos">
             {props.fieldConfiguration.slice(1, 4).map((field, index) => {
-              return (
-                <>
-                  <td key={index}>{field.name}</td>
-                </>
-              );
+              return <td key={field.name}>{field.name}</td>;
             })}
           </tr>
           <tr className="client-infos">
             {props.fieldConfiguration.slice(1, 4).map((field, index) => {
               return (
-                <>
-                  <td key={index}>{props.client.fieldValues[field.name]}</td>
-                </>
+                <td key={`${field.name}-${field.order}`}>
+                  {props.client.fieldValues[field.name]}
+                </td>
               );
             })}
           </tr>
@@ -66,7 +62,47 @@ export const ReportTable = forwardRef(
                     {process.title} - {getStatusDescription(process.status)}
                   </td>
                 </tr>
-                <ReportProcessTable process={process} />
+                {process.additionalData && (
+                  <>
+                    <tr className="section title-row">
+                      <td colSpan={3}>Informações</td>
+                    </tr>
+                    {process.additionalData &&
+                      Object.keys(process.additionalData).map((key, index) => {
+                        return (
+                          <tr key={key}>
+                            <td>{key}</td>
+                            <td colSpan={2}>{process.additionalData[key]}</td>
+                          </tr>
+                        );
+                      })}
+                  </>
+                )}
+
+                {process.events && process.events.length > 0 && (
+                  <>
+                    <tr className="section title-row">
+                      <td colSpan={3}>Eventos</td>
+                    </tr>
+                    <tr>
+                      <td>Título</td>
+                      <td>Status</td>
+                      <td>Data</td>
+                    </tr>
+                    {process.events.map((event, index) => {
+                      return (
+                        <tr key={event.id}>
+                          <td>{event.description}</td>
+                          <td>{getStatusDescription(event.eventType)}</td>
+                          <td>
+                            {new Date(event.createdAt).toLocaleDateString() ??
+                              ""}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </>
+                )}
               </>
             );
           })}
@@ -75,75 +111,3 @@ export const ReportTable = forwardRef(
     );
   }
 );
-
-export const ReportProcessTable = ({ process }: { process: Process }) => {
-  return (
-    <>
-      {process.additionalData && (
-        <>
-          <tr className="section title-row">
-            <td colSpan={3}>Informações</td>
-          </tr>
-          {process.additionalData &&
-            Object.keys(process.additionalData).map((key, index) => {
-              return (
-                <tr key={index}>
-                  <td>{key}</td>
-                  <td colSpan={2}>{process.additionalData[key]}</td>
-                </tr>
-              );
-            })}
-        </>
-      )}
-
-      {process.events && process.events.length > 0 && (
-        <>
-          <tr className="section title-row">
-            <td colSpan={3}>Eventos</td>
-          </tr>
-          <tr>
-            <td>Título</td>
-            <td>Status</td>
-            <td>Data</td>
-          </tr>
-          {process.events.map((event, index) => {
-            return (
-              <tr key={index}>
-                <td>{event.description}</td>
-                <td>{getStatusDescription(event.eventType)}</td>
-                <td>{new Date(event.createdAt).toLocaleDateString() ?? ""}</td>
-              </tr>
-            );
-          })}
-        </>
-      )}
-
-      {process.tasks && process.tasks.length > 0 && (
-        <>
-          <tr className="section title-row">
-            <td colSpan={3}>Tarefas</td>
-          </tr>
-          <tr>
-            <td>Título</td>
-            <td>Status</td>
-            <td>Data de Conclusão</td>
-          </tr>
-          {process.tasks &&
-            process.tasks.map((task, index) => {
-              return (
-                <tr key={index}>
-                  <td>{task.title}</td>
-                  <td>{task.isCompleted ? "Concluído" : "Não concluído"}</td>
-                  <td>
-                    {task.completedAt
-                      ? new Date(task.completedAt).toLocaleDateString()
-                      : ""}
-                  </td>
-                </tr>
-              );
-            })}
-        </>
-      )}
-    </>
-  );
-};
