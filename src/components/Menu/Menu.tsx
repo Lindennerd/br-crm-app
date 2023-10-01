@@ -1,24 +1,24 @@
 import {
   IonContent,
   IonIcon,
+  IonImg,
   IonItem,
   IonLabel,
   IonList,
   IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
-  IonImg
 } from "@ionic/react";
 
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import { useMenuContext } from "../../context/MenuContext";
-import { AppPage, UserRole } from "../../types/app.types";
+import { AppPage } from "../../types/app.types";
 import { additionalPages } from "../../types/pages";
 import "./Menu.css";
 
+import { UserRole } from "../../types";
 import BrunaReisLogo from "/BrunaReisLogo.svg";
 
 const Menu: React.FC = () => {
@@ -28,7 +28,6 @@ const Menu: React.FC = () => {
   const location = useLocation();
   const { modules } = useMenuContext();
   const { user } = useAuthContext();
-
   useEffect(() => {
     setPages(additionalPages);
 
@@ -40,27 +39,36 @@ const Menu: React.FC = () => {
             (m) => m.moduleName == module.id
           ) ||
           module.id === "home" ||
-          ((user.user.userRole === UserRole.Admin ||
-            user.user.userRole === UserRole.SysAdmin) &&
+          ((user.userRole === UserRole.Admin ||
+            user.userRole === UserRole.SysAdmin) &&
             module.id === "Configuracoes") ||
-          ((user.user.userRole === UserRole.Admin ||
-            user.user.userRole === UserRole.SysAdmin) &&
+          ((user.userRole === UserRole.Admin ||
+            user.userRole === UserRole.SysAdmin) &&
             module.id === "Users")
         );
       });
 
       setActiveModules(activeModules);
     }
-
   }, [user]);
 
   return (
     <IonMenu contentId="main" type="push">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>{user?.organization.name ? (
-            <IonImg style={{height: "15rem", color: "#fff"}} src={user.organization.logo} />
-          ) : <IonImg style={{height: "15rem", color: "#fff"}} src={BrunaReisLogo} />}</IonListHeader>
+          <IonListHeader>
+            {user?.organization.name ? (
+              <IonImg
+                style={{ height: "15rem", color: "#fff" }}
+                src={user.organization.logo}
+              />
+            ) : (
+              <IonImg
+                style={{ height: "15rem", color: "#fff" }}
+                src={BrunaReisLogo}
+              />
+            )}
+          </IonListHeader>
           {activeModules.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
@@ -85,9 +93,7 @@ const Menu: React.FC = () => {
             );
           })}
         </IonList>
-        <div className="footer">
-        &trade; Powered By Cólera CRM &copy; 2023
-        </div>
+        <div className="footer">&trade; Powered By Cólera CRM &copy; 2023</div>
       </IonContent>
     </IonMenu>
   );

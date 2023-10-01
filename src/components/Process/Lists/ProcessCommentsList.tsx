@@ -1,27 +1,27 @@
 import {
-  IonList,
-  IonListHeader,
-  IonIcon,
-  IonTitle,
   IonButton,
+  IonButtons,
+  IonIcon,
   IonItem,
   IonLabel,
+  IonList,
+  IonListHeader,
   IonNote,
   IonPopover,
-  IonButtons,
+  IonTitle,
 } from "@ionic/react";
 import {
-  chatbox,
   addSharp,
+  chatbox,
   chatbubble,
   close,
   ellipsisVertical,
   pencil,
 } from "ionicons/icons";
-import { ProcessComment } from "../../../types/app.types";
 import { useState } from "react";
-import { AddCommentForm } from "../Forms/AddCommentForm";
 import { useAuthContext } from "../../../context/AuthContext";
+import { ProcessComment } from "../../../types/app.types";
+import { AddCommentForm } from "../Forms/AddCommentForm";
 
 export interface ProcessCommentsListProps {
   comments: ProcessComment[];
@@ -70,7 +70,7 @@ export const ProcessCommentsList = (props: ProcessCommentsListProps) => {
         </IonButton>
       </IonListHeader>
       {showAddForm && (
-        <IonItem >
+        <IonItem>
           <IonIcon slot="start" icon={chatbubble} />
           <div
             style={{ display: "flex", flexDirection: "column", width: "100%" }}
@@ -79,8 +79,8 @@ export const ProcessCommentsList = (props: ProcessCommentsListProps) => {
               comment={editComment ?? defaultComment}
               onCommentChange={handleCommentChange}
               cancelComment={() => {
-                setShowAddForm(false)
-                setEditComment(null)
+                setShowAddForm(false);
+                setEditComment(null);
               }}
             />
           </div>
@@ -100,7 +100,7 @@ export const ProcessCommentsList = (props: ProcessCommentsListProps) => {
             <p>{comment.authorName}</p>
             <p>{new Date(comment.createdAt).toLocaleDateString()} </p>
           </IonNote>
-          {user?.user.id === comment.authorId && (
+          {user?.id === comment.authorId && (
             <IonButton
               fill="clear"
               color="medium"

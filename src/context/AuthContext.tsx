@@ -1,18 +1,18 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { createStore, get, remove, set } from "../common/storage";
-import { UserData } from "../types/app.types";
+import { Auth, User } from "../types";
 import { childrenProp } from "../types/react.types";
 
 interface IAuthContext {
-  login: (user: UserData) => void;
+  login: (auth: Auth) => void;
   logout: () => void;
-  user: UserData | undefined;
+  user: User | undefined;
 }
 
 const contextValue: IAuthContext = {
-  login: async (user: UserData) => {},
+  login: async (auth: Auth) => {},
   logout: () => {},
-  user: {} as UserData,
+  user: {} as User,
 };
 
 const context = createContext<IAuthContext>(contextValue);
@@ -22,7 +22,7 @@ export const useAuthContext = () => useContext(context);
 export const AuthContextProvider = ({ children }: childrenProp) => {
   createStore("authStore");
 
-  const [auth, setAuth] = useState<UserData>();
+  const [auth, setAuth] = useState<User>();
 
   const memoizedAuth = useMemo(() => {
     return auth;
@@ -30,16 +30,16 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
 
   useEffect(() => {
     const fetchCachedData = async () => {
-      const data = await get("authInfo");
-      setAuth(data);
+      const data = (await get("authInfo")) as Auth;
+      setAuth(data.user);
     };
 
     fetchCachedData().catch((err) => console.error(err));
   }, []);
 
-  const handleLogin = async (user: UserData) => {   
-    set("authInfo", user);
-    setAuth(user);
+  const handleLogin = async (auth: Auth) => {
+    set("authInfo", auth);
+    setAuth(auth.user);
   };
 
   const handleLogout = async () => {

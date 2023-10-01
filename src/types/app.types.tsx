@@ -9,53 +9,6 @@ export interface AppPage {
   page: ReactElement | null | undefined;
 }
 
-export interface UserData {
-  user: User;
-  token: string;
-  name: string;
-  organization: Organization;
-}
-
-export type User = {
-  id: string;
-  name: string;
-  userName: string;
-  userRole: UserRole;
-};
-
-export type Organization = {
-  name: string;
-  logo: string;
-  theme: Theme | undefined;
-  licensing: Licensing;
-};
-
-export type Theme = {
-  primary: string;
-  secondary: string;
-  tertiary: string;
-};
-
-export type Licensing = {
-  active: boolean;
-  availableModules: { modules: Module[] };
-};
-
-export type Module = {
-  moduleName: string;
-};
-
-export type UserLicensing = {
-  name: string;
-  maxUsers: number;
-};
-
-export enum UserRole {
-  SysAdmin,
-  User,
-  Admin,
-}
-
 export type ClientConfiguration = {
   id: string | null;
   name: string;

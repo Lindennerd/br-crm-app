@@ -2,7 +2,8 @@ import { CapacitorHttp as http } from "@capacitor/core";
 import { useIonRouter } from "@ionic/react";
 import { get as getStored, remove } from "../common/storage";
 import { useResponseCacheContext } from "../context/CacheContext";
-import { BussinessError, UserData } from "../types/app.types";
+import { Auth } from "../types";
+import { BussinessError } from "../types/app.types";
 
 export const useApi = () => {
   const baseUrl: string = import.meta.env.DEV
@@ -14,7 +15,7 @@ export const useApi = () => {
   const { headers } = useResponseCacheContext();
 
   async function authenticate() {
-    const authData: UserData = await getStored("authInfo");
+    const authData: Auth = await getStored("authInfo");
     if (authData)
       headers.set("Authorization", authData ? `Bearer ${authData.token}` : "");
     else {

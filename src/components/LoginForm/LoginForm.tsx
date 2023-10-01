@@ -1,16 +1,7 @@
-import {
-  IonButton,
-  IonIcon,
-  IonInput,
-  IonItem,
-  useIonAlert,
-  useIonLoading,
-} from "@ionic/react";
-import { useRouter } from "../../common/useRouter";
-import { useAuthContext } from "../../context/AuthContext";
+import { IonButton, IonIcon, IonInput, IonItem } from "@ionic/react";
 import { ellipsisHorizontalSharp, personSharp } from "ionicons/icons";
-import { useLogin } from "../../api/security";
-import { useLoadingContext } from "../../context/LoadingContext";
+import { useLogin } from "../../api/useLoginApi";
+import { useRouter } from "../../common/useRouter";
 
 type LoginFormTargetType = EventTarget & {
   user: { value: string };
@@ -19,16 +10,19 @@ type LoginFormTargetType = EventTarget & {
 
 export const LoginForm = () => {
   const { gotoHome } = useRouter();
-  const {mutateAsync: login, error} = useLogin();
+  const { mutateAsync: login, error } = useLogin();
 
   async function handleLoginSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
-    await login({
-      user: (e.target as LoginFormTargetType).user.value,
-      password: (e.target as LoginFormTargetType).password.value
-    }, {
-      onSuccess: () => gotoHome()
-    })
+    await login(
+      {
+        user: (e.target as LoginFormTargetType).user.value,
+        password: (e.target as LoginFormTargetType).password.value,
+      },
+      {
+        onSuccess: () => gotoHome(),
+      }
+    );
   }
 
   return (
@@ -47,7 +41,7 @@ export const LoginForm = () => {
         ></IonInput>
       </IonItem>
       <IonItem>
-        <IonIcon  icon={ellipsisHorizontalSharp} slot="end"/>
+        <IonIcon icon={ellipsisHorizontalSharp} slot="end" />
         <IonInput
           name="password"
           label="SENHA"
@@ -56,7 +50,9 @@ export const LoginForm = () => {
         ></IonInput>
       </IonItem>
       <IonItem lines="none">
-        <IonButton size="default" type="submit">LOGIN</IonButton>
+        <IonButton size="default" type="submit">
+          LOGIN
+        </IonButton>
       </IonItem>
     </form>
   );
