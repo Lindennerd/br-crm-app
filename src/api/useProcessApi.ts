@@ -61,6 +61,7 @@ export const useSaveProcess = () => {
       onSuccess: (result, variables) => {
         queryClient.invalidateQueries("getProcesses");
         queryClient.setQueryData<Process[]>("getProcesses", (old) => {
+          if (!result) return old ?? [];
           if (!old) return [{ ...variables, id: result.id }];
           return [
             ...old.filter((c) => c.id !== result.id),
@@ -96,6 +97,7 @@ export const useEditProcess = () => {
         queryClient.invalidateQueries("getProcesses");
         queryClient.invalidateQueries(["getProcess", variables.id]);
         queryClient.setQueryData<Process[]>("getProcesses", (old) => {
+          if (!result) return old ?? [];
           if (!old) return [{ ...variables, id: result.id }];
           return [
             ...old.filter((c) => c.id !== result.id),
