@@ -18,10 +18,12 @@ import { AppPage } from "../../types/app.types";
 import { additionalPages } from "../../types/pages";
 import "./Menu.css";
 
+import { useRouter } from "../../common/useRouter";
 import { UserRole } from "../../types";
 import BrunaReisLogo from "/BrunaReisLogo.svg";
 
 const Menu: React.FC = () => {
+  const { gotoLogin } = useRouter();
   const [pages, setPages] = useState<AppPage[]>(additionalPages);
   const [activeModules, setActiveModules] = useState<AppPage[]>([]);
 
@@ -29,6 +31,8 @@ const Menu: React.FC = () => {
   const { modules } = useMenuContext();
   const { user } = useAuthContext();
   useEffect(() => {
+    if (!user || !user.organization) gotoLogin();
+
     setPages(additionalPages);
 
     if (!user) setActiveModules([]);
