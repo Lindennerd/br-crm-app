@@ -64,7 +64,7 @@ const Menu: React.FC = () => {
       <IonContent>
         <IonList id="inbox-list">
           <IonListHeader>
-            {user?.organizations.name ? (
+            {user?.organization.name ? (
               <IonImg
                 style={{ height: "15rem", color: "#fff" }}
                 src={user.organization.logo}
