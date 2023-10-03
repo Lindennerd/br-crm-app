@@ -14,15 +14,10 @@ export const LoginForm = () => {
 
   async function handleLoginSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
-    await login(
-      {
-        user: (e.target as LoginFormTargetType).user.value,
-        password: (e.target as LoginFormTargetType).password.value,
-      },
-      {
-        onSuccess: () => gotoHome(),
-      }
-    );
+    await login({
+      user: (e.target as LoginFormTargetType).user.value,
+      password: (e.target as LoginFormTargetType).password.value,
+    });
   }
 
   return (

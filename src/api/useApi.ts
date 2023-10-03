@@ -77,7 +77,6 @@ export const useApi = () => {
         data,
         headers: Object.fromEntries(headers),
       });
-
       if (response.status === 401 && !isLogin) {
         await refreshToken();
         return post(url, data);

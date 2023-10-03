@@ -1,4 +1,6 @@
+import { useIonToast } from "@ionic/react";
 import { useMutation } from "react-query";
+import { useRouter } from "../common/useRouter";
 import { useAuthContext } from "../context/AuthContext";
 import { Auth } from "../types";
 import { useApi } from "./useApi";
@@ -11,6 +13,8 @@ export type loginData = {
 export const useLogin = () => {
   const { post } = useApi();
   const { login } = useAuthContext();
+  const [presentToast] = useIonToast();
+  const { gotoHome } = useRouter();
 
   return useMutation(
     ["login"],
@@ -19,8 +23,18 @@ export const useLogin = () => {
     },
     {
       onSuccess: (data) => {
-        if (!data) throw new Error("No data returned");
-        login(data);
+        if (!data || !data.user) {
+          presentToast({
+            message: "Usuário ou senha inválidos",
+            duration: 3000,
+            color: "danger",
+            position: "top",
+          });
+          return;
+        } else {
+          login(data);
+          gotoHome();
+        }
       },
     }
   );

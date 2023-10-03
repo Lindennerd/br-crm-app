@@ -1,4 +1,3 @@
-import { useIonRouter } from "@ionic/react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { createStore, get, remove, set } from "../common/storage";
 import { Auth, User } from "../types";
@@ -22,8 +21,6 @@ export const useAuthContext = () => useContext(context);
 
 export const AuthContextProvider = ({ children }: childrenProp) => {
   createStore("authStore");
-  const { push } = useIonRouter();
-
   const [auth, setAuth] = useState<User>();
 
   const memoizedAuth = useMemo(() => {
@@ -40,7 +37,6 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
   }, []);
 
   const handleLogin = async (auth: Auth) => {
-    debugger;
     set("authInfo", auth);
     setAuth(auth.user);
   };
@@ -48,7 +44,6 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
   const handleLogout = async () => {
     await remove("authInfo");
     setAuth(undefined);
-    push("page/login", "forward", "replace");
   };
 
   return (
