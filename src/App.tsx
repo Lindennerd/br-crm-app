@@ -28,6 +28,7 @@ import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
 import { useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import {
   MutationCache,
   QueryCache,
@@ -35,6 +36,7 @@ import {
   QueryClientProvider,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { ErrorFallback } from "./common/errorFallback";
 import { AuthContextProvider } from "./context/AuthContext";
 import { ResponseCacheContextProvider } from "./context/CacheContext";
 import { CurrentClientContextProvider } from "./context/CurrentClientContext";
@@ -110,24 +112,26 @@ const App: React.FC = () => {
           <MenuContextProvider>
             <AuthContextProvider>
               <CurrentClientContextProvider>
-                <IonApp>
-                  <IonReactRouter>
-                    <IonSplitPane contentId="main">
-                      <Menu />
-                      <IonRouterOutlet id="main">
-                        <Route path="/" exact={true}>
-                          <Redirect to="/page/home" />
-                        </Route>
-                        <Route path="/page/processo/:name">
-                          <Page></Page>
-                        </Route>
-                        <Route path="/page/:name" exact={true}>
-                          <Page></Page>
-                        </Route>
-                      </IonRouterOutlet>
-                    </IonSplitPane>
-                  </IonReactRouter>
-                </IonApp>
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                  <IonApp>
+                    <IonReactRouter>
+                      <IonSplitPane contentId="main">
+                        <Menu />
+                        <IonRouterOutlet id="main">
+                          <Route path="/" exact={true}>
+                            <Redirect to="/page/home" />
+                          </Route>
+                          <Route path="/page/processo/:name">
+                            <Page></Page>
+                          </Route>
+                          <Route path="/page/:name" exact={true}>
+                            <Page></Page>
+                          </Route>
+                        </IonRouterOutlet>
+                      </IonSplitPane>
+                    </IonReactRouter>
+                  </IonApp>
+                </ErrorBoundary>
               </CurrentClientContextProvider>
             </AuthContextProvider>
           </MenuContextProvider>

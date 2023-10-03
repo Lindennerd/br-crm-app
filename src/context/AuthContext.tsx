@@ -21,7 +21,6 @@ export const useAuthContext = () => useContext(context);
 
 export const AuthContextProvider = ({ children }: childrenProp) => {
   createStore("authStore");
-
   const [auth, setAuth] = useState<User>();
 
   const memoizedAuth = useMemo(() => {

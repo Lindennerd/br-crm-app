@@ -12,11 +12,15 @@ export const useRouter = () => {
   }
 
   function gotoProcess(processId: string) {
-    router.push(`/page/processo/${processId}`, 'forward', 'push');
+    router.push(`/page/processo/${processId}`, "forward", "push");
   }
 
   function gotoProcesses() {
     router.push("/page/ProcessManagement", "forward", "push");
+  }
+
+  function gotoProfile() {
+    router.push("/page/profile", "forward", "push");
   }
 
   return {
@@ -24,5 +28,6 @@ export const useRouter = () => {
     gotoLogin,
     gotoProcess,
     gotoProcesses,
+    gotoProfile,
   };
 };

@@ -29,9 +29,12 @@ const Menu: React.FC = () => {
 
   const location = useLocation();
   const { modules } = useMenuContext();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   useEffect(() => {
-    if (!user || !user.organization) gotoLogin();
+    if (!user || !user.organization) {
+      logout();
+      gotoLogin();
+    }
 
     setPages(additionalPages);
 
