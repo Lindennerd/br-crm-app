@@ -7,11 +7,13 @@ interface IAuthContext {
   login: (auth: Auth) => void;
   logout: () => void;
   user: User | undefined;
+  updateUser: (user: User) => void;
 }
 
 const contextValue: IAuthContext = {
   login: async (auth: Auth) => {},
   logout: () => {},
+  updateUser: (user: User) => {},
   user: {} as User,
 };
 
@@ -30,7 +32,8 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
   useEffect(() => {
     const fetchCachedData = async () => {
       const data = (await get("authInfo")) as Auth;
-      setAuth(data.user);
+      console.log(data);
+      setAuth(data?.user);
     };
 
     fetchCachedData().catch((err) => console.error(err));
@@ -46,6 +49,12 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
     setAuth(undefined);
   };
 
+  const handleUpdateUser = async (user: User) => {
+    // const auth = (await get("authInfo")) as Auth;
+    // set("authInfo", { ...auth, user });
+    // setAuth(user);
+  };
+
   return (
     <context.Provider
       value={{
@@ -53,6 +62,7 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
         login: handleLogin,
         user: memoizedAuth,
         logout: handleLogout,
+        updateUser: handleUpdateUser,
       }}
     >
       {children}
