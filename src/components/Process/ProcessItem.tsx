@@ -1,25 +1,25 @@
 import { IonIcon, IonItem, IonLabel } from "@ionic/react";
 import { documentAttachOutline } from "ionicons/icons";
 import { useMapUtils } from "../../api/useMapUtils";
+import { useRouter } from "../../common/useRouter";
 import { Process } from "../../types/app.types";
 import { ProcessStatusBadge } from "./ProcessStatusBadge";
 
 export interface IProcessItemProps {
   process: Process;
-  goToProcess: (processId: string) => void;
 }
 
 export const ProcessItem = (props: IProcessItemProps) => {
   const { getFirstValue } = useMapUtils();
 
+  const { gotoProcess } = useRouter();
+
+  function handleGoToProcess() {
+    gotoProcess(props.process.id);
+  }
+
   return (
-    <IonItem
-      // routerLink={`/page/processo/${props.process.id}`}
-      onClick={() => props.goToProcess(props.process.id)}
-      lines="full"
-      detail
-      button
-    >
+    <IonItem onClick={() => handleGoToProcess()} lines="full" detail button>
       <IonIcon icon={documentAttachOutline} slot="start" size="large" />
 
       <IonLabel>

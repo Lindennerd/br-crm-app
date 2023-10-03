@@ -1,7 +1,6 @@
 import { IonButton, IonFooter, IonList, useIonModal } from "@ionic/react";
 import { useState } from "react";
 import { useGetProcesses } from "../../api/useProcessApi";
-import { useRouter } from "../../common/useRouter";
 import {
   ChangeProcessModal,
   ChangeProcessModalProps,
@@ -20,8 +19,6 @@ export const ProcessPage = () => {
     hasNextPage,
     fetchNextPage,
   } = useGetProcesses(processFilters);
-
-  const { gotoProcess } = useRouter();
 
   const [addProcessModal, dismissAddProcessModal] = useIonModal(
     ChangeProcessModal,
@@ -58,11 +55,7 @@ export const ProcessPage = () => {
       <IonList>
         {processes?.pages.map((page) =>
           page.map((process) => (
-            <ProcessItem
-              key={process.id}
-              process={process}
-              goToProcess={gotoProcess}
-            />
+            <ProcessItem key={process.id} process={process} />
           ))
         )}
       </IonList>
