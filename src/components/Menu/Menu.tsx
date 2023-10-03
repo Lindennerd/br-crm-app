@@ -32,8 +32,8 @@ const Menu: React.FC = () => {
   const { user, logout } = useAuthContext();
   useEffect(() => {
     if (!user || !user.organization) {
-      logout();
-      gotoLogin();
+      // logout();
+      // gotoLogin();
     }
 
     setPages(additionalPages);

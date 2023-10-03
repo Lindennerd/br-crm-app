@@ -1,29 +1,25 @@
-import {
-  IonButton,
-  IonButtons,
-  IonIcon,
-  IonItem,
-  IonLabel,
-} from "@ionic/react";
-import { Process } from "../../types/app.types";
+import { IonIcon, IonItem, IonLabel } from "@ionic/react";
+import { documentAttachOutline } from "ionicons/icons";
 import { useMapUtils } from "../../api/useMapUtils";
-import {
-  documentAttachOutline,
-  flashSharp,
-} from "ionicons/icons";
+import { Process } from "../../types/app.types";
 import { ProcessStatusBadge } from "./ProcessStatusBadge";
 
 export interface IProcessItemProps {
   process: Process;
-  onSelectProcess: (process: Process) => void;
+  goToProcess: (processId: string) => void;
 }
 
 export const ProcessItem = (props: IProcessItemProps) => {
   const { getFirstValue } = useMapUtils();
 
   return (
-
-    <IonItem lines="full" detail button onClick={e => props.onSelectProcess(props.process)}>
+    <IonItem
+      // routerLink={`/page/processo/${props.process.id}`}
+      onClick={() => props.goToProcess(props.process.id)}
+      lines="full"
+      detail
+      button
+    >
       <IonIcon icon={documentAttachOutline} slot="start" size="large" />
 
       <IonLabel>
@@ -36,7 +32,9 @@ export const ProcessItem = (props: IProcessItemProps) => {
         >
           <h1>{props.process.title}</h1>
         </div>
-        <h2>{props.process.client && getFirstValue(props.process.client[0])}</h2>
+        <h2>
+          {props.process.client && getFirstValue(props.process.client[0])}
+        </h2>
         <div style={{ display: "flex", flexDirection: "row", gap: "1rem" }}>
           <p>
             Criado em: {new Date(props.process.createdAt).toLocaleDateString()}

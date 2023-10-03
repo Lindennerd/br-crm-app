@@ -46,15 +46,19 @@ const Page = () => {
     if (authPage) return setPage(authPage);
     const appPage = modulePages.find((page) => page.id === name);
     if (appPage) return setPage(appPage);
-    if (location.pathname.includes("processo")) {
-      setPage({
-        title: "Detalhes do Processo",
-        id: "ProcessManagement",
-        iosIcon: rocketSharp,
-        mdIcon: rocketSharp,
-        url: location.pathname,
-        page: <ProcessDetailsPage processId={name} />,
-      });
+    if (name === "processo") {
+      if (location.pathname.includes("processo")) {
+        const id =
+          location.pathname.split("/")[location.pathname.split("/").length - 1];
+        setPage({
+          title: "Detalhes do Processo",
+          id: "ProcessManagement",
+          iosIcon: rocketSharp,
+          mdIcon: rocketSharp,
+          url: location.pathname,
+          page: <ProcessDetailsPage processId={id} />,
+        });
+      }
     }
     if (location.pathname.includes("profile")) {
       setPage({

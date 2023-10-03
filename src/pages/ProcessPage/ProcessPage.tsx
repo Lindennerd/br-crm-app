@@ -60,8 +60,8 @@ export const ProcessPage = () => {
           page.map((process) => (
             <ProcessItem
               key={process.id}
-              onSelectProcess={(process) => gotoProcess(process.id)}
               process={process}
+              goToProcess={gotoProcess}
             />
           ))
         )}

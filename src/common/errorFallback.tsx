@@ -1,5 +1,8 @@
 import { IonButton } from "@ionic/react";
+import { useEffect } from "react";
+import { useAuthContext } from "../context/AuthContext";
 import { clear } from "./storage";
+import { useRouter } from "./useRouter";
 import erro from "/erro.jpg";
 export const ErrorFallback = ({
   error,
@@ -8,6 +11,14 @@ export const ErrorFallback = ({
   error: any;
   resetErrorBoundary: any;
 }) => {
+  const { logout } = useAuthContext();
+  const { gotoLogin } = useRouter();
+
+  useEffect(() => {
+    logout();
+    gotoLogin();
+  }, []);
+
   async function resetApp() {
     await clear();
     window.location.reload();
