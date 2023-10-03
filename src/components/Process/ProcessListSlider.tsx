@@ -152,11 +152,7 @@ export const ProcessViewList = ({
       </IonHeader>
       <IonContent>
         {processes.map((process) => (
-          <ProcessItem
-            key={process.id}
-            onSelectProcess={(process) => gotoProcess(process.id)}
-            process={process}
-          />
+          <ProcessItem key={process.id} process={process} />
         ))}
       </IonContent>
     </IonPage>
