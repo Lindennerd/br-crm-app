@@ -17,6 +17,26 @@ export const useLogin = () => {
     async (loginData: loginData): Promise<Auth> => {
       return await post<loginData, Auth>("security/login", loginData, true);
     },
-    { onSuccess: (data) => login(data) }
+    {
+      onSuccess: (data) => {
+        if (!data) throw new Error("No data returned");
+        login(data);
+      },
+    }
+  );
+};
+
+export const useChangePassword = () => {
+  const { post } = useApi();
+
+  return useMutation(
+    ["changePassword"],
+    async (data: {
+      oldPassword: string;
+      newPassword: string;
+      newPasswordConfirmation: string;
+    }) => {
+      return await post("security/changePassword", data);
+    }
   );
 };

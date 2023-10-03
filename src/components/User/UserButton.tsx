@@ -5,7 +5,7 @@ import { useAuthContext } from "../../context/AuthContext";
 
 export const UserButton = () => {
   const { user, logout } = useAuthContext();
-  const { gotoHome, gotoLogin } = useRouter();
+  const { gotoProfile, gotoLogin } = useRouter();
 
   const handleLogout = () => {
     logout();
@@ -20,7 +20,11 @@ export const UserButton = () => {
       </IonButton>
       <IonPopover trigger="user-button" triggerAction="click">
         <IonContent>
-          <IonButton fill="clear" style={{ width: "100%" }}>
+          <IonButton
+            fill="clear"
+            style={{ width: "100%" }}
+            onClick={(e) => gotoProfile()}
+          >
             Perfil
           </IonButton>
           <IonButton

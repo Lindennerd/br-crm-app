@@ -29,9 +29,12 @@ const Menu: React.FC = () => {
 
   const location = useLocation();
   const { modules } = useMenuContext();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   useEffect(() => {
-    if (!user || !user.organization) gotoLogin();
+    if (!user || !user.organization) {
+      logout();
+      gotoLogin();
+    }
 
     setPages(additionalPages);
 
@@ -61,7 +64,7 @@ const Menu: React.FC = () => {
       <IonContent>
         <IonList id="inbox-list">
           <IonListHeader>
-            {user?.organization.name ? (
+            {user?.organizations.name ? (
               <IonImg
                 style={{ height: "15rem", color: "#fff" }}
                 src={user.organization.logo}

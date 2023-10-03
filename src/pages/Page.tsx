@@ -12,12 +12,14 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { logOutOutline, rocketSharp } from "ionicons/icons";
+import { logOutOutline, personCircleSharp, rocketSharp } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { useRouter } from "../common/useRouter";
 import ExploreContainer from "../components/ExploreContainer/ExploreContainer";
+import { UserButton } from "../components/User/UserButton";
 import { useAuthContext } from "../context/AuthContext";
+import { useLoadingContext } from "../context/LoadingContext";
 import { AppPage } from "../types/app.types";
 import {
   additionalPages,
@@ -26,8 +28,7 @@ import {
 } from "../types/pages";
 import "./Page.css";
 import { ProcessDetailsPage } from "./ProcessPage/ProcessDetailsPage";
-import { useLoadingContext } from "../context/LoadingContext";
-import { UserButton } from "../components/User/UserButton";
+import { ProfilePage } from "./ProfilePage/ProfilePage";
 
 const Page = () => {
   const { gotoHome, gotoLogin } = useRouter();
@@ -53,6 +54,16 @@ const Page = () => {
         mdIcon: rocketSharp,
         url: location.pathname,
         page: <ProcessDetailsPage processId={name} />,
+      });
+    }
+    if (location.pathname.includes("profile")) {
+      setPage({
+        title: "Perfil",
+        id: "Profile",
+        iosIcon: personCircleSharp,
+        mdIcon: personCircleSharp,
+        url: location.pathname,
+        page: <ProfilePage />,
       });
     }
   }, [name]);
