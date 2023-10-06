@@ -17,9 +17,9 @@ export const ProcessStatusBadge = ({
       case ProcessStatus.Done:
         return "Finalizado";
       case ProcessStatus.InProgress:
-        return "Em andamento";
+        return "Em Análise";
       case ProcessStatus.Waiting:
-        return "Aguardando";
+        return "Pendente";
       default:
         return "";
     }

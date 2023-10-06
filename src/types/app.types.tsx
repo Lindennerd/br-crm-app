@@ -108,8 +108,8 @@ export enum ProcessStatus {
 }
 
 export const ProcessStatusText = new Map<ProcessStatus, string>([
-  [ProcessStatus.InProgress, "Em progresso"],
-  [ProcessStatus.Waiting, "Aguardando"],
+  [ProcessStatus.InProgress, "Em análise"],
+  [ProcessStatus.Waiting, "Pendente"],
   [ProcessStatus.Blocked, "Bloqueado"],
   [ProcessStatus.Done, "Concluído"],
 ]);
