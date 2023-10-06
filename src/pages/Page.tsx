@@ -87,7 +87,10 @@ const Page = () => {
           {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="end">
             {user ? (
-              <UserButton />
+              <>
+                <UserButton />
+                {/* <NotificationsButton /> */}
+              </>
             ) : (
               <IonButton
                 onClick={() => handleLogin()}

@@ -60,13 +60,13 @@ const Menu: React.FC = () => {
   }, [user]);
 
   return (
-    <IonMenu contentId="main" type="push">
+    <IonMenu contentId="main" type="push" id="main-menu">
       <IonContent>
         <IonList id="inbox-list">
           <IonListHeader>
             {user?.organization.name ? (
               <IonImg
-                style={{ height: "15rem", color: "#fff" }}
+                style={{ height: "15rem", color: "#fff", marginBottom: "1rem" }}
                 src={user.organization.logo}
               />
             ) : (

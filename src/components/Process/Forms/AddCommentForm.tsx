@@ -1,6 +1,7 @@
-import { IonTextarea, IonButton } from "@ionic/react";
+import { IonButton } from "@ionic/react";
 import { useState } from "react";
 import { ProcessComment } from "../../../types/app.types";
+import { CommentTextField } from "./CommentTextField";
 
 export interface AddCommentFormProps {
   comment: ProcessComment;
@@ -13,21 +14,20 @@ export const AddCommentForm = (props: AddCommentFormProps) => {
     props.comment
   );
 
+  function handleChangeComment(comment: ProcessComment): void {
+    setEdittingComment({
+      ...edittingComment,
+      comment: comment.comment,
+      taggedUsers: comment.taggedUsers,
+    });
+  }
+
   return (
     <>
-      <IonTextarea
-        style={{ padding: "0.5em" }}
-        fill="solid"
-        label="Comentário"
-        labelPlacement="floating"
-        placeholder="Descreva o comentário"
-        value={edittingComment.comment}
-        onIonChange={(e) =>
-          setEdittingComment({
-            ...edittingComment,
-            comment: e.detail.value ?? "",
-          })
-        }
+      <CommentTextField
+        cancelComment={props.cancelComment}
+        comment={props.comment}
+        onCommentChange={handleChangeComment}
       />
       <div style={{ display: "flex", flexDirection: "row-reverse" }}>
         <IonButton
