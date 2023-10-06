@@ -5,13 +5,13 @@ import {
   IonSelectOption,
   IonTextarea,
 } from "@ionic/react";
+import { addSharp } from "ionicons/icons";
+import { useState } from "react";
 import {
   ProcessEvent,
   ProcessStatus,
   ProcessStatusText,
 } from "../../../types/app.types";
-import { useState } from "react";
-import { addSharp } from "ionicons/icons";
 
 export interface AddTaskFormProps {
   event: ProcessEvent;
@@ -32,7 +32,6 @@ export const AddEventForm = (props: AddTaskFormProps) => {
         placeholder="Descreva o evento"
         value={edittingEvent.description}
         onIonChange={(e) => {
-          debugger;
           setEdittingEvent({
             ...edittingEvent,
             description: e.detail.value ?? "",

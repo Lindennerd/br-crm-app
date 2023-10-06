@@ -1,13 +1,13 @@
 import {
-  IonList,
-  IonListHeader,
+  IonButton,
+  IonCheckbox,
   IonIcon,
-  IonTitle,
   IonItem,
   IonLabel,
-  IonButton,
+  IonList,
+  IonListHeader,
   IonProgressBar,
-  IonCheckbox,
+  IonTitle,
 } from "@ionic/react";
 import {
   addCircleSharp,
@@ -15,8 +15,8 @@ import {
   caretForwardSharp,
   close,
 } from "ionicons/icons";
-import { ProcessTask } from "../../../types/app.types";
 import { useEffect, useState } from "react";
+import { ProcessTask } from "../../../types/app.types";
 import { AddTaskForm } from "../Forms/AddTaskForm";
 
 export interface ProcessTasksListProps {
@@ -64,7 +64,7 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
     <IonList lines="full">
       <IonListHeader color="secondary">
         <IonIcon icon={caretForwardSharp} />
-        <IonTitle>Tarefas</IonTitle>
+        <IonTitle>Checklist</IonTitle>
         <IonButton
           fill="clear"
           color="light"
@@ -83,7 +83,7 @@ export const ProcessTasksList = (props: ProcessTasksListProps) => {
       )}
       {props.tasks.length === 0 && (
         <IonItem>
-          <IonLabel>Nenhuma tarefa encontrada</IonLabel>
+          <IonLabel>Nenhuma item encontrado</IonLabel>
         </IonItem>
       )}
       {props.tasks.map((task, index) => (
