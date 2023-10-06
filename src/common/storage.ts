@@ -12,22 +12,22 @@ export const createStore = (name = "__mydb") => {
 };
 
 export const set = (key: string, val: any) => {
-  // if (storage) storage.set(key, val);
-  localStorage.setItem(key, JSON.stringify(val));
+  if (storage) storage.set(key, val);
+  // localStorage.setItem(key, JSON.stringify(val));
 };
 
 export const get = async (key: string) => {
-  // if (storage) {
-  //   const val = await storage.get(key);
-  //   return val;
-  // }
+  if (storage) {
+    const val = await storage.get(key);
+    return val;
+  }
 
-  return JSON.parse(localStorage.getItem(key) || "null");
+  // return JSON.parse(localStorage.getItem(key) || "null");
 };
 
 export const remove = async (key: string) => {
-  // if (storage) await storage.remove(key);
-  localStorage.removeItem(key);
+  if (storage) await storage.remove(key);
+  // localStorage.removeItem(key);
 };
 
 export const clear = async () => {

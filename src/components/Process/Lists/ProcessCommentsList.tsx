@@ -39,6 +39,7 @@ export const ProcessCommentsList = (props: ProcessCommentsListProps) => {
     authorName: "",
     comment: "",
     createdAt: new Date(),
+    taggedUsers: [],
   };
 
   function handleCommentChange(comment: ProcessComment): void {

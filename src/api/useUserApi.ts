@@ -1,7 +1,8 @@
 import { useIonToast } from "@ionic/react";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useAuthContext } from "../context/AuthContext";
-import { Profile } from "../types";
+import { Profile, User } from "../types";
+import { GetUsers } from "../types/app.types";
 import { useApi } from "./useApi";
 
 export const useUpdateProfile = () => {
@@ -16,14 +17,17 @@ export const useUpdateProfile = () => {
     },
     {
       onSuccess: (data, variables) => {
-        updateUser({ ...user!, Profile: variables });
-        presentToast({
-          message: "Perfil atualizado com sucesso",
-          duration: 3000,
-          color: "success",
-          position: "top",
-        });
+        updateUser({ ...user!, profile: variables });
       },
     }
   );
+};
+
+export const useGetUsers = (params: GetUsers) => {
+  const { get } = useApi();
+  return useQuery(["getUsers"], async () => {
+    var url = `user/getUserForOrganization?organization=${params.organization}&page=${params.page}&size=${params.pageSize}`;
+    console.log("url get users", url);
+    return await get<User[]>(url);
+  });
 };

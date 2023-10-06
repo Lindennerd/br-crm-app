@@ -7,5 +7,5 @@ export type User = {
   name: string;
   userRole: UserRole;
   organization: Organization;
-  Profile: Profile;
+  profile: Profile;
 };

@@ -32,7 +32,6 @@ export const AuthContextProvider = ({ children }: childrenProp) => {
   useEffect(() => {
     const fetchCachedData = async () => {
       const data = (await get("authInfo")) as Auth;
-      console.log(data);
       setAuth(data?.user);
     };
 

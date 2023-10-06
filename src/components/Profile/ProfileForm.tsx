@@ -5,13 +5,15 @@ import { useAuthContext } from "../../context/AuthContext";
 import { Profile } from "../../types";
 
 export const ProfileForm = () => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const { user } = useAuthContext();
-  const [profile, setProfile] = useState<Partial<Profile>>();
+  const [profile, setProfile] = useState<Profile>({} as Profile);
   const updateProfileMutation = useUpdateProfile();
 
   useEffect(() => {
-    setProfile(user?.Profile);
+    setProfile((prev) => {
+      return user?.profile ?? prev;
+    });
   }, [user]);
 
   function handleSave() {
@@ -37,7 +39,7 @@ export const ProfileForm = () => {
     <>
       <IonInput
         label="Nome"
-        labelPlacement="floating"
+        labelPlacement="fixed"
         disabled={!isEditing}
         value={profile?.firstName}
         onIonInput={(e) =>
@@ -46,7 +48,7 @@ export const ProfileForm = () => {
       />
       <IonInput
         label="Sobrenome"
-        labelPlacement="floating"
+        labelPlacement="fixed"
         disabled={!isEditing}
         value={profile?.lastName}
         onIonInput={(e) =>
@@ -56,14 +58,14 @@ export const ProfileForm = () => {
       <IonInput
         type="email"
         label="Email"
-        labelPlacement="floating"
+        labelPlacement="fixed"
         disabled={!isEditing}
         value={profile?.email}
         onIonInput={(e) => setProfile({ ...profile, email: e.detail.value! })}
       />
       <IonInput
         label="Telefone"
-        labelPlacement="floating"
+        labelPlacement="fixed"
         disabled={!isEditing}
         value={profile?.phoneNumber}
         onIonInput={(e) =>

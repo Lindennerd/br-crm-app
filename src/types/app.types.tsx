@@ -97,6 +97,7 @@ export type ProcessComment = {
   createdAt: Date;
   authorId: string;
   authorName: string;
+  taggedUsers: string[];
 };
 
 export enum ProcessStatus {
@@ -144,3 +145,9 @@ export type BussinessError = {
 };
 
 export type ProcessesByStatus = { [key: string]: Process[] };
+
+export type GetUsers = {
+  organization: string;
+  page: number;
+  pageSize: number;
+};

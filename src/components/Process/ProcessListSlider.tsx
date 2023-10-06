@@ -90,9 +90,9 @@ export const ProcessListSlider = ({
       </IonList>
 
       {processByStatus &&
-        Object.keys(processByStatus).map((key) => (
-          <>
-            <IonList lines="none" key={key}>
+        Object.keys(processByStatus).map((key, index) => (
+          <div key={index}>
+            <IonList lines="none">
               <IonListHeader color="secondary">
                 <IonLabel>
                   <h2>{translateStatus(key)}</h2>
@@ -123,7 +123,7 @@ export const ProcessListSlider = ({
                 }
               )}
             </IonList>
-          </>
+          </div>
         ))}
     </>
   );

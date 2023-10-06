@@ -37,6 +37,7 @@ import {
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { ErrorFallback } from "./common/errorFallback";
+import { UserMenu } from "./components/User/UserMenu";
 import { AuthContextProvider } from "./context/AuthContext";
 import { ResponseCacheContextProvider } from "./context/CacheContext";
 import { CurrentClientContextProvider } from "./context/CurrentClientContext";
@@ -117,6 +118,7 @@ const App: React.FC = () => {
                     <IonReactRouter>
                       <IonSplitPane contentId="main">
                         <Menu />
+                        <UserMenu />
                         <IonRouterOutlet id="main">
                           <Route path="/" exact={true}>
                             <Redirect to="/page/home" />
